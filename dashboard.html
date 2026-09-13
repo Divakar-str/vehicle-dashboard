@@ -50,6 +50,9 @@
           <li class="nav-item">
             <a class="nav-link fw-bold" href="reports.html"><i class="bi bi-file-earmark-text me-1"></i> Reports</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="print.html"><i class="bi bi-printer me-1"></i> Print</a>
+          </li>
         </ul>
 
         <div class="d-flex align-items-center gap-3">
@@ -63,20 +66,15 @@
   <!-- Main Workspace -->
   <main class="dashboard-container py-4 px-3">
 
-    <!-- Top Title and Controls -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-      <div>
-        <h4 class="fw-bold mb-0 text-dark">Vehicle Compliance Dashboard</h4>
-        <small class="text-muted fw-semibold">Click any number or vehicle plate to open the full report.</small>
+  
+
+    <!-- Missing Documents Alert Banner -->
+    <div id="missingDocsBanner" class="dash-alert-banner mb-3 d-none">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
+        <span><strong id="missingDocsCount">0</strong> vehicles have missing or incomplete document dates.</span>
       </div>
-      <div class="d-flex gap-2">
-        <a href="reports.html" class="btn btn-outline-primary btn-sm fw-bold shadow-sm">
-          <i class="bi bi-file-earmark-text me-1"></i> Open All Reports
-        </a>
-        <button id="btnRefreshDash" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" onclick="DashboardController.load()">
-          <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> Refresh
-        </button>
-      </div>
+      <a href="reports.html?preset=MISSING_ONLY" class="btn btn-sm btn-dark fw-bold py-0 px-2" style="font-size: 0.75rem;">Fix Missing Papers &rarr;</a>
     </div>
 
     <!-- DOCUMENT BREAKDOWNS -->
@@ -115,8 +113,11 @@
               <a href="reports.html?doc=permit&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Permit Warning">
                 <span id="docPermitWarning">0</span> ⚠️
               </a>
-              <a href="reports.html?doc=permit&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="Permit Expiring">
-                <span id="docPermitExpiring">0</span> ⏳
+              <a href="reports.html?doc=permit&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="Permit Safe">
+                <span id="docPermitSafe">0</span> 🟢
+              </a>
+              <a href="reports.html?doc=permit&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="Permit Notice">
+                <span id="docPermitNotice">0</span> 📢
               </a>
             </div>
           </div>
@@ -133,8 +134,11 @@
               <a href="reports.html?doc=np&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="NP Warning">
                 <span id="docNpWarning">0</span> ⚠️
               </a>
-              <a href="reports.html?doc=np&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="NP Expiring">
-                <span id="docNpExpiring">0</span> ⏳
+              <a href="reports.html?doc=np&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="NP Safe">
+                <span id="docNpSafe">0</span> 🟢
+              </a>
+              <a href="reports.html?doc=np&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="NP Notice">
+                <span id="docNpNotice">0</span> 📢
               </a>
             </div>
           </div>
@@ -265,29 +269,33 @@
       </div>
     </div>
 
-    <!-- 4 DEDICATED TRACKER CARDS: FC, PERMIT (45-DAY), ROAD TAX, NATIONAL PERMIT -->
+    <!-- 4 DEDICATED TRACKER CARDS -->
     <div class="row g-3 mb-4">
       
       <!-- CARD 1: FITNESS (FC) TRACKER -->
       <div class="col-lg-3 col-sm-6">
         <div class="dash-card h-100">
           <div class="dash-card-header">
-            <h6 class="dash-card-title"><i class="bi bi-patch-check-fill text-success"></i> Fitness (FC) Status</h6>
+            <h6 class="dash-card-title"><i class="bi bi-patch-check-fill text-success"></i> Fitness (FC) Tracker</h6>
             <a href="reports.html?doc=fc" class="small fw-bold text-decoration-none">View All &rarr;</a>
           </div>
           <div class="d-flex gap-1 mb-2">
-            <a href="reports.html?doc=fc&preset=EXPIRED_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-danger-subtle border-danger-subtle">
-              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #dc2626;">Expired</span>
-              <span class="fw-bold text-danger" id="fcSummaryExpired">0</span>
-            </a>
-            <a href="reports.html?doc=fc&preset=FINE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-warning-subtle border-warning-subtle">
-              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #b45309;">&le; 15d</span>
-              <span class="fw-bold text-warning-emphasis" id="fcSummaryWarning">0</span>
-            </a>
-            <a href="reports.html?doc=fc&preset=SAFE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-success-subtle border-success-subtle">
-              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #15803d;">16–30d</span>
-              <span class="fw-bold text-success" id="fcSummarySafe">0</span>
-            </a>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-danger-subtle border-danger-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '0d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
+              <span class="fw-bold text-danger" id="fcSum0">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-warning-subtle border-warning-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '15d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #b45309;">0–15d</span>
+              <span class="fw-bold text-warning-emphasis" id="fcSum15">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-success-subtle border-success-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '30d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #15803d;">15–30d</span>
+              <span class="fw-bold text-success" id="fcSum30">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-info-subtle border-info-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '45d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #0891b2;">30–45d</span>
+              <span class="fw-bold text-info-emphasis" id="fcSum45">0</span>
+            </button>
           </div>
           <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
             <table class="dash-table">
@@ -298,26 +306,30 @@
         </div>
       </div>
 
-      <!-- CARD 2: PERMIT TRACKER (WITH 45-DAY WINDOW) -->
+      <!-- CARD 2: PERMIT TRACKER -->
       <div class="col-lg-3 col-sm-6">
         <div class="dash-card h-100">
           <div class="dash-card-header">
-            <h6 class="dash-card-title"><i class="bi bi-file-earmark-text text-warning"></i> Permit (45-Day Tracker)</h6>
+            <h6 class="dash-card-title"><i class="bi bi-file-earmark-text text-warning"></i> Permit Tracker</h6>
             <a href="reports.html?doc=permit" class="small fw-bold text-decoration-none">View All &rarr;</a>
           </div>
           <div class="d-flex gap-1 mb-2">
-            <a href="reports.html?doc=permit&preset=EXPIRED_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-danger-subtle border-danger-subtle" title="Lapsed / Surrender required">
-              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #dc2626;">Lapsed</span>
-              <span class="fw-bold text-danger" id="permitSummaryExpired">0</span>
-            </a>
-            <a href="reports.html?doc=permit&preset=FINE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-warning-subtle border-warning-subtle" title="Fine Window <= 15d">
-              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #b45309;">&le; 15d</span>
-              <span class="fw-bold text-warning-emphasis" id="permitSummaryWarning">0</span>
-            </a>
-            <a href="reports.html?doc=permit&preset=NOTICE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-info-subtle border-info-subtle" title="45-Day Window">
-              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #0891b2;">31–45d</span>
-              <span class="fw-bold text-info-emphasis" id="permitSummaryNotice">0</span>
-            </a>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-danger-subtle border-danger-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '0d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
+              <span class="fw-bold text-danger" id="permitSum0">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-warning-subtle border-warning-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '15d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #b45309;">0–15d</span>
+              <span class="fw-bold text-warning-emphasis" id="permitSum15">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-success-subtle border-success-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '30d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #15803d;">15–30d</span>
+              <span class="fw-bold text-success" id="permitSum30">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-info-subtle border-info-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '45d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #0891b2;">30–45d</span>
+              <span class="fw-bold text-info-emphasis" id="permitSum45">0</span>
+            </button>
           </div>
           <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
             <table class="dash-table">
@@ -328,7 +340,41 @@
         </div>
       </div>
 
-      <!-- CARD 3: ROAD TAX STATUTORY QUARTERS -->
+      <!-- CARD 3: NATIONAL PERMIT TRACKER -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="dash-card h-100">
+          <div class="dash-card-header">
+            <h6 class="dash-card-title"><i class="bi bi-shield-exclamation text-danger"></i> NP Tracker</h6>
+            <a href="reports.html?doc=np" class="small fw-bold text-decoration-none">View All &rarr;</a>
+          </div>
+          <div class="d-flex gap-1 mb-2">
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-danger-subtle border-danger-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '0d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
+              <span class="fw-bold text-danger" id="npSum0">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-warning-subtle border-warning-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '15d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #b45309;">0–15d</span>
+              <span class="fw-bold text-warning-emphasis" id="npSum15">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-success-subtle border-success-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '30d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #15803d;">15–30d</span>
+              <span class="fw-bold text-success" id="npSum30">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1 border rounded text-center bg-info-subtle border-info-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '45d', this)" style="cursor: pointer;">
+              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #0891b2;">30–45d</span>
+              <span class="fw-bold text-info-emphasis" id="npSum45">0</span>
+            </button>
+          </div>
+          <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
+            <table class="dash-table">
+              <thead><tr><th>Vehicle</th><th>NP Expiry</th><th>Status</th></tr></thead>
+              <tbody id="dashNpMiniTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: ROAD TAX STATUTORY QUARTERS -->
       <div class="col-lg-3 col-sm-6">
         <div class="dash-card h-100">
           <div class="dash-card-header">
@@ -360,46 +406,41 @@
         </div>
       </div>
 
-      <!-- CARD 4: NATIONAL PERMIT 15-YEAR RULE -->
-      <div class="col-lg-3 col-sm-6">
-        <div class="dash-card h-100">
-          <div class="dash-card-header">
-            <h6 class="dash-card-title"><i class="bi bi-shield-exclamation text-danger"></i> NP (15-Yr Rule)</h6>
-            <a href="reports.html?permit=NP_ONLY" class="small fw-bold text-decoration-none">View All &rarr;</a>
-          </div>
-          <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-            <table class="dash-table">
-              <thead><tr><th>Vehicle</th><th>Reg Date</th><th>Status</th></tr></thead>
-              <tbody id="dashNpLifecycleTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
     </div>
 
-    <!-- CUSTOMER DASHBOARD & PRIORITY QUEUE -->
-    <div class="row g-3">
+    <!-- LOWER SECTION: CUSTOMER DASHBOARD & PRIORITY QUEUE -->
+    <div class="row g-3 mb-4">
       
-      <!-- CUSTOMER FLEET DASHBOARD -->
+      <!-- CUSTOMER FLEET DASHBOARD WITH FULL NAME & SEARCH BAR -->
       <div class="col-lg-5">
         <div class="dash-card h-100">
-          <div class="dash-card-header">
+          <div class="dash-card-header flex-wrap gap-2">
             <div>
               <h6 class="dash-card-title"><i class="bi bi-people-fill text-primary"></i> Customer Fleet Dashboard</h6>
-              <small class="text-muted">Client health, vehicle totals, and direct reports.</small>
+              <small class="text-muted">Client health & quick search.</small>
             </div>
-            <a href="customers.html" class="small fw-bold text-decoration-none">Clients &rarr;</a>
+            
+            <div class="d-flex align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-dark fw-bold py-0 px-2" style="font-size: 0.7rem;" id="custBtnAll" onclick="DashboardController.filterCustomerTable('ALL')">All</button>
+              <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-0 px-2" style="font-size: 0.7rem;" id="custBtnTroubled" onclick="DashboardController.filterCustomerTable('TROUBLED')">Issues</button>
+            </div>
           </div>
 
-          <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+          <!-- Search Input Bar -->
+          <div class="mb-2">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-light"><i class="bi bi-search text-muted"></i></span>
+              <input type="text" id="customerSearchInput" class="form-control form-control-sm" placeholder="Search customer name or mobile..." onkeyup="DashboardController.renderCustomerDashboard()" />
+            </div>
+          </div>
+
+          <div class="table-responsive" style="max-height: 330px; overflow-y: auto;">
             <table class="dash-table">
               <thead>
                 <tr>
                   <th>Customer Name</th>
                   <th class="text-center">Total</th>
                   <th class="text-center">Overdue</th>
-                  <th class="text-center">&le; 15d</th>
                   <th class="text-end">Action</th>
                 </tr>
               </thead>
@@ -411,43 +452,101 @@
 
       <!-- PRIORITY ACTION QUEUE -->
       <div class="col-lg-7">
-        <div class="dash-card h-100">
-          <div class="dash-card-header flex-wrap gap-2">
-            <div>
-              <h6 class="dash-card-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Priority Action Queue</h6>
-              <small class="text-muted">Overdue, 1–15 days warning, and 16–30 days renewal.</small>
+        <div class="dash-card h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="dash-card-header flex-wrap gap-2">
+              <div>
+                <h6 class="dash-card-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Priority Action Queue</h6>
+                <small class="text-muted">Filtered by active horizon window.</small>
+              </div>
+
+              <!-- Filter tabs -->
+              <div class="d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-sm btn-dark fw-bold py-1 px-2" id="pqBtnAll" onclick="DashboardController.filterPriorityQueue('ALL')">All (<span id="pqCountAll">0</span>)</button>
+                <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-1 px-2" id="pqBtnOverdue" onclick="DashboardController.filterPriorityQueue('OVERDUE')">Overdue (<span id="pqCountOverdue">0</span>)</button>
+                <button type="button" class="btn btn-sm btn-outline-warning fw-bold py-1 px-2" id="pqBtnWarning" onclick="DashboardController.filterPriorityQueue('WARNING')">1–15d (<span id="pqCountWarning">0</span>)</button>
+                <button type="button" class="btn btn-sm btn-outline-success fw-bold py-1 px-2" id="pqBtnExpiring" onclick="DashboardController.filterPriorityQueue('EXPIRING')">16–30d (<span id="pqCountExpiring">0</span>)</button>
+              </div>
             </div>
 
-            <!-- Filter tabs -->
-            <div class="d-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-dark fw-bold py-1 px-2" id="pqBtnAll" onclick="DashboardController.filterPriorityQueue('ALL')">All (<span id="pqCountAll">0</span>)</button>
-              <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-1 px-2" id="pqBtnOverdue" onclick="DashboardController.filterPriorityQueue('OVERDUE')">Overdue (<span id="pqCountOverdue">0</span>)</button>
-              <button type="button" class="btn btn-sm btn-outline-warning fw-bold py-1 px-2" id="pqBtnWarning" onclick="DashboardController.filterPriorityQueue('WARNING')">1–15d (<span id="pqCountWarning">0</span>)</button>
-              <button type="button" class="btn btn-sm btn-outline-success fw-bold py-1 px-2" id="pqBtnExpiring" onclick="DashboardController.filterPriorityQueue('EXPIRING')">16–30d (<span id="pqCountExpiring">0</span>)</button>
+            <div class="table-responsive" style="max-height: 240px; overflow-y: auto;">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Vehicle Number</th>
+                    <th>Customer</th>
+                    <th>Item Due</th>
+                    <th>Expiry Date</th>
+                    <th>Days</th>
+                    <th class="text-end">WhatsApp</th>
+                  </tr>
+                </thead>
+                <tbody id="dashUrgentTableBody"></tbody>
+              </table>
             </div>
           </div>
 
-          <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
-            <table class="dash-table">
-              <thead>
-                <tr>
-                  <th>Vehicle Number</th>
-                  <th>Customer</th>
-                  <th>Item Due</th>
-                  <th>Expiry Date</th>
-                  <th>Days</th>
-                  <th class="text-end">WhatsApp</th>
-                </tr>
-              </thead>
-              <tbody id="dashUrgentTableBody"></tbody>
-            </table>
+          <!-- Recent Activity Ticker -->
+          <div class="mt-3 pt-2 border-top">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="small fw-bold text-muted"><i class="bi bi-clock-history me-1"></i> Recent Activity Ticker</span>
+              <span class="badge bg-light text-dark border small fw-bold">Live</span>
+            </div>
+            <div class="activity-ticker-box" id="recentActivityTicker">
+              <div class="activity-item text-muted">System loaded successfully. Ready for operations.</div>
+            </div>
           </div>
+
         </div>
       </div>
 
     </div>
 
+    <!-- MOVED TO BOTTOM: Visual Compliance Health Score Bar -->
+    <div class="dash-card p-3">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="small fw-bold text-uppercase text-secondary"><i class="bi bi-heart-pulse-fill text-success me-1"></i> Fleet Compliance Health Score</span>
+        <span class="small fw-extrabold font-monospace" id="fleetHealthPercentText">0% Roadworthy</span>
+      </div>
+      <div class="compliance-health-bar">
+        <div id="healthBarValid" class="health-segment bg-success" style="width: 0%;" title="Valid"></div>
+        <div id="healthBarWarning" class="health-segment bg-warning" style="width: 0%;" title="Warning <= 15d"></div>
+        <div id="healthBarOverdue" class="health-segment bg-danger" style="width: 0%;" title="Overdue"></div>
+      </div>
+    </div>
+
   </main>
+
+
+ <!-- MODERN EDIT MODAL WITH DATE INPUT SUPPORT -->
+  <div class="modal fade" id="quickEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title fw-bold text-dark" id="quickEditModalTitle"><i class="bi bi-pencil-square text-primary me-2"></i>Quick Edit</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4">
+          <input type="hidden" id="qeRecordId" />
+          <input type="hidden" id="qeFieldType" />
+          <input type="hidden" id="qeFieldName" />
+          
+          <div class="mb-3">
+            <label id="qeLabel" class="form-label fw-bold small text-secondary text-uppercase">Value</label>
+            <!-- Dynamic input field that shifts between text (for names) and date picker -->
+            <div id="qeInputContainer">
+              <input type="text" id="qeInput" class="form-control form-control-sm fw-bold" />
+            </div>
+          </div>
+          <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Clicking "Yes to save" applies changes instantly to the database.</small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-bold px-3" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold px-4" id="btnYesToSave" onclick="DashboardController.executeQuickSave()">Yes to save</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
