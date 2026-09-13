@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - FleetERP</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body class="bg-light">
+
+  <!-- Toast Notification -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1300;">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMessage">Done.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-4">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.html">
+        <i class="bi bi-truck text-primary fs-4 me-2"></i>FleetERP
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="topNav">
+        <ul class="navbar-nav me-auto ms-lg-3 mb-2 mb-lg-0 gap-lg-1">
+          <li class="nav-item">
+            <a class="nav-link active fw-bold" href="dashboard.html"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="customers.html"><i class="bi bi-people me-1"></i> Customers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" href="reports.html"><i class="bi bi-file-earmark-text me-1"></i> Reports</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+          <span class="text-light small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Workspace -->
+  <main class="dashboard-container py-4 px-3">
+
+    <!-- Top Title and Controls -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+      <div>
+        <h4 class="fw-bold mb-0 text-dark">Vehicle Compliance Dashboard</h4>
+        <small class="text-muted fw-semibold">Click any number or vehicle plate to open the full report.</small>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="reports.html" class="btn btn-outline-primary btn-sm fw-bold shadow-sm">
+          <i class="bi bi-file-earmark-text me-1"></i> Open All Reports
+        </a>
+        <button id="btnRefreshDash" class="btn btn-outline-secondary btn-sm fw-bold shadow-sm" onclick="DashboardController.load()">
+          <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <!-- DOCUMENT BREAKDOWNS -->
+    <div class="mb-4">
+      <div class="section-subheading">
+        <i class="bi bi-card-checklist text-primary"></i> Document Expiry Breakdown
+      </div>
+
+      <div class="row g-2">
+        <!-- 1. Fitness (FC) -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-fc">
+            <div class="doc-title">Fitness (FC)</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=fc&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="FC Expired">
+                <span id="docFcExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=fc&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="FC Warning">
+                <span id="docFcWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=fc&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="FC Expiring">
+                <span id="docFcExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Permit -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-permit">
+            <div class="doc-title">Permit</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=permit&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Permit Expired">
+                <span id="docPermitExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=permit&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Permit Warning">
+                <span id="docPermitWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=permit&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="Permit Expiring">
+                <span id="docPermitExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. National Permit -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-np">
+            <div class="doc-title">National Permit</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=np&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="NP Expired">
+                <span id="docNpExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=np&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="NP Warning">
+                <span id="docNpWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=np&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="NP Expiring">
+                <span id="docNpExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Quarter Tax -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-tax">
+            <div class="doc-title">Road Tax</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=tax&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Tax Expired">
+                <span id="docTaxExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=tax&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Tax Warning">
+                <span id="docTaxWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=tax&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="Tax Expiring">
+                <span id="docTaxExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Green Tax -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-gtax">
+            <div class="doc-title">Green Tax</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=gtax&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Green Tax Expired">
+                <span id="docGtaxExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=gtax&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Green Tax Warning">
+                <span id="docGtaxWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=gtax&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="Green Tax Expiring">
+                <span id="docGtaxExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Insurance -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-ins">
+            <div class="doc-title">Insurance</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=ins&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Insurance Expired">
+                <span id="docInsExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=ins&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Insurance Warning">
+                <span id="docInsWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=ins&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="Insurance Expiring">
+                <span id="docInsExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Pollution (PUC) -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card doc-card-puc">
+            <div class="doc-title">Pollution (PUC)</div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=puc&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="PUC Expired">
+                <span id="docPucExpired">0</span> 🚨
+              </a>
+              <a href="reports.html?doc=puc&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="PUC Warning">
+                <span id="docPucWarning">0</span> ⚠️
+              </a>
+              <a href="reports.html?doc=puc&preset=SAFE_ONLY" class="doc-badge-link badge-expiring" title="PUC Expiring">
+                <span id="docPucExpiring">0</span> ⏳
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERALL SUMMARY STATS -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-2 col-sm-4 col-6">
+        <a href="reports.html?preset=EXPIRED_ONLY" class="kpi-card kpi-overdue">
+          <div class="kpi-title text-danger">Overdue (&le; 0d)</div>
+          <div class="kpi-number text-danger" id="kpiOverdueCount">0</div>
+          <div class="kpi-sub">Expired Documents</div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-sm-4 col-6">
+        <a href="reports.html?preset=FINE_ONLY" class="kpi-card kpi-fine">
+          <div class="kpi-title text-warning">Due in 15 Days</div>
+          <div class="kpi-number text-warning" id="kpiFineCount">0</div>
+          <div class="kpi-sub">High Priority</div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-sm-4 col-6">
+        <a href="reports.html?preset=SAFE_ONLY" class="kpi-card kpi-safe">
+          <div class="kpi-title text-success">Due in 16–30 Days</div>
+          <div class="kpi-number text-success" id="kpiSafeCount">0</div>
+          <div class="kpi-sub">Normal Renewal</div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-sm-4 col-6">
+        <a href="reports.html?preset=NOTICE_ONLY" class="kpi-card kpi-notice">
+          <div class="kpi-title text-info">Due in 31–45 Days</div>
+          <div class="kpi-number text-info" id="kpiNoticeCount">0</div>
+          <div class="kpi-sub">Advance Notice</div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-sm-4 col-6">
+        <a href="reports.html?preset=MISSING_ONLY" class="kpi-card kpi-missing">
+          <div class="kpi-title" style="color: #8b5cf6;">Missing Papers</div>
+          <div class="kpi-number" style="color: #8b5cf6;" id="kpiMissingCount">0</div>
+          <div class="kpi-sub">Blank Dates</div>
+        </a>
+      </div>
+
+      <div class="col-md-2 col-sm-4 col-6">
+        <a href="reports.html?preset=ALL" class="kpi-card">
+          <div class="kpi-title text-dark">Total Vehicles</div>
+          <div class="kpi-number text-dark" id="kpiTotalVehicles">0</div>
+          <div class="kpi-sub"><span id="kpiTotalCustomers">0</span> Active Clients</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 4 DEDICATED TRACKER CARDS: FC, PERMIT (45-DAY), ROAD TAX, NATIONAL PERMIT -->
+    <div class="row g-3 mb-4">
+      
+      <!-- CARD 1: FITNESS (FC) TRACKER -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="dash-card h-100">
+          <div class="dash-card-header">
+            <h6 class="dash-card-title"><i class="bi bi-patch-check-fill text-success"></i> Fitness (FC) Status</h6>
+            <a href="reports.html?doc=fc" class="small fw-bold text-decoration-none">View All &rarr;</a>
+          </div>
+          <div class="d-flex gap-1 mb-2">
+            <a href="reports.html?doc=fc&preset=EXPIRED_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-danger-subtle border-danger-subtle">
+              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #dc2626;">Expired</span>
+              <span class="fw-bold text-danger" id="fcSummaryExpired">0</span>
+            </a>
+            <a href="reports.html?doc=fc&preset=FINE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-warning-subtle border-warning-subtle">
+              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #b45309;">&le; 15d</span>
+              <span class="fw-bold text-warning-emphasis" id="fcSummaryWarning">0</span>
+            </a>
+            <a href="reports.html?doc=fc&preset=SAFE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-success-subtle border-success-subtle">
+              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #15803d;">16–30d</span>
+              <span class="fw-bold text-success" id="fcSummarySafe">0</span>
+            </a>
+          </div>
+          <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
+            <table class="dash-table">
+              <thead><tr><th>Vehicle</th><th>FC Expiry</th><th>Status</th></tr></thead>
+              <tbody id="dashFcMiniTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: PERMIT TRACKER (WITH 45-DAY WINDOW) -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="dash-card h-100">
+          <div class="dash-card-header">
+            <h6 class="dash-card-title"><i class="bi bi-file-earmark-text text-warning"></i> Permit (45-Day Tracker)</h6>
+            <a href="reports.html?doc=permit" class="small fw-bold text-decoration-none">View All &rarr;</a>
+          </div>
+          <div class="d-flex gap-1 mb-2">
+            <a href="reports.html?doc=permit&preset=EXPIRED_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-danger-subtle border-danger-subtle" title="Lapsed / Surrender required">
+              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #dc2626;">Lapsed</span>
+              <span class="fw-bold text-danger" id="permitSummaryExpired">0</span>
+            </a>
+            <a href="reports.html?doc=permit&preset=FINE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-warning-subtle border-warning-subtle" title="Fine Window <= 15d">
+              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #b45309;">&le; 15d</span>
+              <span class="fw-bold text-warning-emphasis" id="permitSummaryWarning">0</span>
+            </a>
+            <a href="reports.html?doc=permit&preset=NOTICE_ONLY" class="flex-fill p-1 border rounded text-decoration-none text-center bg-info-subtle border-info-subtle" title="45-Day Window">
+              <span class="d-block" style="font-size: 0.65rem; font-weight: 800; color: #0891b2;">31–45d</span>
+              <span class="fw-bold text-info-emphasis" id="permitSummaryNotice">0</span>
+            </a>
+          </div>
+          <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
+            <table class="dash-table">
+              <thead><tr><th>Vehicle</th><th>Permit Expiry</th><th>Status</th></tr></thead>
+              <tbody id="dashPermitMiniTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: ROAD TAX STATUTORY QUARTERS -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="dash-card h-100">
+          <div class="dash-card-header">
+            <h6 class="dash-card-title"><i class="bi bi-calendar4-range text-primary"></i> Road Tax Quarters</h6>
+            <a href="reports.html?doc=tax" class="small fw-bold text-decoration-none">View All &rarr;</a>
+          </div>
+          <div class="quarter-bar mb-2">
+            <a href="#" id="linkTaxQ1" class="quarter-box p-1 text-center">
+              <div style="font-size: 0.65rem;" class="quarter-box-title">Q1 (31-03)</div>
+              <div class="fs-6 fw-bold text-primary" id="taxQ1Count">0</div>
+            </a>
+            <a href="#" id="linkTaxQ2" class="quarter-box p-1 text-center">
+              <div style="font-size: 0.65rem;" class="quarter-box-title">Q2 (30-06)</div>
+              <div class="fs-6 fw-bold text-primary" id="taxQ2Count">0</div>
+            </a>
+            <a href="#" id="linkTaxQ3" class="quarter-box p-1 text-center">
+              <div style="font-size: 0.65rem;" class="quarter-box-title">Q3 (30-09)</div>
+              <div class="fs-6 fw-bold text-primary" id="taxQ3Count">0</div>
+            </a>
+            <a href="#" id="linkTaxQ4" class="quarter-box p-1 text-center">
+              <div style="font-size: 0.65rem;" class="quarter-box-title">Q4 (31-12)</div>
+              <div class="fs-6 fw-bold text-primary" id="taxQ4Count">0</div>
+            </a>
+          </div>
+          <div class="p-2 border rounded bg-light text-center">
+            <small class="text-muted d-block">Tracked quarterly tax vehicles</small>
+            <span class="fw-bold text-dark small" id="taxTotalTrackedText">0 Vehicles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: NATIONAL PERMIT 15-YEAR RULE -->
+      <div class="col-lg-3 col-sm-6">
+        <div class="dash-card h-100">
+          <div class="dash-card-header">
+            <h6 class="dash-card-title"><i class="bi bi-shield-exclamation text-danger"></i> NP (15-Yr Rule)</h6>
+            <a href="reports.html?permit=NP_ONLY" class="small fw-bold text-decoration-none">View All &rarr;</a>
+          </div>
+          <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+            <table class="dash-table">
+              <thead><tr><th>Vehicle</th><th>Reg Date</th><th>Status</th></tr></thead>
+              <tbody id="dashNpLifecycleTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CUSTOMER DASHBOARD & PRIORITY QUEUE -->
+    <div class="row g-3">
+      
+      <!-- CUSTOMER FLEET DASHBOARD -->
+      <div class="col-lg-5">
+        <div class="dash-card h-100">
+          <div class="dash-card-header">
+            <div>
+              <h6 class="dash-card-title"><i class="bi bi-people-fill text-primary"></i> Customer Fleet Dashboard</h6>
+              <small class="text-muted">Client health, vehicle totals, and direct reports.</small>
+            </div>
+            <a href="customers.html" class="small fw-bold text-decoration-none">Clients &rarr;</a>
+          </div>
+
+          <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th class="text-center">Total</th>
+                  <th class="text-center">Overdue</th>
+                  <th class="text-center">&le; 15d</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody id="dashCustomerTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRIORITY ACTION QUEUE -->
+      <div class="col-lg-7">
+        <div class="dash-card h-100">
+          <div class="dash-card-header flex-wrap gap-2">
+            <div>
+              <h6 class="dash-card-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Priority Action Queue</h6>
+              <small class="text-muted">Overdue, 1–15 days warning, and 16–30 days renewal.</small>
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="d-flex align-items-center gap-1">
+              <button type="button" class="btn btn-sm btn-dark fw-bold py-1 px-2" id="pqBtnAll" onclick="DashboardController.filterPriorityQueue('ALL')">All (<span id="pqCountAll">0</span>)</button>
+              <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-1 px-2" id="pqBtnOverdue" onclick="DashboardController.filterPriorityQueue('OVERDUE')">Overdue (<span id="pqCountOverdue">0</span>)</button>
+              <button type="button" class="btn btn-sm btn-outline-warning fw-bold py-1 px-2" id="pqBtnWarning" onclick="DashboardController.filterPriorityQueue('WARNING')">1–15d (<span id="pqCountWarning">0</span>)</button>
+              <button type="button" class="btn btn-sm btn-outline-success fw-bold py-1 px-2" id="pqBtnExpiring" onclick="DashboardController.filterPriorityQueue('EXPIRING')">16–30d (<span id="pqCountExpiring">0</span>)</button>
+            </div>
+          </div>
+
+          <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Vehicle Number</th>
+                  <th>Customer</th>
+                  <th>Item Due</th>
+                  <th>Expiry Date</th>
+                  <th>Days</th>
+                  <th class="text-end">WhatsApp</th>
+                </tr>
+              </thead>
+              <tbody id="dashUrgentTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

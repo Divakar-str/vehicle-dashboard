@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Directory - FleetERP</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- DataTables Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css" />
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Dedicated Customer Module CSS -->
+  <link rel="stylesheet" href="css/customers.css" />
+</head>
+<body class="bg-light">
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMessage"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.html">
+        <i class="bi bi-truck text-primary fs-4 me-2"></i>FleetERP
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="topNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-lg-2">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="customers.html"><i class="bi bi-people-fill me-1"></i> Customers</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Workspace -->
+  <main class="container-fluid py-4 px-4">
+    
+    <!-- Header with Quick Refresh Spinner -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h4 class="fw-bold mb-0">Customer Directory</h4>
+        <small class="text-muted">Manage corporate fleet accounts, contact channels, and real-time document compliance</small>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="btnRefresh" class="btn btn-outline-secondary btn-sm" onclick="CustomerController.load()" title="Reload table data">
+          <i id="refreshIcon" class="bi bi-arrow-clockwise"></i>
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="CustomerController.openModal()">
+          <i class="bi bi-person-plus-fill me-1"></i> Add Customer
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="card border-0 customer-card-shadow mb-4">
+      <div class="card-body">
+        <div class="row align-items-center g-2">
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold text-muted mb-1">Filter by Compliance Health</label>
+          </div>
+          <div class="col-md-5">
+            <select id="healthFilter" class="form-select" onchange="CustomerController.applyHealthFilter()">
+              <option value="">All Health Conditions</option>
+              <option value="EXPIRED">Action Required (Expired Docs)</option>
+              <option value="URGENT">Attention (Due &le; 30 Days)</option>
+              <option value="HEALTHY">All Compliances Valid</option>
+              <option value="NO_FLEET">No Vehicles Linked</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customers DataTable Container -->
+    <div class="card border-0 customer-card-shadow p-3">
+      <div class="table-responsive">
+        <table id="customerDataTable" class="table table-hover align-middle mb-0 w-100">
+          <thead class="table-dark small">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Customer Name</th>
+              <th scope="col">Contact Details</th>
+              <th scope="col">Address & Remarks</th>
+              <th scope="col">Fleet Size</th>
+              <th scope="col">Health Status</th>
+              <th scope="col">Account</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="customerTableBody" class="small">
+            <!-- Dynamically injected with skeleton loader or DataTables rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal: Add / Edit Customer -->
+  <div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-dark text-white">
+          <h6 class="modal-title fw-bold" id="customerModalTitle">Customer Profile</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="customerForm" onsubmit="event.preventDefault(); CustomerController.save();">
+          <div class="modal-body row g-3">
+            <input type="hidden" id="cust_id" />
+            
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Customer / Business Name <span class="text-danger">*</span></label>
+              <input type="text" id="cust_name" class="form-control" placeholder="e.g. Kavitha Transport Logistics" required />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Mobile 1 (Primary) <span class="text-danger">*</span></label>
+              <input type="tel" id="cust_mobile" class="form-control" maxlength="10" placeholder="10 Digits" required />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Mobile 2</label>
+              <input type="tel" id="cust_mobile_2" class="form-control" maxlength="10" placeholder="Optional" />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Mobile 3</label>
+              <input type="tel" id="cust_mobile_3" class="form-control" maxlength="10" placeholder="Optional" />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Address</label>
+              <textarea id="cust_address" class="form-control" rows="2" placeholder="Premises, street, locality, district..."></textarea>
+            </div>
+
+            <div class="col-md-8">
+              <label class="form-label small fw-semibold">Remarks</label>
+              <input type="text" id="cust_remarks" class="form-control" placeholder="e.g. Bulk interstate operator" />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Status</label>
+              <select id="cust_status" class="form-select">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" id="btnSaveCustomer" class="btn btn-primary btn-sm">
+              <span id="saveBtnSpinner" class="spinner-border spinner-border-sm me-1 d-none"></span>
+              <span id="saveBtnText">Save Customer</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: View Customer Fleet -->
+  <div class="modal fade" id="customerFleetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-dark text-white">
+          <div>
+            <h6 class="modal-title fw-bold" id="fleetModalCustomerName">Customer Fleet</h6>
+            <small class="text-white-50" id="fleetModalCustomerId"></small>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-0">
+          <div class="table-responsive fleet-modal-scrollable">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
+                <tr>
+                  <th>Reg. Number</th>
+                  <th>Category</th>
+                  <th>Insurance</th>
+                  <th>Fitness Cert (FC)</th>
+                  <th>PUC Expiry</th>
+                  <th>Road Tax Due</th>
+                  <th>Permit Expiry</th>
+                  <th>National Permit</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="fleetModalRows" class="small"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Assets -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- App Modules -->
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/customers.js"></script>
+</body>
+</html>
