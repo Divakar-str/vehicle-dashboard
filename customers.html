@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer Directory - FleetERP</title>
+  <title>Customers - Fleet Management</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/favicon.png" />
   
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -20,109 +23,124 @@
 
   <!-- Toast Notification Container -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-    <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage"></div>
+        <div class="toast-body py-3 px-3 fw-medium" id="toastMessage"></div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
     </div>
   </div>
 
-  <!-- Top Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3">
+  <!-- Modern Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3 py-2">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.html">
-        <i class="bi bi-truck text-primary fs-4 me-2"></i>FleetERP
+      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="dashboard.html">
+        <img src="images/logo.png" alt="Logo" width="36" height="36" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
+        <span class="tracking-tight">Fleet Management</span>
       </a>
       
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="topNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-lg-2">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-2">
           <li class="nav-item">
-            <a class="nav-link" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a>
+            <a class="nav-link px-3 rounded-pill" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="customers.html"><i class="bi bi-people-fill me-1"></i> Customers</a>
+            <a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="customers.html"><i class="bi bi-people-fill me-1"></i> Customers</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
+            <a class="nav-link px-3 rounded-pill" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</a>
+            <a class="nav-link px-3 rounded-pill" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="print.html"><i class="bi bi-printer me-1"></i> Print</a>
+            <a class="nav-link px-3 rounded-pill" href="print.html"><i class="bi bi-printer me-1"></i> Print</a>
           </li>
         </ul>
 
-        <div class="d-flex align-items-center gap-3">
-          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay">admin</span></span>
-          <button class="btn btn-outline-danger btn-sm" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+        <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0">
+          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay" class="text-white fw-semibold">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Main Workspace -->
-  <main class="container-fluid py-4 px-4">
+  <!-- Main Workspace Container -->
+  <main class="container-fluid py-4 px-3 px-md-4">
     
-    <!-- Header with Quick Refresh Spinner -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Page Header & Action Buttons -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
       <div>
-        <h4 class="fw-bold mb-0">Customer Directory</h4>
-        <small class="text-muted">Manage corporate fleet accounts, contact channels, and real-time document compliance</small>
+        <h3 class="fw-bold text-dark mb-1">Customer List</h3>
+        </div>
+        <div >
+            <div class="card border-0 customer-card-shadow mb-4">
+      <div class="card-body py-3 px-4">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="small fw-bold text-secondary me-2"><i class="bi bi-funnel text-primary me-1"></i>Filter By:</span>
+          
+          <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 filter-pill active" onclick="CustomerController.setFilter('health', '', this)">
+            All Status
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'EXPIRED', this)">
+            <i class="bi bi-exclamation-circle me-1"></i>Expired
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 filter-pill text-dark" onclick="CustomerController.setFilter('health', 'URGENT', this)">
+            <i class="bi bi-clock me-1"></i>Due Soon
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'HEALTHY', this)">
+            <i class="bi bi-check-circle me-1"></i>Valid
+          </button>
+
+          <div class="vr mx-2 text-muted opacity-25 d-none d-md-block"></div>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'active', this)">
+            Active Only
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'inactive', this)">
+            Inactive Only
+          </button>
+        </div>
       </div>
+    </div>
+    </div>
+        
       <div class="d-flex gap-2">
-        <button id="btnRefresh" class="btn btn-outline-secondary btn-sm" onclick="CustomerController.load()" title="Reload table data">
-          <i id="refreshIcon" class="bi bi-arrow-clockwise"></i>
+        <button id="btnRefresh" class="btn btn-outline-secondary btn-sm px-3 rounded-pill bg-white shadow-sm" onclick="CustomerController.load()" title="Reload list">
+          <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> Refresh
         </button>
-        <button class="btn btn-primary btn-sm" onclick="CustomerController.openModal()">
+        <button class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm" onclick="CustomerController.openModal()">
           <i class="bi bi-person-plus-fill me-1"></i> Add Customer
         </button>
       </div>
     </div>
 
-    <!-- Filter Toolbar -->
-    <div class="card border-0 customer-card-shadow mb-4">
-      <div class="card-body">
-        <div class="row align-items-center g-2">
-          <div class="col-md-3">
-            <label class="form-label small fw-semibold text-muted mb-1">Filter by Compliance Health</label>
-          </div>
-          <div class="col-md-5">
-            <select id="healthFilter" class="form-select" onchange="CustomerController.applyHealthFilter()">
-              <option value="">All Health Conditions</option>
-              <option value="EXPIRED">Action Required (Expired Docs)</option>
-              <option value="URGENT">Attention (Due &le; 30 Days)</option>
-              <option value="HEALTHY">All Compliances Valid</option>
-              <option value="NO_FLEET">No Vehicles Linked</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Modern Pill Filter Toolbar Card -->
+  
 
-    <!-- Customers DataTable Container -->
-    <div class="card border-0 customer-card-shadow p-3">
+    <!-- Customers Data Table Container Card -->
+    <div class="card border-0 customer-card-shadow p-3 p-md-4">
       <div class="table-responsive">
-        <table id="customerDataTable" class="table table-hover align-middle mb-0 w-100">
-          <thead class="table-dark small">
+        <table id="customerDataTable" class="table table-hover align-middle mb-0 w-100" style="cursor: pointer;">
+          <thead class="table-light text-secondary small uppercase fw-bold border-bottom">
             <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Customer Name</th>
-              <th scope="col">Contact Details</th>
-              <th scope="col">Address & Remarks</th>
-              <th scope="col">Fleet Size</th>
-              <th scope="col">Health Status</th>
-              <th scope="col">Account</th>
-              <th scope="col" class="text-end">Actions</th>
+              <th scope="col" class="d-none">ID</th>
+              <th scope="col" class="py-3">Customer Name</th>
+              <th scope="col" class="py-3">Phone & WhatsApp</th>
+              <th scope="col" class="py-3">Address & Notes</th>
+              <th scope="col" class="py-3 text-center">Vehicles</th>
+              <th scope="col" class="py-3">Document Status</th>
+              <th scope="col" class="py-3">Account State</th>
+              <th scope="col" class="py-3 text-end">Actions</th>
             </tr>
           </thead>
-          <tbody id="customerTableBody" class="small">
-            <!-- Dynamically injected with skeleton loader or DataTables rows -->
+          <tbody id="customerTableBody" class="small text-secondary">
+            <!-- Dynamically populated -->
           </tbody>
         </table>
       </div>
@@ -132,57 +150,57 @@
 
   <!-- Modal: Add / Edit Customer -->
   <div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow">
-        <div class="modal-header bg-dark text-white">
-          <h6 class="modal-title fw-bold" id="customerModalTitle">Customer Profile</h6>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white px-4 py-3">
+          <h5 class="modal-title fw-bold fs-6" id="customerModalTitle">Customer Details</h5>
+          <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
         </div>
         <form id="customerForm" onsubmit="event.preventDefault(); CustomerController.save();">
-          <div class="modal-body row g-3">
+          <div class="modal-body p-4 row g-3">
             <input type="hidden" id="cust_id" />
             
             <div class="col-12">
-              <label class="form-label small fw-semibold">Customer / Business Name <span class="text-danger">*</span></label>
-              <input type="text" id="cust_name" class="form-control" placeholder="e.g. Kavitha Transport Logistics" required />
+              <label class="form-label small fw-bold text-secondary">Customer / Business Name <span class="text-danger">*</span></label>
+              <input type="text" id="cust_name" class="form-control" placeholder="e.g. Kumar Transport" required />
             </div>
 
             <div class="col-md-4">
-              <label class="form-label small fw-semibold">Mobile 1 (Primary) <span class="text-danger">*</span></label>
+              <label class="form-label small fw-bold text-secondary">Primary Phone <span class="text-danger">*</span></label>
               <input type="tel" id="cust_mobile" class="form-control" maxlength="10" placeholder="10 Digits" required />
             </div>
 
             <div class="col-md-4">
-              <label class="form-label small fw-semibold">Mobile 2</label>
+              <label class="form-label small fw-bold text-secondary">Extra Phone 2</label>
               <input type="tel" id="cust_mobile_2" class="form-control" maxlength="10" placeholder="Optional" />
             </div>
 
             <div class="col-md-4">
-              <label class="form-label small fw-semibold">Mobile 3</label>
+              <label class="form-label small fw-bold text-secondary">Extra Phone 3</label>
               <input type="tel" id="cust_mobile_3" class="form-control" maxlength="10" placeholder="Optional" />
             </div>
 
             <div class="col-12">
-              <label class="form-label small fw-semibold">Address</label>
-              <textarea id="cust_address" class="form-control" rows="2" placeholder="Premises, street, locality, district..."></textarea>
+              <label class="form-label small fw-bold text-secondary">Address</label>
+              <textarea id="cust_address" class="form-control" rows="2" placeholder="Street, City, Area..."></textarea>
             </div>
 
             <div class="col-md-8">
-              <label class="form-label small fw-semibold">Remarks</label>
-              <input type="text" id="cust_remarks" class="form-control" placeholder="e.g. Bulk interstate operator" />
+              <label class="form-label small fw-bold text-secondary">Notes / Remarks</label>
+              <input type="text" id="cust_remarks" class="form-control" placeholder="e.g. Regular client" />
             </div>
 
             <div class="col-md-4">
-              <label class="form-label small fw-semibold">Status</label>
+              <label class="form-label small fw-bold text-secondary">Account State</label>
               <select id="cust_status" class="form-select">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>
-          <div class="modal-footer bg-light">
-            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" id="btnSaveCustomer" class="btn btn-primary btn-sm">
+          <div class="modal-footer bg-light px-4 py-3">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" id="btnSaveCustomer" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
               <span id="saveBtnSpinner" class="spinner-border spinner-border-sm me-1 d-none"></span>
               <span id="saveBtnText">Save Customer</span>
             </button>
@@ -192,39 +210,39 @@
     </div>
   </div>
 
-  <!-- Modal: View Customer Fleet -->
+  <!-- Modal: View Customer Vehicles -->
   <div class="modal fade" id="customerFleetModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content border-0 shadow">
-        <div class="modal-header bg-dark text-white">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white px-4 py-3">
           <div>
-            <h6 class="modal-title fw-bold" id="fleetModalCustomerName">Customer Fleet</h6>
+            <h5 class="modal-title fw-bold fs-6" id="fleetModalCustomerName">Customer Vehicles</h5>
             <small class="text-white-50" id="fleetModalCustomerId"></small>
           </div>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-0">
           <div class="table-responsive fleet-modal-scrollable">
             <table class="table table-hover align-middle mb-0">
-              <thead class="table-light small">
+              <thead class="table-light text-secondary small uppercase fw-bold">
                 <tr>
-                  <th>Reg. Number</th>
-                  <th>Category</th>
-                  <th>Insurance</th>
-                  <th>Fitness Cert (FC)</th>
-                  <th>PUC Expiry</th>
-                  <th>Road Tax Due</th>
-                  <th>Permit Expiry</th>
-                  <th>National Permit</th>
-                  <th>Status</th>
+                  <th class="py-3 ps-3">Vehicle Number</th>
+                  <th class="py-3">Category</th>
+                  <th class="py-3">Insurance</th>
+                  <th class="py-3">Fitness (FC)</th>
+                  <th class="py-3">PUC</th>
+                  <th class="py-3">Road Tax</th>
+                  <th class="py-3">Permit</th>
+                  <th class="py-3">National Permit</th>
+                  <th class="py-3 pe-3">Document Status</th>
                 </tr>
               </thead>
-              <tbody id="fleetModalRows" class="small"></tbody>
+              <tbody id="fleetModalRows" class="small text-secondary"></tbody>
             </table>
           </div>
         </div>
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer bg-light px-4 py-3">
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>

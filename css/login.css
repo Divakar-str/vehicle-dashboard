@@ -1,0 +1,111 @@
+/* Smooth Animated Background Gradient */
+body {
+    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow-x: hidden;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Modern Glass Card Entry Animation */
+.login-card {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo Image Container */
+.login-logo {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 6px;
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.12);
+    transition: transform 0.3s ease;
+}
+
+.login-logo:hover {
+    transform: scale(1.05);
+}
+
+/* Mobile-Friendly Inputs (Font size >= 16px blocks unwanted auto-zoom on mobile safari/chrome) */
+.form-control {
+    font-size: 1rem !important;
+    border-radius: 0 12px 12px 0;
+    transition: all 0.25s ease;
+}
+
+.input-group-text {
+    border-radius: 12px 0 0 12px;
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6;
+}
+
+.form-control:focus {
+    background-color: #ffffff !important;
+    border-color: #0d6efd;
+    box-shadow: none;
+}
+
+/* Group Focus Outline Effect */
+.input-group:focus-within {
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+    border-radius: 12px;
+}
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .form-control {
+    border-color: #0d6efd;
+}
+
+/* Action Button Style */
+.btn-primary {
+    border-radius: 12px;
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35) !important;
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Shake Animation for Wrong Credentials */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+    animation: shake 0.4s ease-in-out;
+}

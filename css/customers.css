@@ -1,210 +1,235 @@
-/* Layout & Container */
-.customer-container {
-  max-width: 1560px;
-  margin: 0 auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #0f172a;
+/* ==========================================================================
+   Fleet Management - Modern Customers Stylesheet
+   ========================================================================== */
+
+:root {
+    --primary-color: #0d6efd;
+    --primary-glow: rgba(13, 110, 253, 0.15);
+    --bg-app: #f4f6f9;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --border-radius-card: 16px;
+    --transition-smooth: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Card Surface */
-.clean-card {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+/* Global Workspace Polish */
+body {
+    background-color: var(--bg-app);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-main);
 }
 
-.table-wrapper {
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  background-color: #ffffff;
-  overflow-x: auto;
+/* Navbar Enhancements */
+.navbar {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Table Design */
-table.dataTable {
-  border-collapse: collapse !important;
-  width: 100% !important;
-  margin: 0 !important;
+.navbar .nav-link {
+    transition: var(--transition-smooth);
+    color: rgba(255, 255, 255, 0.75) !important;
 }
 
-table.dataTable thead th {
-  background: #0f172a !important;
-  color: #ffffff !important;
-  font-weight: 800;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 12px 14px !important;
-  border: none !important;
-  white-space: nowrap;
+.navbar .nav-link:hover, .navbar .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
-table.dataTable tbody td {
-  padding: 12px 14px !important;
-  vertical-align: middle;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 0.85rem;
+/* Card Containers */
+.customer-card-shadow {
+    border-radius: var(--border-radius-card);
+    background: var(--card-bg);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid var(--border-color);
 }
 
-table.dataTable tbody tr:hover td {
-  background-color: #f8fafc !important;
+/* Filter Pill Buttons */
+.filter-pill {
+    font-weight: 500;
+    font-size: 0.825rem;
+    padding: 6px 16px;
+    border-radius: 50rem;
+    transition: var(--transition-smooth);
 }
 
-/* Customer Badges & Typography */
-.customer-id-pill {
-  font-family: monospace;
-  font-weight: 800;
-  font-size: 0.85rem;
-  color: #0369a1;
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  padding: 2px 7px;
-  border-radius: 6px;
-  display: inline-block;
+.filter-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.customer-name-title {
-  font-weight: 800;
-  color: #0f172a;
-  font-size: 0.92rem;
+/* DataTables Styling Overrides */
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: var(--transition-smooth);
 }
 
-.phone-link {
-  color: #334155;
-  text-decoration: none;
-  font-weight: 600;
-  font-family: monospace;
-  font-size: 0.85rem;
-}
-
-.phone-link:hover {
-  color: #0284c7;
-  text-decoration: underline;
-}
-
-.status-badge {
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 20px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  display: inline-block;
-}
-
-.status-badge.active {
-  background-color: #dcfce7;
-  color: #15803d;
-  border: 1px solid #86efac;
-}
-
-.status-badge.inactive {
-  background-color: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #cbd5e1;
-}
-
-/* Action Controls */
-.btn-clean-action {
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  background-color: #ffffff;
-  color: #334155;
-  transition: all 0.15s ease;
-}
-
-.btn-clean-action.edit:hover { color: #0284c7; border-color: #0284c7; background-color: #f0f9ff; }
-.btn-clean-action.delete:hover { color: #dc2626; border-color: #dc2626; background-color: #fef2f2; }
-
-/* =========================================================
-   CLEAN DATATABLES CONTROLS & PAGINATION STYLES
-   ========================================================= */
-/* Top Header Controls */
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-  margin-bottom: 12px;
-}
-
-.dataTables_wrapper .dataTables_length label,
-.dataTables_wrapper .dataTables_filter label {
-  font-weight: 700;
-  font-size: 0.82rem;
-  color: #475569;
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-glow);
 }
 
 .dataTables_wrapper .dataTables_length select {
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 0.825rem;
-  outline: none;
-  background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 4px 8px;
 }
 
-.dataTables_wrapper .dataTables_filter input {
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 0.825rem;
-  outline: none;
-  background-color: #ffffff;
-  margin-left: 6px;
+/* Table Design */
+#customerDataTable thead th {
+    background-color: #f8fafc !important;
+    color: var(--text-muted) !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--border-color);
 }
 
-.dataTables_wrapper .dataTables_filter input:focus,
-.dataTables_wrapper .dataTables_length select:focus {
-  border-color: #0284c7;
-  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+#customerDataTable tbody tr {
+    transition: background-color 0.15s ease-in-out;
 }
 
-/* Bottom Pagination & Counter Alignments */
-.dataTables_wrapper .dataTables_info {
-  font-weight: 600;
-  font-size: 0.8rem;
-  color: #64748b;
-  padding-top: 14px !important;
+#customerDataTable tbody tr:hover {
+    background-color: #f1f5f9 !important;
 }
 
-.dataTables_wrapper .dataTables_paginate {
-  padding-top: 12px !important;
+#customerDataTable td {
+    padding: 14px 12px;
+    vertical-align: middle;
 }
 
-.pagination {
-  gap: 4px;
-  margin-bottom: 0;
+/* Document Status Badges */
+.badge-valid {
+    background-color: #ecfdf5;
+    color: #047857;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
 }
 
-.page-item .page-link {
-  border: 1px solid #cbd5e1;
-  background-color: #ffffff;
-  color: #1e293b;
-  font-weight: 700;
-  font-size: 0.8rem;
-  border-radius: 6px !important;
-  padding: 5px 10px;
-  transition: all 0.15s ease;
+.badge-urgent {
+    background-color: #fffbeb;
+    color: #b45309;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
 }
 
-.page-item .page-link:hover {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
-  color: #0f172a;
+.badge-expired {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
 }
 
-.page-item.active .page-link {
-  background-color: #0f172a !important;
-  border-color: #0f172a !important;
-  color: #ffffff !important;
+/* Skeleton Loading Animation */
+.skeleton-row td {
+    padding: 18px 12px !important;
 }
 
-.page-item.disabled .page-link {
-  background-color: #f8fafc;
-  color: #94a3b8;
-  border-color: #e2e8f0;
+.skeleton-box {
+    height: 18px;
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: loadingPulse 1.4s infinite ease-in-out;
+    border-radius: 6px;
+}
+
+@keyframes loadingPulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Refresh Spinner */
+.spin-animation {
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Modals Modernization */
+.modal-content {
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+    background: #0f172a !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fleet-modal-scrollable {
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+/* Form Controls Inside Modals */
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 10px 14px;
+    border-color: #cbd5e1;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: var(--transition-smooth);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* Action Buttons & Badges */
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 768px) {
+    main.container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    .table td, .table th {
+        font-size: 0.8rem;
+    }
+    
+    .filter-pill {
+        font-size: 0.725rem;
+        padding: 5px 10px;
+    }
 }

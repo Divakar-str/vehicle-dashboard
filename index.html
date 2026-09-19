@@ -1,37 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Vehicle Management</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="css/style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Sign In - Fleet Management</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.ico" />
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Custom Modern Animated CSS -->
+    <link rel="stylesheet" href="css/login.css" />
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+<body class="d-flex align-items-center justify-content-center min-vh-100 p-3">
 
-  <div class="card border-0 shadow-lg p-4" style="max-width: 380px; width: 100%;">
-    <div class="text-center mb-4">
-      <div class="display-6 text-primary mb-2"><i class="bi bi-truck-front-fill"></i></div>
-      <h4 class="fw-bold">Fleet Management</h4>
-      <p class="text-muted small">Sign in to your compliance workspace</p>
+    <!-- Main Container Card with Fade-in Animation -->
+    <div class="card border-0 shadow-lg p-4 p-sm-5 login-card animate-fade-in">
+        <div class="text-center mb-4">
+            
+            <!-- Logo with Pulse Effect -->
+            <div class="logo-wrapper mb-3">
+                <img src="images/logo.png" alt="Logo" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';" />
+                <div class="fallback-icon bg-primary text-white rounded-circle d-none align-items-center justify-content-center mx-auto" style="width: 70px; height: 70px;">
+                    <i class="bi bi-truck-front-fill fs-3"></i>
+                </div>
+            </div>
+            
+            <h3 class="fw-bold text-dark tracking-tight mb-1">Vehicle Management </h3>
+            <p class="text-muted small">Sign in to access your dashboard</p>
+        </div>
+
+        <form id="loginForm" autocomplete="off">
+            <!-- Username Input Group -->
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-secondary">Username</label>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-light border-end-0 text-muted ps-3">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input type="text" id="username" class="form-control border-start-0 bg-light ps-2" placeholder="Enter username" required autofocus />
+                </div>
+            </div>
+            
+            <!-- Password Input Group -->
+            <div class="mb-4">
+                <label class="form-label small fw-bold text-secondary">Password</label>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-light border-end-0 text-muted ps-3">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" id="password" class="form-control border-start-0 bg-light ps-2" placeholder="Enter password" required />
+                </div>
+            </div>
+
+            <!-- Error Notification Alert -->
+            <div id="loginError" class="alert alert-danger py-2 small d-none text-center rounded-3 animate-shake" role="alert">
+                Incorrect username or password.
+            </div>
+
+            <!-- Submit Button with Transition -->
+            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm py-3">
+                Sign In
+            </button>
+        </form>
     </div>
-    <form id="loginForm">
-      <div class="mb-3">
-        <label class="form-label small fw-semibold">Username</label>
-        <input type="text" id="username" class="form-control" placeholder="admin" required autofocus />
-      </div>
-      <div class="mb-3">
-        <label class="form-label small fw-semibold">Password</label>
-        <input type="password" id="password" class="form-control" placeholder="••••••••" required />
-      </div>
-      <div id="loginError" class="alert alert-danger py-2 small d-none">Invalid credentials!</div>
-      <button type="submit" class="btn btn-primary w-100 fw-semibold">Sign In</button>
-    </form>
-  </div>
 
-  <script src="js/auth.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/login.js"></script>
+    <!-- Required Scripts (Unchanged so backend/session flow remains fully safe) -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/login.js"></script>
 </body>
 </html>
