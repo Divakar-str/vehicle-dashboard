@@ -1,13 +1,5 @@
 /**
  * Vehicle Controller
- * 1. In-memory deduplication via Map (by vehicle_id)
- * 2. Clean A4 landscape print view
- * 3. Double-click row to view full specifications modal
- * 4. Next Tax Cycle calculator & quick selector buttons (31-03, 30-06, 30-09, 31-12)
- * 5. Hover remarks tooltip + double-click quick inline remarks editor
- * 6. Green Tax (GTax) positioned under Road Tax
- * 7. Lifetime Tax (LTT) hides tax amounts
- * 8. Collapsible filter drawer with dedicated customer filter
  */
 const VehicleController = {
   dataTable: null,
@@ -18,16 +10,18 @@ const VehicleController = {
   quickDateModal: null,
   quickRemarksModal: null,
   toast: null,
-  tomSelect: null,
+  tomSelectForm: null,
+  tomSelectFilter: null,
   activeMetricFilter: "ALL",
+  activeViewVehicleId: null,
 
   tyreMatrix: {
-    "4 TYRE": { amount: 600, category: "LGV" },
-    "6 TYRE": { amount: 1500, category: "MGV" },
-    "10 TYRE": { amount: 5100, category: "HGV" },
+    "4 TYRE": { amount: 1450, category: "LGV" },
+    "6 TYRE": { amount: 3500, category: "MGV" },
+    "10 TYRE": { amount: 7200, category: "HGV" },
     "12 TYRE": { amount: 9350, category: "HGV" },
-    "14 TYRE": { amount: 7900, category: "HGV" },
-    "16 TYRE": { amount: 10600, category: "HGV" },
+    "14 TYRE": { amount: 11500, category: "HGV" },
+    "16 TYRE": { amount: 13150, category: "HGV" },
     "22 TYRE": { amount: 10600, category: "HGV" }
   },
 
@@ -37,6 +31,23 @@ const VehicleController = {
     this.quickDateModal = new bootstrap.Modal(document.getElementById("quickDateModal"));
     this.quickRemarksModal = new bootstrap.Modal(document.getElementById("quickRemarksModal"));
     this.toast = new bootstrap.Toast(document.getElementById("liveToast"), { delay: 4000 });
+
+    document.getElementById("btnSwitchToEdit").addEventListener("click", () => {
+      if (this.activeViewVehicleId) {
+        this.viewModal.hide();
+        this.openEdit(this.activeViewVehicleId);
+      }
+    });
+
+    document.getElementById("v_np_app").addEventListener("change", (e) => {
+      const npDate = document.getElementById("v_np_expiry");
+      if (e.target.value === "Yes") {
+        npDate.removeAttribute("disabled");
+      } else {
+        npDate.value = "";
+        npDate.setAttribute("disabled", true);
+      }
+    });
 
     this.initTable();
     this.load();
@@ -63,37 +74,60 @@ const VehicleController = {
   formatDisplayDate(dateStr) {
     if (!dateStr) return "-";
     const parts = dateStr.split("-");
-    if (parts.length === 3) {
-      return `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD -> DD-MM-YYYY
-    }
-    return dateStr;
+    return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : dateStr;
   },
 
   getDaysLeft(dateStr) {
     if (!dateStr) return null;
-    const target = new Date(dateStr);
+    const parts = dateStr.split("-").map(Number);
+    const target = new Date(parts[0], parts[1] - 1, parts[2]);
     const now = new Date();
-    target.setHours(0, 0, 0, 0);
     now.setHours(0, 0, 0, 0);
-    return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+    return Math.round((target - now) / (1000 * 60 * 60 * 24));
+  },
+
+  renderDateBadge(dateStr, vehicleId, fieldKey, fieldLabel) {
+    if (!dateStr) return `<span class="text-muted small">-</span>`;
+    const days = this.getDaysLeft(dateStr);
+    let cssClass = "safe";
+    let statusHint = `${days}d left`;
+
+    if (days <= 0) {
+      cssClass = "expired";
+      statusHint = "Expired / Lapsed";
+    } else if (days <= 15) {
+      cssClass = "urgent";
+      statusHint = `${days}d (Urgent)`;
+    } else if (days <= 30) {
+      cssClass = "soon";
+      statusHint = `${days}d (Soon)`;
+    } else if (days <= 45) {
+      cssClass = "soon";
+      statusHint = `${days}d`;
+    }
+
+    return `
+      <span class="exp-pill ${cssClass}"
+            title="${statusHint} - Click to edit date"
+            onclick="event.stopPropagation(); VehicleController.openQuickDate('${vehicleId}', '${fieldKey}', '${fieldLabel}', '${dateStr}')">
+        ${this.formatDisplayDate(dateStr)}
+      </span>
+    `;
   },
 
   printReport() {
     document.getElementById("printDateStamp").innerText = new Date().toLocaleString();
-    window.print();
+    const prevLength = this.dataTable.page.len();
+    this.dataTable.page.len(-1).draw();
+
+    setTimeout(() => {
+      window.print();
+      this.dataTable.page.len(prevLength).draw();
+    }, 300);
   },
 
-  // --- TAX CYCLE UTILITIES (31-03, 30-06, 30-09, 31-12) ---
-
-  /**
-   * Computes the subsequent quarterly cycle date (YYYY-MM-DD)
-   * given an existing date string. If no date is given, calculates from current date.
-   */
   getNextTaxCycle(baseDateStr) {
-    let year;
-    let month; // 1 - 12
-    let day;
-
+    let year, month, day;
     if (baseDateStr) {
       const parts = baseDateStr.split("-");
       year = parseInt(parts[0], 10);
@@ -106,18 +140,11 @@ const VehicleController = {
       day = now.getDate();
     }
 
-    // Sequence: 31-03 -> 30-06 -> 30-09 -> 31-12 -> 31-03 (Next Year)
-    if (month < 3 || (month === 3 && day < 31)) {
-      return `${year}-03-31`;
-    } else if (month < 6 || (month === 6 && day < 30)) {
-      return `${year}-06-30`;
-    } else if (month < 9 || (month === 9 && day < 30)) {
-      return `${year}-09-30`;
-    } else if (month < 12 || (month === 12 && day < 31)) {
-      return `${year}-12-31`;
-    } else {
-      return `${year + 1}-03-31`;
-    }
+    if (month < 3 || (month === 3 && day < 31)) return `${year}-03-31`;
+    if (month < 6 || (month === 6 && day < 30)) return `${year}-06-30`;
+    if (month < 9 || (month === 9 && day < 30)) return `${year}-09-30`;
+    if (month < 12 || (month === 12 && day < 31)) return `${year}-12-31`;
+    return `${year + 1}-03-31`;
   },
 
   applyNextTaxCycleFromCurrent() {
@@ -141,20 +168,9 @@ const VehicleController = {
     this.showToast(`Advanced to: ${this.formatDisplayDate(nextCycle)}`, "info");
   },
 
-  setFormCycleDate(monthDay) {
-    const currentVal = document.getElementById("v_tax").value;
-    const year = currentVal ? currentVal.split("-")[0] : new Date().getFullYear();
-    document.getElementById("v_tax").value = `${year}-${monthDay}`;
-  },
-
-  // --- METRICS COUNTERS ---
   updateTopMetrics() {
     const total = this.data.length;
-    let expired = 0;
-    let due15 = 0;
-    let due30 = 0;
-    let due45 = 0;
-    let validClear = 0;
+    let expired = 0, due15 = 0, due30 = 0, due45 = 0, validClear = 0;
 
     this.data.forEach(v => {
       const days = v.min_days_remaining;
@@ -189,14 +205,12 @@ const VehicleController = {
     }
 
     const statusSelect = document.getElementById("statusFilter");
-    if (this.activeMetricFilter === "ALL") statusSelect.value = "";
-    else statusSelect.value = this.activeMetricFilter;
-
+    statusSelect.value = this.activeMetricFilter === "ALL" ? "" : this.activeMetricFilter;
     this.applyFilters();
   },
 
   clearAllFilters() {
-    document.getElementById("customerFilter").value = "";
+    if (this.tomSelectFilter) this.tomSelectFilter.clear();
     document.getElementById("statusFilter").value = "";
     document.getElementById("categoryFilter").value = "";
     document.getElementById("btnTogglePermit").checked = false;
@@ -206,7 +220,6 @@ const VehicleController = {
 
     document.querySelectorAll(".metric-card").forEach(c => c.classList.remove("active-metric-filter"));
     this.activeMetricFilter = "ALL";
-
     this.applyFilters();
   },
 
@@ -217,17 +230,18 @@ const VehicleController = {
       lengthMenu: [5, 10, 25, 50, 100],
       searching: true,
       ordering: true,
+      order: [],
       info: true,
       autoWidth: false,
       language: {
         search: "Search Records:",
-        searchPlaceholder: "Plate, Owner, Category...",
+        searchPlaceholder: "Plate, Owner, Category, Chassis...",
         lengthMenu: "Show _MENU_ vehicles",
         emptyTable: "No vehicles found in database",
         info: "Showing _START_ to _END_ of _TOTAL_ vehicles"
       },
       columns: [
-        // 1. Vehicle Number & Tax Spec
+        // 1. Vehicle & Tax Spec: Merged Sub-row Stack
         {
           data: "registration_no",
           render: (data, type, row) => {
@@ -235,79 +249,106 @@ const VehicleController = {
             const isLTT = row.tax_type === "Lifetime";
 
             return `
-              <div>
-                <div class="d-flex align-items-center">
-                  <a href="#" onclick="VehicleController.openEdit('${VehicleController.escape(row.vehicle_id)}'); return false;" class="reg-no-link" title="Click to edit full record">
-                    ${VehicleController.escape(data)}
-                  </a>
-                  <span class="status-dot ${statusClass}" title="Status: ${row.active_status || 'Active'}"></span>
+              <div class="cell-merged-stack">
+                <div class="sub-row">
+                  <div class="d-flex align-items-center">
+                    <a href="#" onclick="VehicleController.openEdit('${VehicleController.escape(row.vehicle_id)}'); return false;" class="reg-no-link" title="Click to edit record">
+                      ${VehicleController.escape(data)}
+                    </a>
+                    <span class="status-dot ${statusClass}" title="Status: ${row.active_status || 'Active'}"></span>
+                  </div>
                 </div>
-
-                <div class="d-flex align-items-center gap-1 mt-1">
+                <div class="sub-row">
                   <span class="cat-badge">${VehicleController.escape(row.vehicle_category || 'LGV')}</span>
-                  <span class="tyre-text ms-1">${row.no_of_tyres ? `${row.no_of_tyres}T` : ''}</span>
+                  <code class="text-secondary small" style="font-size: 0.72rem;" title="Chassis">[${VehicleController.escape(row.chassis_no) || '-'}]</code>
                 </div>
-
-                <div class="tax-stacked-block">
+                <div class="sub-row">
+                  <span class="tyre-text fw-bold">${row.no_of_tyres ? `${row.no_of_tyres}` : 'N/A'}</span>
                   ${isLTT ? `
-                    <span class="badge bg-secondary text-white mt-1">LTT (Lifetime)</span>
+                    <span class="badge bg-secondary text-white" style="font-size: 0.65rem;">LTT</span>
                   ` : `
-                    <div class="tax-amount-text">
-                      ₹${Number(row.tax_amount || 0).toLocaleString('en-IN')} 
-                      <small class="text-muted fw-bold">(QTR)</small>
-                    </div>
+                    <span class="tax-amount-text">₹${Number(row.tax_amount || 0).toLocaleString('en-IN')} <small class="text-muted fw-bold">(Q)</small></span>
                   `}
                 </div>
               </div>
             `;
           }
         },
-        // 2. Customer, Owner & Remarks
+        // 2. Customer & Owner: Merged Sub-rows, No truncation, Full Alt-phone rendering
         {
           data: null,
           render: (data, type, row) => {
-            let blockersHtml = "";
-            if (Array.isArray(row.dependency_blockers) && row.dependency_blockers.length > 0) {
-              blockersHtml = `
-                <div class="blocker-alert-box mt-1">
-                  <i class="bi bi-exclamation-octagon-fill me-1"></i>
-                  <strong>Blocked:</strong> ${VehicleController.escape(row.dependency_blockers[0])}
-                </div>
-              `;
-            }
+            // Find matched customer record if present to grab all stored phone fields
+            const cust = VehicleController.customerList.find(c => String(c.id) === String(row.customer_id)) || {};
 
-            const remarkVal = row.remarks || "No remarks added (Double-click to add)";
-            const remarksHtml = `
-              <div class="remarks-wrapper mt-1">
-                <div class="remarks-text-interactive" 
-                     ondblclick="event.stopPropagation(); VehicleController.openQuickRemarks('${row.vehicle_id}', '${VehicleController.escape(row.remarks || '')}')"
-                     title="Hover to view full note | Double-click to edit note">
-                  <i class="bi bi-pencil-fill text-muted" style="font-size: 0.65rem;"></i>
-                  <span>${VehicleController.escape(row.remarks || 'Add note...')}</span>
-                </div>
-                <div class="remarks-tooltip-content">
-                  <strong>Notes / Remarks:</strong><br/>
-                  ${VehicleController.escape(remarkVal)}
-                </div>
-              </div>
-            `;
+            // Harvest candidate numbers from row and matching customer record
+            const rawNumbers = [
+              row.customer_mobile,
+              row.mobile,
+              row.phone,
+              row.phone1,
+              row.alt_phone,
+              row.secondary_phone,
+              cust.mobile,
+              cust.mobile_2,
+              cust.mobile_3,
+              cust.alt_phone,
+              cust.contact_no
+            ];
+
+            // Split on comma/slash/space if multiple numbers were packed into one string
+            const phoneList = [];
+            rawNumbers.forEach(item => {
+              if (item) {
+                String(item).split(/[,/|]/).forEach(num => {
+                  const cleaned = num.trim();
+                  if (cleaned && !phoneList.includes(cleaned)) {
+                    phoneList.push(cleaned);
+                  }
+                });
+              }
+            });
+
+            const phoneBadgeHtml = phoneList.length > 0
+              ? phoneList.map(p => `<span class="badge bg-light text-secondary border font-monospace me-1"><i class="bi bi-telephone-fill me-1" style="font-size: 0.6rem;"></i>${VehicleController.escape(p)}</span>`).join('')
+              : '<span class="text-muted small">-</span>';
 
             return `
-              <div>
-                <div class="owner-title"><i class="bi bi-person-fill text-dark me-1"></i>${VehicleController.escape(row.owner_name)}</div>
-                <div class="firm-subtitle mt-1"><i class="bi bi-building text-muted me-1"></i><strong>Firm:</strong> ${VehicleController.escape(row.customer_name || 'Individual')}</div>
-                ${remarksHtml}
-                ${blockersHtml}
+              <div class="cell-merged-stack">
+                <div class="sub-row">
+                  <span class="sub-row-label">Owner:</span>
+                  <div class="sub-row-content full-text-wrap fw-bold text-dark text-start">
+                    ${VehicleController.escape(row.owner_name)}
+                  </div>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-row-label">Firm:</span>
+                  <div class="sub-row-content full-text-wrap text-muted text-start">
+                    ${VehicleController.escape(row.customer_name || 'Individual')}
+                  </div>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-row-label">Phone:</span>
+                  <div class="sub-row-content full-text-wrap">
+                    ${phoneBadgeHtml}
+                  </div>
+                </div>
               </div>
             `;
           }
         },
-        // 3. Permits (State Permit & NP)
+        // 3. Permits: State Permit & NP (Merged Sub-rows)
         {
           data: null,
           render: (data, type, row) => {
             if (row.permit_applicable !== "Yes") {
-              return '<span class="text-muted small fw-bold">No Permit</span>';
+              return `
+                <div class="cell-merged-stack">
+                  <div class="sub-row justify-content-center p-3">
+                    <span class="text-muted small fw-bold">No Permit</span>
+                  </div>
+                </div>
+              `;
             }
 
             const pDays = VehicleController.getDaysLeft(row.permit_expiry);
@@ -318,116 +359,99 @@ const VehicleController = {
               else if (pDays <= 30) fineBadge = `<span class="badge-permit-safe ms-1">NO FINE</span>`;
             }
 
-            const npDays = VehicleController.getDaysLeft(row.national_permit_expiry);
-
             return `
-              <div>
-                <div class="d-flex justify-content-between align-items-center mb-1">
+              <div class="cell-merged-stack">
+                <div class="sub-row">
                   <div><span class="badge-tag-permit">Permit</span> ${fineBadge}</div>
-                  <span class="date-val editable-date ${pDays !== null && pDays <= 30 ? 'urgent' : ''}" 
-                        onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'permit_expiry', 'Permit Expiry', '${row.permit_expiry || ''}')"
-                        title="Click to edit date">
-                    ${VehicleController.formatDisplayDate(row.permit_expiry)}
-                  </span>
+                  <div>${VehicleController.renderDateBadge(row.permit_expiry, row.vehicle_id, 'permit_expiry', 'Permit Expiry')}</div>
                 </div>
-                ${row.national_permit_applicable === "Yes" ? `
-                  <div class="d-flex justify-content-between align-items-center mt-1">
-                    <span class="badge-tag-np">NP</span>
-                    <span class="date-val editable-date ${npDays !== null && npDays <= 30 ? 'urgent' : ''}" 
-                          onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'national_permit_expiry', 'National Permit Expiry', '${row.national_permit_expiry || ''}')"
-                          title="Click to edit date">
-                      ${VehicleController.formatDisplayDate(row.national_permit_expiry)}
-                    </span>
+                <div class="sub-row">
+                  <span class="badge-tag-np">NP</span>
+                  <div>
+                    ${row.national_permit_applicable === "Yes"
+                      ? VehicleController.renderDateBadge(row.national_permit_expiry, row.vehicle_id, 'national_permit_expiry', 'National Permit Expiry')
+                      : '<span class="text-muted small">-</span>'}
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        },
+        // 4. FC Expiry, Road Tax Due & Green Tax (Merged Sub-rows)
+        {
+          data: null,
+          render: (data, type, row) => {
+            const isLTT = row.tax_type === "Lifetime";
+            return `
+              <div class="cell-merged-stack">
+                <div class="sub-row">
+                  <span class="sub-row-label">FC:</span>
+                  <div>${VehicleController.renderDateBadge(row.fc_expiry, row.vehicle_id, 'fc_expiry', 'FC Expiry')}</div>
+                </div>
+                <div class="sub-row">
+                  <span class="sub-row-label">Tax:</span>
+                  <div>
+                    ${isLTT ? '<span class="text-muted small fw-bold">LTT (N/A)</span>' : VehicleController.renderDateBadge(row.road_tax_due, row.vehicle_id, 'road_tax_due', 'Road Tax Due Date')}
+                  </div>
+                </div>
+                ${row.green_tax_due ? `
+                  <div class="sub-row">
+                    <span class="sub-row-label"><i class="bi bi-shield-shaded me-1"></i>GTax:</span>
+                    <div>${VehicleController.renderDateBadge(row.green_tax_due, row.vehicle_id, 'green_tax_due', 'Green Tax Due')}</div>
                   </div>
                 ` : ''}
               </div>
             `;
           }
         },
-        // 4. FC Expiry, Road Tax Due & Green Tax (GTax)
+        // 5. Insurance & PUC (Merged Sub-rows)
         {
           data: null,
+          render: (data, type, row) => `
+            <div class="cell-merged-stack">
+              <div class="sub-row">
+                <span class="sub-row-label">INS:</span>
+                <div>${VehicleController.renderDateBadge(row.insurance_expiry, row.vehicle_id, 'insurance_expiry', 'Insurance Expiry')}</div>
+              </div>
+              <div class="sub-row">
+                <span class="sub-row-label">PUC:</span>
+                <div>${VehicleController.renderDateBadge(row.puc_expiry, row.vehicle_id, 'puc_expiry', 'PUC Expiry')}</div>
+              </div>
+            </div>
+          `
+        },
+        // 6. Dedicated Remarks Column (Blocker Notice + Orange Text)
+        {
+          data: "remarks",
           render: (data, type, row) => {
-            const fcDays = VehicleController.getDaysLeft(row.fc_expiry);
-            const taxDays = VehicleController.getDaysLeft(row.road_tax_due);
-            const gtaxDays = VehicleController.getDaysLeft(row.green_tax_due);
-            const isGtaxDue = gtaxDays !== null && gtaxDays <= 30;
-
-            let gtaxHtml = "";
-            if (row.green_tax_due) {
-              gtaxHtml = `
-                <div class="d-flex justify-content-between align-items-center mt-1 pt-1 border-top">
-                  <span class="text-secondary small fw-bold"><i class="bi bi-shield-shaded me-1"></i>GTax:</span>
-                  <span class="date-val editable-date ${isGtaxDue ? 'urgent' : ''}"
-                        onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'green_tax_due', 'Green Tax Due', '${row.green_tax_due || ''}')"
-                        title="Click to edit date">
-                    ${VehicleController.formatDisplayDate(row.green_tax_due)}
-                  </span>
+            let blockerHtml = "";
+            if (Array.isArray(row.dependency_blockers) && row.dependency_blockers.length > 0) {
+              blockerHtml = `
+                <div class="blocker-alert-box">
+                  <i class="bi bi-exclamation-octagon-fill me-1"></i>${VehicleController.escape(row.dependency_blockers[0])}
                 </div>
               `;
             }
 
-            return `
-              <div>
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="text-secondary small fw-bold">FC Expiry:</span>
-                  <span class="date-val editable-date ${fcDays !== null && fcDays <= 30 ? 'urgent' : ''}"
-                        onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'fc_expiry', 'FC Expiry', '${row.fc_expiry || ''}')"
-                        title="Click to edit date">
-                    ${VehicleController.formatDisplayDate(row.fc_expiry)}
-                  </span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="text-secondary small fw-bold">Road Tax:</span>
-                  ${row.tax_type === "Lifetime" ? '<span class="text-muted small fw-bold">LTT (N/A)</span>' : `
-                    <span class="date-val editable-date ${taxDays !== null && taxDays <= 30 ? 'urgent' : ''}"
-                          onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'road_tax_due', 'Road Tax Due Date', '${row.road_tax_due || ''}')"
-                          title="Click to edit date">
-                      ${VehicleController.formatDisplayDate(row.road_tax_due)}
-                    </span>
-                  `}
-                </div>
-                ${gtaxHtml}
-              </div>
-            `;
-          }
-        },
-        // 5. Insurance & PUC
-        {
-          data: null,
-          render: (data, type, row) => {
-            const insDays = VehicleController.getDaysLeft(row.insurance_expiry);
-            const pucDays = VehicleController.getDaysLeft(row.puc_expiry);
+            const text = data ? VehicleController.escape(data) : "";
 
             return `
-              <div class="bg-light p-2 rounded border small">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="text-muted fw-bold">INS:</span>
-                  <span class="editable-date ${insDays !== null && insDays <= 30 ? 'text-danger fw-bold' : 'text-dark fw-bold'}"
-                        onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'insurance_expiry', 'Insurance Expiry', '${row.insurance_expiry || ''}')"
-                        title="Click to edit date">
-                    ${VehicleController.formatDisplayDate(row.insurance_expiry)}
-                  </span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="text-muted fw-bold">PUC:</span>
-                  <span class="editable-date ${pucDays !== null && pucDays <= 30 ? 'text-danger fw-bold' : 'text-dark fw-bold'}"
-                        onclick="event.stopPropagation(); VehicleController.openQuickDate('${row.vehicle_id}', 'puc_expiry', 'PUC Expiry', '${row.puc_expiry || ''}')"
-                        title="Click to edit date">
-                    ${VehicleController.formatDisplayDate(row.puc_expiry)}
-                  </span>
-                </div>
+              <div class="remarks-cell-box"
+                   ondblclick="event.stopPropagation(); VehicleController.openQuickRemarks('${row.vehicle_id}', '${VehicleController.escape(data || '')}')"
+                   title="Double-click to edit remarks">
+                ${blockerHtml}
+                ${text ? `<span>${text}</span>` : `<span class="text-muted fst-italic no-print-placeholder">Double-click to add note...</span>`}
               </div>
             `;
           }
         },
-        // 6. Action Controls
+        // 7. Action Controls
         {
           data: null,
           orderable: false,
-          className: "text-end",
+          className: "text-end action-col",
           render: (data, type, row) => `
-            <div class="d-inline-flex gap-2" onclick="event.stopPropagation()">
+            <div class="d-inline-flex gap-2 p-2" onclick="event.stopPropagation()">
               <button class="btn-clean-action edit" onclick='VehicleController.openEdit("${VehicleController.escape(row.vehicle_id)}")' title="Edit Full Record">
                 <i class="bi bi-pencil"></i>
               </button>
@@ -440,18 +464,14 @@ const VehicleController = {
       ]
     });
 
-    // Double-click row handler to view full vehicle modal
     $("#vehicleDataTable tbody").on("dblclick", "tr", function (e) {
-      if ($(e.target).closest(".editable-date, .remarks-text-interactive, .btn-clean-action, a").length > 0) {
-        return;
-      }
+      if ($(e.target).closest(".exp-pill, .remarks-cell-box, .btn, a, button").length > 0) return;
       const data = VehicleController.dataTable.row(this).data();
       if (data && data.vehicle_id) {
         VehicleController.openView(data.vehicle_id);
       }
     });
 
-    // Custom filtering
     $.fn.dataTable.ext.search.push((settings, data, dataIndex, rowData) => {
       const customerVal = document.getElementById("customerFilter").value;
       const statusVal = document.getElementById("statusFilter").value;
@@ -462,7 +482,7 @@ const VehicleController = {
       const dateFrom = document.getElementById("customDateFrom").value;
       const dateTo = document.getElementById("customDateTo").value;
 
-      if (customerVal && rowData.customer_id !== customerVal) return false;
+      if (customerVal && String(rowData.customer_id) !== String(customerVal)) return false;
       if (catVal && rowData.vehicle_category !== catVal) return false;
       if (filterPermitOnly && rowData.permit_applicable !== "Yes") return false;
       if (filterNPOnly && rowData.national_permit_applicable !== "Yes") return false;
@@ -503,7 +523,11 @@ const VehicleController = {
 
   async load() {
     const icon = document.getElementById("refreshIcon");
+    const refreshBtn = document.getElementById("btnRefresh");
+    const refreshText = document.getElementById("refreshBtnText");
+
     if (icon) icon.classList.add("spin-animation");
+    if (refreshBtn) refreshBtn.disabled = true;
 
     try {
       const cacheBust = `?_nocache=${Date.now()}`;
@@ -512,13 +536,19 @@ const VehicleController = {
         Api.request(`/customers${cacheBust}`)
       ]);
 
-      // Deduplicate vehicles array by vehicle_id
+      if (refreshBtn) {
+        refreshBtn.classList.remove("btn-refresh-needed", "btn-danger");
+        refreshBtn.classList.add("btn-outline-secondary");
+      }
+      if (refreshText) refreshText.innerText = "Refresh";
+
       const uniqueMap = new Map();
       (vehicles || []).forEach(item => {
         if (item.vehicle_id && !uniqueMap.has(item.vehicle_id)) {
           uniqueMap.set(item.vehicle_id, item);
         }
       });
+
       this.data = Array.from(uniqueMap.values());
       this.customerList = customers || [];
 
@@ -530,25 +560,42 @@ const VehicleController = {
 
       this.updateTopMetrics();
     } catch (err) {
-      this.showToast("Failed to load fresh data: " + err.message, "error");
+      if (refreshBtn) {
+        refreshBtn.classList.remove("btn-outline-secondary");
+        refreshBtn.classList.add("btn-refresh-needed");
+      }
+      if (refreshText) refreshText.innerText = "Reload Needed!";
+
+      this.showToast("Failed to load data: " + err.message, "error");
     } finally {
       if (icon) icon.classList.remove("spin-animation");
+      if (refreshBtn) refreshBtn.disabled = false;
     }
   },
 
   populateCustomerFilter() {
     const custFilterSelect = document.getElementById("customerFilter");
-    const currentVal = custFilterSelect.value;
-    custFilterSelect.innerHTML = '<option value="">All Customers</option>' + 
+    if (this.tomSelectFilter) {
+      this.tomSelectFilter.destroy();
+      this.tomSelectFilter = null;
+    }
+
+    custFilterSelect.innerHTML = '<option value="">All Customers</option>' +
       this.customerList.map(c => `
-        <option value="${c.id}" ${c.id === currentVal ? 'selected' : ''}>
-          ${c.name} (${c.mobile})
+        <option value="${c.id}">
+          ${c.name} (${c.mobile || ''})
         </option>
       `).join('');
+
+    this.tomSelectFilter = new TomSelect("#customerFilter", {
+      create: false,
+      placeholder: "Search customer or firm...",
+      allowEmptyOption: true
+    });
   },
 
   applyFilters() {
-    const hasActiveFilter = 
+    const hasActiveFilter =
       document.getElementById("customerFilter").value !== "" ||
       document.getElementById("statusFilter").value !== "" ||
       document.getElementById("categoryFilter").value !== "" ||
@@ -641,7 +688,7 @@ const VehicleController = {
     try {
       await Api.request("/vehicles", "PUT", updatedPayload);
       this.quickDateModal.hide();
-      this.showToast(`Updated date for ${vehicle.registration_no} successfully.`);
+      this.showToast(`Updated date for ${vehicle.registration_no}`);
       await this.load();
     } catch (err) {
       this.showToast("Failed to update date: " + err.message, "error");
@@ -654,75 +701,76 @@ const VehicleController = {
   openView(id) {
     const v = this.data.find(item => item.vehicle_id === id);
     if (!v) return;
+    this.activeViewVehicleId = id;
 
     document.getElementById("viewRegNo").innerText = v.registration_no;
-    document.getElementById("viewCustomerInfo").innerText = `Owner: ${v.owner_name} | Firm: ${v.customer_name || 'Individual'}`;
+
+    const cust = this.customerList.find(c => String(c.id) === String(v.customer_id)) || {};
+    const numbers = [v.customer_mobile, v.mobile, v.phone, v.alt_mobile, cust.mobile, cust.phone].filter(Boolean);
+    const uniquePhones = [...new Set(numbers)].join(", ") || "No phone registered";
+
+    document.getElementById("viewCustomerInfo").innerText = `Owner: ${v.owner_name} | Firm: ${v.customer_name || 'Individual'} (${uniquePhones})`;
 
     const isLTT = v.tax_type === "Lifetime";
 
+    const renderDateBlock = (label, dateVal) => {
+      const days = this.getDaysLeft(dateVal);
+      let badge = '<span class="text-muted small">Not set</span>';
+      if (dateVal) {
+        let badgeClass = "bg-success";
+        let text = `${days} days left`;
+        if (days <= 0) { badgeClass = "bg-danger"; text = "Expired"; }
+        else if (days <= 15) { badgeClass = "bg-warning text-dark"; text = `${days} days (Urgent)`; }
+        else if (days <= 30) { badgeClass = "bg-info text-dark"; text = `${days} days`; }
+
+        badge = `<span class="fw-bold">${this.formatDisplayDate(dateVal)}</span> <span class="badge ${badgeClass} ms-2">${text}</span>`;
+      }
+      return `
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">${label}</small>
+          <div>${badge}</div>
+        </div>
+      `;
+    };
+
     document.getElementById("viewModalBody").innerHTML = `
-      <div class="row g-3">
-        <div class="col-sm-6 col-md-4">
-          <small class="text-muted d-block fw-semibold">Status</small>
+      <div class="row g-2">
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">Status</small>
           <span class="badge ${v.active_status === 'Active' ? 'bg-success' : 'bg-secondary'}">${this.escape(v.active_status || 'Active')}</span>
         </div>
-        <div class="col-sm-6 col-md-4">
-          <small class="text-muted d-block fw-semibold">Category & Tyres</small>
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">Category &amp; Tyres</small>
           <strong>${this.escape(v.vehicle_category)} (${v.no_of_tyres ? `${v.no_of_tyres} TYRE` : 'N/A'})</strong>
         </div>
-        <div class="col-sm-6 col-md-4">
-          <small class="text-muted d-block fw-semibold">Tax Type & Amount</small>
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">Chassis Number</small>
+          <code>${this.escape(v.chassis_no) || '-'}</code>
+        </div>
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">Engine Number</small>
+          <code>${this.escape(v.engine_no) || '-'}</code>
+        </div>
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">Date of Registration</small>
+          <strong>${this.formatDisplayDate(v.date_of_registration)}</strong>
+        </div>
+        <div class="col-sm-6 border-bottom py-2">
+          <small class="text-secondary d-block">Tax Type &amp; Amount</small>
           <strong>${isLTT ? 'Lifetime Tax (LTT)' : `₹${Number(v.tax_amount || 0).toLocaleString('en-IN')} (Quarterly)`}</strong>
         </div>
 
-        <div class="col-sm-6 col-md-4">
-          <small class="text-muted d-block fw-semibold">Engine No</small>
-          <code>${this.escape(v.engine_no) || '-'}</code>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <small class="text-muted d-block fw-semibold">Chassis No</small>
-          <code>${this.escape(v.chassis_no) || '-'}</code>
-        </div>
-        <div class="col-sm-6 col-md-4">
-          <small class="text-muted d-block fw-semibold">Registration Date</small>
-          <strong>${this.escape(v.date_of_registration) || '-'}</strong>
-        </div>
+        ${renderDateBlock("State Permit Expiry", v.permit_applicable === 'Yes' ? v.permit_expiry : null)}
+        ${renderDateBlock("National Permit Expiry", v.national_permit_applicable === 'Yes' ? v.national_permit_expiry : null)}
+        ${renderDateBlock("Fitness Certificate (FC) Expiry", v.fc_expiry)}
+        ${renderDateBlock("Road Tax Due Date", isLTT ? null : v.road_tax_due)}
+        ${renderDateBlock("Insurance Expiry", v.insurance_expiry)}
+        ${renderDateBlock("Pollution (PUC) Expiry", v.puc_expiry)}
+        ${renderDateBlock("Green Tax Due", v.green_tax_due)}
 
-        <div class="col-12"><hr class="my-2" /></div>
-
-        <div class="col-sm-6 col-md-3">
-          <small class="text-muted d-block fw-semibold">Permit</small>
-          <div>${v.permit_applicable === 'Yes' ? this.formatDisplayDate(v.permit_expiry) : '<span class="text-muted">No Permit</span>'}</div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <small class="text-muted d-block fw-semibold">National Permit</small>
-          <div>${v.national_permit_applicable === 'Yes' ? this.formatDisplayDate(v.national_permit_expiry) : '<span class="text-muted">No Permit</span>'}</div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <small class="text-muted d-block fw-semibold">FC Expiry</small>
-          <div>${this.formatDisplayDate(v.fc_expiry)}</div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <small class="text-muted d-block fw-semibold">Road Tax Due</small>
-          <div>${isLTT ? '<span class="text-muted">LTT (N/A)</span>' : this.formatDisplayDate(v.road_tax_due)}</div>
-        </div>
-
-        <div class="col-sm-6 col-md-4 mt-3">
-          <small class="text-muted d-block fw-semibold">Insurance</small>
-          <div>${this.formatDisplayDate(v.insurance_expiry)}</div>
-        </div>
-        <div class="col-sm-6 col-md-4 mt-3">
-          <small class="text-muted d-block fw-semibold">PUC Expiry</small>
-          <div>${this.formatDisplayDate(v.puc_expiry)}</div>
-        </div>
-        <div class="col-sm-6 col-md-4 mt-3">
-          <small class="text-muted d-block fw-semibold">Green Tax Due</small>
-          <div>${this.formatDisplayDate(v.green_tax_due)}</div>
-        </div>
-
-        <div class="col-12 mt-3">
-          <small class="text-muted d-block fw-semibold">Remarks & Operational Notes</small>
-          <div class="p-2 bg-light rounded border fw-semibold">${this.escape(v.remarks) || 'No notes added.'}</div>
+        <div class="col-12 mt-3 pt-2">
+          <small class="text-secondary d-block mb-1">Remarks &amp; Notes</small>
+          <div class="p-2 bg-light rounded border fw-semibold" style="color: #ea580c;">${this.escape(v.remarks) || '<span class="text-muted">No notes recorded</span>'}</div>
         </div>
       </div>
     `;
@@ -733,26 +781,26 @@ const VehicleController = {
   setupCustomerSelect(selectedId = null) {
     const select = document.getElementById("v_cust_id");
 
-    if (this.tomSelect) {
-      this.tomSelect.destroy();
-      this.tomSelect = null;
+    if (this.tomSelectForm) {
+      this.tomSelectForm.destroy();
+      this.tomSelectForm = null;
     }
 
-    select.innerHTML = '<option value="">Search customer or firm...</option>' + 
+    select.innerHTML = '<option value="">Search customer or firm...</option>' +
       this.customerList.map(c => `
         <option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>
-          ${c.name} (${c.mobile})
+          ${c.name} (${c.mobile || ''})
         </option>
       `).join('');
 
-    this.tomSelect = new TomSelect("#v_cust_id", {
+    this.tomSelectForm = new TomSelect("#v_cust_id", {
       create: false,
       maxItems: 1,
       placeholder: "Search customer or firm..."
     });
 
     if (selectedId) {
-      this.tomSelect.setValue(selectedId, true);
+      this.tomSelectForm.setValue(selectedId, true);
     }
   },
 
@@ -780,15 +828,6 @@ const VehicleController = {
       npDate.value = "";
       npDate.setAttribute("disabled", true);
     }
-
-    np.onchange = () => {
-      if (np.value === "Yes") {
-        npDate.removeAttribute("disabled");
-      } else {
-        npDate.value = "";
-        npDate.setAttribute("disabled", true);
-      }
-    };
   },
 
   toggleTaxType(type) {
@@ -805,18 +844,6 @@ const VehicleController = {
       taxInput.removeAttribute("disabled");
       hint.classList.add("d-none");
     }
-  },
-
-  fillNextRoadTaxQuarter() {
-    if (document.getElementById("v_tax_type").value === "Lifetime") {
-      this.showToast("Road Tax cycle does not apply to Lifetime Tax (LTT)", "warning");
-      return;
-    }
-
-    const currentVal = document.getElementById("v_tax").value;
-    const nextCycle = this.getNextTaxCycle(currentVal);
-    document.getElementById("v_tax").value = nextCycle;
-    this.showToast(`Set deadline to ${this.formatDisplayDate(nextCycle)}`, "success");
   },
 
   checkGreenTax() {
@@ -853,6 +880,7 @@ const VehicleController = {
   },
 
   openAdd() {
+    document.getElementById("vehicleForm").reset();
     document.getElementById("vehModalTitle").innerText = "Add Vehicle";
     document.getElementById("vehModalSubtitle").innerText = "Fill vehicle registration details";
     this.setupCustomerSelect();
@@ -910,9 +938,10 @@ const VehicleController = {
     document.getElementById("v_chassis_no").value = v.chassis_no || "";
     document.getElementById("v_active_status").value = v.active_status || "Active";
 
-    const tyreEl = document.getElementById("v_no_of_tyres");
-    const match = Object.keys(this.tyreMatrix).find(k => k.startsWith(String(v.no_of_tyres)));
-    tyreEl.value = match || (v.no_of_tyres ? "CUSTOM" : "");
+   const tyreEl = document.getElementById("v_no_of_tyres");
+const tyre = String(v.no_of_tyres).trim();
+
+tyreEl.value = tyre.includes("TYRE") ? tyre : tyre + " TYRE";
 
     document.getElementById("v_category").value = v.vehicle_category || "LGV";
     document.getElementById("v_tax_amount").value = v.tax_amount || "";
@@ -972,18 +1001,15 @@ const VehicleController = {
       customer_id: custId,
       owner_name: document.getElementById("v_owner").value.trim(),
       vehicle_category: document.getElementById("v_category").value,
-
       engine_no: document.getElementById("v_engine_no").value.trim() || null,
       chassis_no: document.getElementById("v_chassis_no").value.trim() || null,
       date_of_registration: document.getElementById("v_reg_date").value || null,
       active_status: document.getElementById("v_active_status").value,
-
       permit_applicable: document.getElementById("v_permit_app").value,
       national_permit_applicable: document.getElementById("v_np_app").value,
       tax_type: document.getElementById("v_tax_type").value,
       tax_amount: document.getElementById("v_tax_type").value === "Lifetime" ? 0 : (parseFloat(document.getElementById("v_tax_amount").value) || 0),
-      no_of_tyres: tyreNum,
-
+      no_of_tyres: document.getElementById("v_no_of_tyres").value,
       insurance_expiry: document.getElementById("v_ins").value || null,
       fc_expiry: document.getElementById("v_fc").value || null,
       puc_expiry: document.getElementById("v_puc").value || null,
@@ -1015,7 +1041,6 @@ const VehicleController = {
 
   async delete(id, regNo) {
     if (!confirm(`Are you sure you want to delete ${regNo}?`)) return;
-
     try {
       await Api.request(`/vehicles?id=${id}`, "DELETE");
       this.showToast(`Vehicle ${regNo} deleted successfully.`);
