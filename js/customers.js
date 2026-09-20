@@ -1,6 +1,6 @@
 /**
  * CustomerController Module
- * Handles DataTables initialization, skeleton loading state, button spinners, and CRUD operations.
+ * Handles DataTables initialization, unique printid sequence, skeleton loading, and CRUD operations.
  */
 const CustomerController = {
     dataTable: null,
@@ -8,7 +8,7 @@ const CustomerController = {
     customerModal: null,
     fleetModal: null,
     toastInstance: null,
-    
+
     // Filter states
     selectedHealthFilter: "",
     selectedAccountFilter: "",
@@ -30,7 +30,7 @@ const CustomerController = {
     },
 
     escapeHtml(str) {
-        if (!str) return "";
+        if (!str && str !== 0) return "";
         return String(str)
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -43,9 +43,38 @@ const CustomerController = {
         return (phone || "").replace(/\D/g, "");
     },
 
+    /**
+     * Finds the lowest available integer from 1 to N not currently assigned.
+     * @param {string|number|null} excludeCustomerId
+     */
+    getNextAvailablePrintId(excludeCustomerId = null) {
+        const existingIds = new Set(
+            this.data
+                .filter(c => excludeCustomerId === null || String(c.id) !== String(excludeCustomerId))
+                .map(c => Number(c.printid))
+                .filter(id => !isNaN(id) && id > 0)
+        );
+
+        let nextId = 1;
+        while (existingIds.has(nextId)) {
+            nextId++;
+        }
+        return nextId;
+    },
+
+    /**
+     * Finds another customer who currently uses the specified printid.
+     */
+    findPrintIdConflict(printId, excludeCustomerId = null) {
+        return this.data.find(c => 
+            (excludeCustomerId === null || String(c.id) !== String(excludeCustomerId)) &&
+            Number(c.printid) === Number(printId)
+        );
+    },
+
     formatDateWithBadge(dateString) {
         if (!dateString) return '<span class="text-muted">-</span>';
-        
+
         const cleanDate = dateString.split("T")[0];
         const parts = cleanDate.split("-");
         let displayDate = dateString;
@@ -69,13 +98,14 @@ const CustomerController = {
         const tbody = document.getElementById("customerTableBody");
         const skeletonRows = Array.from({ length: 4 }).map(() => `
             <tr class="skeleton-row">
+                <td class="text-center"><div class="skeleton-box mx-auto" style="width: 30px;"></div></td>
                 <td><div class="skeleton-box" style="width: 140px;"></div></td>
                 <td><div class="skeleton-box" style="width: 110px;"></div></td>
                 <td><div class="skeleton-box" style="width: 180px;"></div></td>
-                <td class="text-center"><div class="skeleton-box" style="width: 50px;"></div></td>
+                <td class="text-center"><div class="skeleton-box mx-auto" style="width: 50px;"></div></td>
                 <td><div class="skeleton-box" style="width: 70px;"></div></td>
                 <td><div class="skeleton-box" style="width: 60px;"></div></td>
-                <td class="text-end"><div class="skeleton-box" style="width: 45px;"></div></td>
+                <td class="text-end"><div class="skeleton-box ms-auto" style="width: 45px;"></div></td>
             </tr>
         `).join("");
         tbody.innerHTML = skeletonRows;
@@ -88,6 +118,7 @@ const CustomerController = {
             lengthMenu: [5, 10, 25, 50, 100],
             searching: true,
             ordering: true,
+            order: [[1, 'asc']], // Order by Print ID by default
             info: true,
             responsive: true,
             language: {
@@ -102,20 +133,28 @@ const CustomerController = {
                 }
             },
             columns: [
-                { data: "id", visible: false }, // ID column hidden
-                { 
-                    data: "name", 
-                    className: "fw-semibold text-primary", 
-                    render: (data) => CustomerController.escapeHtml(data) 
+                { data: "id", visible: false },
+                {
+                    data: "printid",
+                    className: "text-center fw-bold text-dark",
+                    render: (data) => {
+                        const val = data !== null && data !== undefined ? Number(data) : null;
+                        return val ? `<span class="badge bg-secondary rounded-pill px-2 py-1">${val}</span>` : '<span class="text-muted">-</span>';
+                    }
                 },
-                { 
-                    data: null, 
+                {
+                    data: "name",
+                    className: "fw-semibold text-primary",
+                    render: (data) => CustomerController.escapeHtml(data)
+                },
+                {
+                    data: null,
                     render: (data, type, row) => {
                         const p1 = CustomerController.cleanPhone(row.mobile);
                         const p2 = CustomerController.cleanPhone(row.mobile_2);
                         const p3 = CustomerController.cleanPhone(row.mobile_3);
                         const waText = encodeURIComponent(`Hello ${row.name}, regarding your vehicle documents.`);
-                        
+
                         const primaryContact = `
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <a href="tel:+91${p1}" class="text-decoration-none fw-bold text-dark" onclick="event.stopPropagation();">${CustomerController.escapeHtml(row.mobile)}</a>
@@ -124,6 +163,7 @@ const CustomerController = {
                                 </a>
                             </div>
                         `;
+
                         let extraContacts = "";
                         if (p2 || p3) {
                             extraContacts = `
@@ -134,30 +174,30 @@ const CustomerController = {
                             `;
                         }
                         return `${primaryContact}${extraContacts}`;
-                    } 
+                    }
                 },
-                { 
-                    data: null, 
+                {
+                    data: null,
                     render: (data, type, row) => {
                         return `
                             <div class="text-truncate" style="max-width: 200px;" title="${CustomerController.escapeHtml(row.address)}">${CustomerController.escapeHtml(row.address) || '<span class="text-muted">-</span>'}</div>
                             <div class="text-muted" style="font-size: 0.75rem;">${CustomerController.escapeHtml(row.remarks) || ''}</div>
                         `;
-                    } 
+                    }
                 },
-                { 
-                    data: "total_vehicles", 
-                    className: "text-center", 
+                {
+                    data: "total_vehicles",
+                    className: "text-center",
                     render: (data, type, row) => {
                         return `
                             <button class="btn btn-sm btn-outline-dark py-0 px-2" onclick='event.stopPropagation(); CustomerController.viewFleetById("${row.id}")' title="View Vehicles">
                                 <i class="bi bi-truck me-1"></i>${data || 0}
                             </button>
                         `;
-                    } 
+                    }
                 },
-                { 
-                    data: "overall_health", 
+                {
+                    data: "overall_health",
                     render: (data, type, row) => {
                         if (data === "EXPIRED") {
                             return `<span class="badge badge-expired"><i class="bi bi-exclamation-circle-fill me-1"></i>${row.expired_count} Expired</span>`;
@@ -167,10 +207,10 @@ const CustomerController = {
                             return `<span class="badge badge-valid"><i class="bi bi-check-circle-fill me-1"></i>All Clear</span>`;
                         }
                         return `<span class="badge bg-light text-muted border">No Vehicles</span>`;
-                    } 
+                    }
                 },
-                { 
-                    data: "status", 
+                {
+                    data: "status",
                     render: (data, type, row) => {
                         const isActive = (data || "active") === "active";
                         return `
@@ -178,29 +218,29 @@ const CustomerController = {
                                 ${isActive ? 'Active' : 'Inactive'}
                             </button>
                         `;
-                    } 
+                    }
                 },
-                { 
-                    data: null, 
-                    orderable: false, 
-                    className: "text-end", 
+                {
+                    data: null,
+                    orderable: false,
+                    className: "text-end",
                     render: (data, type, row) => {
                         return `
-                        <div class="d-flex justify-content-end gap-1">
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick='event.stopPropagation(); CustomerController.openEditById("${CustomerController.escapeHtml(row.id)}")' title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button id="btnDel_${CustomerController.escapeHtml(row.id)}" class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); CustomerController.delete('${CustomerController.escapeHtml(row.id)}', ${row.total_vehicles || 0})" title="Delete">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
+                            <div class="d-flex justify-content-end gap-1">
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick='event.stopPropagation(); CustomerController.openEditById("${CustomerController.escapeHtml(row.id)}")' title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button id="btnDel_${CustomerController.escapeHtml(row.id)}" class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); CustomerController.delete('${CustomerController.escapeHtml(row.id)}', ${row.total_vehicles || 0})" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         `;
-                    } 
+                    }
                 }
             ]
         });
 
-        // Double-click / double-tap handler on table rows now opens the EDIT form for customer data
+        // Double-click row handler to trigger edit modal
         $('#customerDataTable tbody').on('dblclick', 'tr', function() {
             const rowData = CustomerController.dataTable.row(this).data();
             if (rowData) {
@@ -208,7 +248,7 @@ const CustomerController = {
             }
         });
 
-        // Custom filter integration for DataTables
+        // Custom status & account filters
         $.fn.dataTable.ext.search.push((settings, data, dataIndex, rowData) => {
             if (CustomerController.selectedHealthFilter && rowData.overall_health !== CustomerController.selectedHealthFilter) {
                 return false;
@@ -222,7 +262,7 @@ const CustomerController = {
 
     setFilter(type, value, buttonElement) {
         const parentContainer = buttonElement.parentElement;
-        
+
         if (type === 'health') {
             this.selectedHealthFilter = value;
             parentContainer.querySelectorAll('[onclick*="health"]').forEach(b => {
@@ -239,7 +279,7 @@ const CustomerController = {
             });
         } else if (type === 'account') {
             if (this.selectedAccountFilter === value) {
-                this.selectedAccountFilter = ""; 
+                this.selectedAccountFilter = "";
                 buttonElement.classList.remove('btn-secondary');
                 buttonElement.classList.add('btn-outline-secondary');
             } else {
@@ -317,6 +357,8 @@ const CustomerController = {
     openModal() {
         document.getElementById("customerModalTitle").innerText = "Add New Customer";
         document.getElementById("cust_id").value = "";
+        // Pre-fill with the next 1 to N sequence slot
+        document.getElementById("cust_printid").value = this.getNextAvailablePrintId();
         document.getElementById("cust_name").value = "";
         document.getElementById("cust_mobile").value = "";
         document.getElementById("cust_mobile_2").value = "";
@@ -333,6 +375,13 @@ const CustomerController = {
 
         document.getElementById("customerModalTitle").innerText = "Edit Customer Details";
         document.getElementById("cust_id").value = customer.id;
+
+        // Keep current ID or fill next open ID if null in database
+        const existingPrintId = customer.printid !== undefined && customer.printid !== null && customer.printid !== ""
+            ? customer.printid 
+            : this.getNextAvailablePrintId(customer.id);
+
+        document.getElementById("cust_printid").value = existingPrintId;
         document.getElementById("cust_name").value = customer.name || "";
         document.getElementById("cust_mobile").value = customer.mobile || "";
         document.getElementById("cust_mobile_2").value = customer.mobile_2 || "";
@@ -347,7 +396,7 @@ const CustomerController = {
         const saveBtn = document.getElementById("btnSaveCustomer");
         const spinner = document.getElementById("saveBtnSpinner");
         const btnText = document.getElementById("saveBtnText");
-        
+
         const rawId = document.getElementById("cust_id").value.trim();
         const customerId = rawId ? (!isNaN(rawId) ? Number(rawId) : rawId) : null;
         const rawMobile = this.cleanPhone(document.getElementById("cust_mobile").value);
@@ -357,7 +406,28 @@ const CustomerController = {
             return;
         }
 
+        // Validate and ensure printid is a positive integer starting from 1
+        let printIdValue = parseInt(document.getElementById("cust_printid").value, 10);
+        if (isNaN(printIdValue) || printIdValue < 1) {
+            printIdValue = this.getNextAvailablePrintId(customerId);
+            document.getElementById("cust_printid").value = printIdValue;
+            this.showToast(`Print ID must be ≥ 1. Defaulted to ${printIdValue}.`, "info");
+        }
+
+        // Detect conflicts and auto-assign an unused number
+        const conflict = this.findPrintIdConflict(printIdValue, customerId);
+        if (conflict) {
+            const nextAvailable = this.getNextAvailablePrintId(customerId);
+            this.showToast(
+                `Print ID ${printIdValue} is already used by "${conflict.name}". Automatically updated to ${nextAvailable}.`,
+                "warning"
+            );
+            printIdValue = nextAvailable;
+            document.getElementById("cust_printid").value = nextAvailable;
+        }
+
         const payload = {
+            printid: printIdValue,
             name: document.getElementById("cust_name").value.trim(),
             mobile: rawMobile,
             mobile_2: this.cleanPhone(document.getElementById("cust_mobile_2").value) || null,
@@ -379,7 +449,7 @@ const CustomerController = {
             const method = customerId !== null ? "PUT" : "POST";
             await Api.request("/customers", method, payload);
             this.customerModal.hide();
-            this.showToast(`Customer saved successfully!`, "success");
+            this.showToast("Customer saved successfully!", "success");
             await this.load();
         } catch (err) {
             this.showToast(err.message, "error");
@@ -403,7 +473,7 @@ const CustomerController = {
 
         try {
             await Api.request("/customers", "PUT", { id: parsedId, status: newStatus });
-            this.showToast(`Status updated successfully.`, "info");
+            this.showToast("Status updated successfully.", "info");
             await this.load();
         } catch (err) {
             this.showToast(err.message, "error");

@@ -4,41 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vehicle Compliance Statement - FleetERP</title>
-
-  <!-- Bootstrap 5 CSS -->
+  <!-- Bootstrap 5 CSS & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <!-- html2pdf Library for Instant PDF Generation -->
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- html2pdf Library for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/print.css" />
 </head>
-<body class="bg-light">
-
+<body>
   <!-- Standard Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-4 no-print">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.html">
-        <i class="bi bi-truck text-primary fs-4 me-2"></i>FleetERP
+      <a class="navbar-brand fw-extrabold d-flex align-items-center" href="dashboard.html">
+        <i class="bi bi-truck-front-fill text-primary fs-4 me-2"></i>Vehicle Management 
       </a>
       <div class="d-flex align-items-center gap-3">
-        <a href="reports.html" class="btn btn-outline-light btn-sm fw-bold"><i class="bi bi-arrow-left me-1"></i>Back to Reports</a>
+        <a href="reports.html" class="btn btn-outline-light btn-sm fw-bold">
+          <i class="bi bi-arrow-left me-1"></i>Back to Reports
+        </a>
       </div>
     </div>
   </nav>
 
-  <div class="print-container my-4" id="printableArea">
-    
-    <!-- Top Actions & Toolbar -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-3 border-bottom no-print">
+  <div class="print-container my-3" id="printableArea">
+    <!-- Top Action Toolbar -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 pb-2 border-bottom no-print">
       <div>
-        <h4 class="fw-bold mb-0 text-dark">Fleet Compliance Print & Export Hub</h4>
-        <small class="text-muted">Master print engine with full column customization, multi-select checkboxes, and secure PDF export.</small>
+        <h4 class="fw-extrabold mb-0 text-dark">Fleet Print Hub</h4>
       </div>
       <div class="d-flex align-items-center gap-2">
-        <button onclick="PrintController.downloadPDF()" class="btn btn-outline-danger btn-sm fw-bold shadow-sm px-3">
+        <!-- Save Toner Toggle -->
+        <button id="btnSaveToner" type="button" class="btn btn-outline-success btn-sm fw-bold shadow-sm px-3" onclick="PrintController.toggleSaveToner()">
+          <i class="bi bi-droplet-half me-1"></i> Save Toner: <span id="saveTonerState">OFF</span>
+        </button>
+        <button id="btnDownloadPdf" onclick="PrintController.downloadPDF()" class="btn btn-outline-danger btn-sm fw-bold shadow-sm px-3">
           <i class="bi bi-file-earmark-pdf me-1"></i> Download PDF
         </button>
         <button onclick="window.print()" class="btn btn-primary btn-sm fw-bold shadow-sm px-4">
@@ -47,140 +51,138 @@
       </div>
     </div>
 
-    <!-- Master Toolbar & Checkbox Controls -->
-    <div class="print-toolbar no-print row g-3 align-items-end">
-      
-      <!-- Control Filter Type Dropdown -->
-      <div class="col-md-3">
-        <label class="form-label small fw-bold text-secondary">Filter Mode</label>
-        <select id="controlFilterType" class="form-select form-select-sm fw-bold" onchange="PrintController.handleFilterTypeChange()">
-          <option value="ALL">Show ALL Records</option>
-          <option value="TODAY">🎯 Expiring Today</option>
-          <option value="OVERDUE">🚨 Overdue / Expired</option>
-          <option value="CUSTOM">📅 Custom Date Range</option>
-          <option value="CUSTOMER">💼 Custom Owner</option>
-          <option value="DOC_TYPE">📑 Particular Document</option>
-        </select>
-      </div>
-
-      <!-- Dynamic Sub-Filter Container -->
-      <div class="col-md-3" id="dynamicSubFilterContainer">
-        <!-- Populated dynamically -->
-      </div>
-
-      <!-- Live Search Box -->
-      <div class="col-md-2">
-        <label class="form-label small fw-bold text-secondary">Quick Search</label>
-        <div class="input-group input-group-sm">
-          <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-          <input type="text" id="printSearchInput" class="form-control form-control-sm fw-bold" placeholder="Reg no, owner..." onkeyup="PrintController.applyFiltersAndRender()" />
+    <!-- Filter Toolbar -->
+    <div class="print-toolbar no-print mb-3">
+      <div class="row g-2 align-items-center">
+        <!-- 0, 15, 30, 45 Expiry Pills -->
+        <div class="col-lg-5 col-md-12">
+          <label class="form-label small fw-extrabold text-secondary text-uppercase tracking-wider mb-1">Expiry Window</label>
+          <div class="expiry-segmented-control" role="group">
+            <button type="button" class="btn-segment active" data-days="ALL" onclick="PrintController.setDayFilter('ALL', this)">All</button>
+            <button type="button" class="btn-segment" data-days="0" onclick="PrintController.setDayFilter('0', this)">0d <span class="badge bg-danger ms-1">Expired</span></button>
+            <button type="button" class="btn-segment" data-days="15" onclick="PrintController.setDayFilter('15', this)">≤ 15d</button>
+            <button type="button" class="btn-segment" data-days="30" onclick="PrintController.setDayFilter('30', this)">≤ 30d</button>
+            <button type="button" class="btn-segment" data-days="45" onclick="PrintController.setDayFilter('45', this)">≤ 45d</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Customer Column Dropdown -->
-      <div class="col-md-2">
-        <label class="form-label small fw-bold text-secondary">Customer Columns</label>
-        <div class="dropdown">
-          <button class="btn btn-outline-secondary btn-sm dropdown-toggle w-100 fw-bold text-start" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-            Customer Info
+        <!-- Quick Buttons for Permit and NP -->
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label small fw-extrabold text-secondary text-uppercase tracking-wider mb-1">Quick Vehicle Filter</label>
+          <div class="d-flex gap-1">
+            <button type="button" class="btn btn-outline-dark btn-sm fw-bold flex-fill btn-quick-filter" id="btnFilterPermit" onclick="PrintController.setQuickDocFilter('permit')">
+              Permit Only
+            </button>
+            <button type="button" class="btn btn-outline-dark btn-sm fw-bold flex-fill btn-quick-filter" id="btnFilterNP" onclick="PrintController.setQuickDocFilter('np')">
+              NP Only
+            </button>
+          </div>
+        </div>
+
+        <!-- Debounced Live Search -->
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label small fw-extrabold text-secondary text-uppercase tracking-wider mb-1">Live Search</label>
+          <div class="input-group input-group-sm modern-input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="printSearchInput" class="form-control fw-bold" placeholder="Reg no, customer, chassis..." oninput="PrintController.debouncedSearch()" />
+          </div>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="col-lg-1 col-md-12 text-end pt-lg-3">
+          <button class="btn btn-outline-secondary btn-sm fw-bold w-100" onclick="PrintController.resetFilters()">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
           </button>
-          <ul class="dropdown-menu p-2 shadow-sm" style="font-size: 0.82rem;">
-            <li><button class="btn btn-link btn-sm p-0 mb-1 text-decoration-none fw-bold" onclick="PrintController.toggleAllCheckboxes('.cust-col-chk', true)">Select All</button> | <button class="btn btn-link btn-sm p-0 mb-1 text-decoration-none fw-bold text-danger" onclick="PrintController.toggleAllCheckboxes('.cust-col-chk', false)">Deselect All</button></li>
-            <li><hr class="dropdown-divider my-1"></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="name" checked onchange="PrintController.applyFiltersAndRender()"> Customer Name</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="mob1" checked onchange="PrintController.applyFiltersAndRender()"> Mobile No 1</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="mob2" checked onchange="PrintController.applyFiltersAndRender()"> Mobile No 2</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="mob3" checked onchange="PrintController.applyFiltersAndRender()"> Mobile No 3</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="address" checked onchange="PrintController.applyFiltersAndRender()"> Address</label></li>
-          </ul>
         </div>
       </div>
 
-      <!-- Vehicle Column Dropdown (Defaults: Owner Name, Chassis No, Tax Amount, Remarks) -->
-      <div class="col-md-2">
-        <label class="form-label small fw-bold text-secondary">Vehicle Fields</label>
-        <div class="dropdown">
-          <button class="btn btn-outline-secondary btn-sm dropdown-toggle w-100 fw-bold text-start" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-            Vehicle Info
-          </button>
-          <ul class="dropdown-menu p-2 shadow-sm" style="font-size: 0.82rem;">
-            <li><button class="btn btn-link btn-sm p-0 mb-1 text-decoration-none fw-bold" onclick="PrintController.toggleAllCheckboxes('.veh-col-chk', true)">Select All</button> | <button class="btn btn-link btn-sm p-0 mb-1 text-decoration-none fw-bold text-danger" onclick="PrintController.toggleAllCheckboxes('.veh-col-chk', false)">Deselect All</button></li>
-            <li><hr class="dropdown-divider my-1"></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="category" onchange="PrintController.applyFiltersAndRender()"> Category</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="owner" checked onchange="PrintController.applyFiltersAndRender()"> Owner Name</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="engine" onchange="PrintController.applyFiltersAndRender()"> Engine No</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="chassis" checked onchange="PrintController.applyFiltersAndRender()"> Chassis No</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="reg_date" onchange="PrintController.applyFiltersAndRender()"> Reg Date</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="tyres" onchange="PrintController.applyFiltersAndRender()"> No of Tyres</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="tax_amount" checked onchange="PrintController.applyFiltersAndRender()"> Tax Amount</label></li>
-            <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="remarks" checked onchange="PrintController.applyFiltersAndRender()"> Remarks</label></li>
-          </ul>
+      <!-- Secondary Controls -->
+      <div class="row g-2 align-items-end mt-1 pt-2 border-top">
+        <!-- Vehicle Eligibility Filter Dropdown -->
+        <div class="col-md-3">
+          <label class="form-label small fw-bold text-secondary mb-1">Vehicle Eligibility Filter</label>
+          <select id="controlFilterDoc" class="form-select form-select-sm fw-bold" onchange="PrintController.handleDocFilterChange(this.value)">
+            <option value="ALL">Show All Vehicles (GV, NP, All)</option>
+            <option value="permit">Permit Vehicles Only</option>
+            <option value="np">National Permit (NP) Vehicles Only</option>
+            <option value="tax">Road Tax Applicable Only</option>
+            <option value="fc">Fitness (FC) Applicable Only</option>
+            <option value="ins">Insurance Applicable Only</option>
+            <option value="puc">PUC Applicable Only</option>
+          </select>
+        </div>
+
+        <!-- Customer Fields Dropdown (with Remarks) -->
+        <div class="col-md-3">
+          <label class="form-label small fw-bold text-secondary mb-1">Customer Fields</label>
+          <div class="dropdown">
+            <button class="btn btn-white border btn-sm dropdown-toggle w-100 fw-bold text-start shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+              Visible Customer Info
+            </button>
+            <ul class="dropdown-menu p-2 shadow-sm" style="font-size: 0.82rem;">
+              <li>
+                <button class="btn btn-link btn-sm p-0 mb-1 text-decoration-none fw-bold" onclick="PrintController.toggleAllCheckboxes('.cust-col-chk', true)">Select All</button> | 
+                <button class="btn btn-link btn-sm p-0 mb-1 text-decoration-none fw-bold text-danger" onclick="PrintController.toggleAllCheckboxes('.cust-col-chk', false)">Deselect All</button>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="mob1" checked onchange="PrintController.applyFiltersAndRender()"> Primary Phone (mobile)</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="mob2" checked onchange="PrintController.applyFiltersAndRender()"> Alt Phone 1 (mobile_2)</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="mob3" checked onchange="PrintController.applyFiltersAndRender()"> Alt Phone 2 (mobile_3)</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="address" checked onchange="PrintController.applyFiltersAndRender()"> Physical Address</label></li>
+              <li><label class="dropdown-item fw-bold text-danger"><input type="checkbox" class="form-check-input me-2 cust-col-chk" value="remarks" checked onchange="PrintController.applyFiltersAndRender()"> Customer Remarks</label></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Vehicle Details Dropdown (with Tax Type) -->
+        <div class="col-md-3">
+          <label class="form-label small fw-bold text-secondary mb-1">Vehicle Details</label>
+          <div class="dropdown">
+            <button class="btn btn-white border btn-sm dropdown-toggle w-100 fw-bold text-start shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+              Visible Vehicle Specs
+            </button>
+            <ul class="dropdown-menu p-2 shadow-sm" style="font-size: 0.82rem;">
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="category" onchange="PrintController.applyFiltersAndRender()"> Category</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="owner" checked onchange="PrintController.applyFiltersAndRender()"> Owner Name</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="engine" onchange="PrintController.applyFiltersAndRender()"> Engine No</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="chassis" checked onchange="PrintController.applyFiltersAndRender()"> Chassis No</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="reg_date" onchange="PrintController.applyFiltersAndRender()"> Reg Date</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="tyres" onchange="PrintController.applyFiltersAndRender()"> Tyres</label></li>
+              <li><label class="dropdown-item fw-bold text-primary"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="tax_type" checked onchange="PrintController.applyFiltersAndRender()"> Tax Type</label></li>
+              <li><label class="dropdown-item fw-bold"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="tax_amount" checked onchange="PrintController.applyFiltersAndRender()"> Tax Amount</label></li>
+              <li><label class="dropdown-item fw-bold text-danger"><input type="checkbox" class="form-check-input me-2 veh-col-chk" value="remarks" checked onchange="PrintController.applyFiltersAndRender()"> Vehicle Remarks</label></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Blank Out Dates Switch -->
+        <div class="col-md-3 d-flex align-items-center pb-1">
+          <div class="form-check form-switch modern-switch mb-0">
+            <input class="form-check-input" type="checkbox" id="toggleMakeDatesEmpty" onchange="PrintController.applyFiltersAndRender()">
+            <label class="form-check-label small fw-bold text-secondary ms-1" for="toggleMakeDatesEmpty">Blank Out Dates</label>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Blank Out Dates Switch -->
-      <div class="col-md-3 d-flex align-items-center pt-3">
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="toggleMakeDatesEmpty" onchange="PrintController.applyFiltersAndRender()">
-          <label class="form-check-label small fw-bold text-secondary" for="toggleMakeDatesEmpty">Blank Out Dates</label>
-        </div>
+    <!-- Statement Metadata Header -->
+    <div class="statement-header mb-2 pb-2 border-bottom d-flex justify-content-between align-items-center">
+      <div>
+        <span class="badge bg-dark text-white px-2 py-1 fw-bold" id="printCustomerCount">0 Customers</span>
+        <span class="badge bg-primary text-white px-2 py-1 ms-1 fw-bold" id="printVehicleCount">0 Vehicles</span>
       </div>
-
-      <div class="col-md-2">
-        <label class="form-label small fw-bold text-secondary">Layout Mode</label>
-        <select id="printLayoutMode" class="form-select form-select-sm fw-bold" onchange="PrintController.applyFiltersAndRender()">
-          <option value="table">Master Grouped Table</option>
-          <option value="cards">Card Grid Statement</option>
-        </select>
-      </div>
-
-      <div class="col-md-1 text-end">
-        <button class="btn btn-outline-secondary btn-sm fw-bold w-100" onclick="PrintController.resetFilters()">Reset</button>
+      <div class="text-muted fw-bold small">
+        Generated: <span id="printDateStamp"></span> | Filter: <span id="printFilterLabel" class="text-dark fw-extrabold">All Records</span>
       </div>
     </div>
 
-    <!-- Neutral Document Header (Branding Removed) -->
-    <div class="text-center mb-3 pb-2 border-bottom">
-    
-      <div class="text-muted fw-bold" style="font-size: 0.78rem;">
-        Generated on: <span id="printDateStamp"></span> | Filter: <span id="printFilterLabel" class="text-dark">All Records</span>
-      </div>
-    </div>
-
-    <!-- Card Container for Card Grid Statement View -->
-    <div id="printCardContainer" class="row g-3 d-none mb-4">
-      <!-- Populated dynamically -->
-    </div>
-
-    <!-- Data Table Container -->
-    <div class="table-responsive" id="printTableWrapper">
-      <table class="print-table align-middle" id="printDataTable">
-        <thead>
-          <tr>
-            <th style="width: 4%;">S.No</th>
-            <th style="width: 15%;">Vehicle Details</th>
-            <th style="width: 20%;">Customer / Owner Group</th>
-            <th style="width: 12%;">Fitness & Ins</th>
-            <th style="width: 12%;">Permit & NP</th>
-            <th style="width: 12%;">Road & Green Tax</th>
-            <th style="width: 12%;">PUC & Status</th>
-            <th style="width: 13%;">Remarks</th>
-          </tr>
-        </thead>
-        <tbody id="printTableBody">
-          <!-- Populated dynamically -->
-        </tbody>
-      </table>
-    </div>
-
-
-
+    <!-- Grouped Statement Container -->
+    <div id="printGroupedContainer" class="d-flex flex-column gap-3"></div>
   </div>
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
   <script src="js/auth.js"></script>
   <script src="js/api.js"></script>
   <script src="js/print.js"></script>

@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Customers - Fleet Management</title>
-  
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="images/favicon.ico" />
-  
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Bootstrap Icons -->
@@ -38,7 +38,7 @@
         <img src="images/logo.png" alt="Logo" width="36" height="36" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
         <span class="tracking-tight">Fleet Management</span>
       </a>
-      
+
       <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -72,44 +72,40 @@
 
   <!-- Main Workspace Container -->
   <main class="container-fluid py-4 px-3 px-md-4">
-    
     <!-- Page Header & Action Buttons -->
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
       <div>
         <h3 class="fw-bold text-dark mb-1">Customer List</h3>
-        </div>
-        <div >
-            <div class="card border-0 customer-card-shadow mb-4">
-      <div class="card-body py-3 px-4">
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          <span class="small fw-bold text-secondary me-2"><i class="bi bi-funnel text-primary me-1"></i>Filter By:</span>
-          
-          <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 filter-pill active" onclick="CustomerController.setFilter('health', '', this)">
-            All Status
-          </button>
-          <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'EXPIRED', this)">
-            <i class="bi bi-exclamation-circle me-1"></i>Expired
-          </button>
-          <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 filter-pill text-dark" onclick="CustomerController.setFilter('health', 'URGENT', this)">
-            <i class="bi bi-clock me-1"></i>Due Soon
-          </button>
-          <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'HEALTHY', this)">
-            <i class="bi bi-check-circle me-1"></i>Valid
-          </button>
-
-          <div class="vr mx-2 text-muted opacity-25 d-none d-md-block"></div>
-
-          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'active', this)">
-            Active Only
-          </button>
-          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'inactive', this)">
-            Inactive Only
-          </button>
+      </div>
+      <div>
+        <div class="card border-0 customer-card-shadow mb-4">
+          <div class="card-body py-3 px-4">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <span class="small fw-bold text-secondary me-2"><i class="bi bi-funnel text-primary me-1"></i>Filter By:</span>
+              <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 filter-pill active" onclick="CustomerController.setFilter('health', '', this)">
+                All Status
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'EXPIRED', this)">
+                <i class="bi bi-exclamation-circle me-1"></i>Expired
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 filter-pill text-dark" onclick="CustomerController.setFilter('health', 'URGENT', this)">
+                <i class="bi bi-clock me-1"></i>Due Soon
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'HEALTHY', this)">
+                <i class="bi bi-check-circle me-1"></i>Valid
+              </button>
+              <div class="vr mx-2 text-muted opacity-25 d-none d-md-block"></div>
+              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'active', this)">
+                Active Only
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'inactive', this)">
+                Inactive Only
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    </div>
-        
+
       <div class="d-flex gap-2">
         <button id="btnRefresh" class="btn btn-outline-secondary btn-sm px-3 rounded-pill bg-white shadow-sm" onclick="CustomerController.load()" title="Reload list">
           <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> Refresh
@@ -120,9 +116,6 @@
       </div>
     </div>
 
-    <!-- Modern Pill Filter Toolbar Card -->
-  
-
     <!-- Customers Data Table Container Card -->
     <div class="card border-0 customer-card-shadow p-3 p-md-4">
       <div class="table-responsive">
@@ -130,9 +123,10 @@
           <thead class="table-light text-secondary small uppercase fw-bold border-bottom">
             <tr>
               <th scope="col" class="d-none">ID</th>
+              <th scope="col" class="py-3 text-center" style="width: 80px;">Print ID</th>
               <th scope="col" class="py-3">Customer Name</th>
-              <th scope="col" class="py-3">Phone & WhatsApp</th>
-              <th scope="col" class="py-3">Address & Notes</th>
+              <th scope="col" class="py-3">Phone &amp; WhatsApp</th>
+              <th scope="col" class="py-3">Address &amp; Notes</th>
               <th scope="col" class="py-3 text-center">Vehicles</th>
               <th scope="col" class="py-3">Document Status</th>
               <th scope="col" class="py-3">Account State</th>
@@ -145,7 +139,6 @@
         </table>
       </div>
     </div>
-
   </main>
 
   <!-- Modal: Add / Edit Customer -->
@@ -159,22 +152,24 @@
         <form id="customerForm" onsubmit="event.preventDefault(); CustomerController.save();">
           <div class="modal-body p-4 row g-3">
             <input type="hidden" id="cust_id" />
-            
-            <div class="col-12">
+
+            <div class="col-md-8">
               <label class="form-label small fw-bold text-secondary">Customer / Business Name <span class="text-danger">*</span></label>
               <input type="text" id="cust_name" class="form-control" placeholder="e.g. Kumar Transport" required />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small fw-bold text-secondary">Print ID <span class="text-danger">*</span></label>
+              <input type="number" id="cust_printid" class="form-control" placeholder="e.g. 1" min="1" step="1" required />
             </div>
 
             <div class="col-md-4">
               <label class="form-label small fw-bold text-secondary">Primary Phone <span class="text-danger">*</span></label>
               <input type="tel" id="cust_mobile" class="form-control" maxlength="10" placeholder="10 Digits" required />
             </div>
-
             <div class="col-md-4">
               <label class="form-label small fw-bold text-secondary">Extra Phone 2</label>
               <input type="tel" id="cust_mobile_2" class="form-control" maxlength="10" placeholder="Optional" />
             </div>
-
             <div class="col-md-4">
               <label class="form-label small fw-bold text-secondary">Extra Phone 3</label>
               <input type="tel" id="cust_mobile_3" class="form-control" maxlength="10" placeholder="Optional" />
@@ -189,7 +184,6 @@
               <label class="form-label small fw-bold text-secondary">Notes / Remarks</label>
               <input type="text" id="cust_remarks" class="form-control" placeholder="e.g. Regular client" />
             </div>
-
             <div class="col-md-4">
               <label class="form-label small fw-bold text-secondary">Account State</label>
               <select id="cust_status" class="form-select">
