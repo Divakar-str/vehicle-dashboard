@@ -36,6 +36,22 @@ body.bg-light {
   background-color: #2563eb !important;
 }
 
+/* Navbar Enhancements */
+.navbar {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar .nav-link {
+    transition: var(--transition-smooth);
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.navbar .nav-link:hover, .navbar .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
 /* --- Rounded Cards --- */
 .card {
   background-color: #ffffff !important;
