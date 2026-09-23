@@ -173,7 +173,7 @@ table.print-table thead th {
 /* Pure Borderless Date Styling */
 .date-txt {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 900;
   border: none !important;
   background: transparent !important;
@@ -360,7 +360,8 @@ table.print-table td {
     border-bottom: 1.5px solid #000000 !important;
   }
   .date-txt {
-    font-size: 7.5px !important;
+    
+    font-size: 0.9rem;
     font-weight: 900 !important;
     border: none !important;
     padding: 0 !important;
