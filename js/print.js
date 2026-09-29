@@ -499,8 +499,8 @@ const PrintController = {
                 ${cfg.vehEngine && engineNo ? `<span>Eng: <strong>${engineNo}</strong></span>` : ''}
                 ${cfg.vehRegDate && regDate ? `<span>Reg: <strong>${regDate}</strong></span>` : ''}
                 ${cfg.vehTyres && tyres ? `<span>Tyres: <strong>${tyres}</strong></span>` : ''}
-                ${cfg.vehTaxType && taxType ? `<span>Type: <strong>${taxType}</strong></span>` : ''}
-                ${cfg.vehTaxAmt && taxAmount ? `<span class="text-dark fw-black">Tax: ${taxAmount}</span>` : ''}
+                ${cfg.vehTaxType && taxType ? `<span> <strong>${taxType}${cfg.vehTaxAmt && taxAmount ? `<span class="text-dark fw-black">: ${taxAmount}</span>` : ''}</strong></span>` : ''}
+               
               </div>
             </td>
 
