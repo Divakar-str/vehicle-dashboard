@@ -3,323 +3,268 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - FleetERP</title>
-   <!-- Favicon -->
+  <title>Dashboard - Fleet Management</title>
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="images/favicon.ico" />
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- App Stylesheets -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/dashboard.css" />
 </head>
-<body class="bg-light">
+<body class="glass-app-bg">
 
   <!-- Toast Notification -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1300;">
-    <div id="liveToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1400;">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage">Done.</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <div class="toast-body py-3 px-3 fw-bold" id="toastMessage">Done.</div>
+        <button type="button" id="toastCloseBtn" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
       </div>
     </div>
   </div>
 
- <!-- Modern Top Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3 py-2">
+  <!-- Standard Bootstrap Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top glass-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="dashboard.html">
-        <img src="images/logo.png" alt="Logo" width="36" height="36" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
-        <span class="tracking-tight">Fleet Management</span>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
+        <img src="images/logo.png" alt="Logo" width="32" height="32" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
+        <span class="fw-bold tracking-tight">Fleet Management</span>
       </a>
-      
-      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="topNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-2">
-          <li class="nav-item">
-            <a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill " href="customers.html"><i class="bi bi-people-fill me-1"></i> Customers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="print.html"><i class="bi bi-printer me-1"></i> Print</a>
-          </li>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+          <li class="nav-item"><a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="dashboard.html"><i class="fa fa-th-large me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="customers.html"><i class="fa fa-users me-1"></i> Customers</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="vehicles.html"><i class="fa fa-truck me-1"></i> Vehicles</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="reports.html"><i class="fa fa-chart-bar me-1"></i> Reports</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="print.html"><i class="fa fa-print me-1"></i> Print</a></li>
         </ul>
-
-        <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0">
-          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay" class="text-white fw-semibold">admin</span></span>
-          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+        <div class="d-flex align-items-center gap-3">
+          <span class="text-white-50 small"><i class="fa fa-user-circle me-1"></i><span id="userDisplay" class="text-white fw-semibold">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i class="fa fa-sign-out-alt me-1"></i>Logout</button>
         </div>
       </div>
     </div>
   </nav>
+
+
   <!-- Main Workspace -->
   <main class="dashboard-container py-4 px-3 px-lg-4 container-fluid">
 
-    
+  
 
-    <!-- DOCUMENT BREAKDOWNS -->
-    <div class="mb-4">
-      <div class="section-subheading mb-3">
-        <i class="bi bi-shield-check text-primary"></i> Document Expiry Breakdown
-      </div>
-      
-      <div class="row g-2">
-        <!-- 1. Fitness (FC) -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-fc">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-patch-check-fill text-primary"></i></span>
-              <div class="doc-title">Fitness (FC)</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=fc&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="FC Expired (&le; 0d)">
-                <span id="docFcExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=fc&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="FC Warning (1–15d)">
-                <span id="docFcWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=fc&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="FC Safe (16–30d)">
-                <span id="docFcExpiring">0</span> 🟢
-              </a>
-              <a href="reports.html?doc=fc&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="FC Notice (31–45d)">
-                <span id="docFcNotice">0</span> 📢
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Permit -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-permit">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-file-earmark-text text-warning"></i></span>
-              <div class="doc-title">Permit</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=permit&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Permit Expired (&le; 0d)">
-                <span id="docPermitExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=permit&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Permit Warning (1–15d)">
-                <span id="docPermitWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=permit&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Permit Safe (16–30d)">
-                <span id="docPermitSafe">0</span> 🟢
-              </a>
-              <a href="reports.html?doc=permit&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="Permit Notice (31–45d)">
-                <span id="docPermitNotice">0</span> 📢
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. National Permit -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-np">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-globe-americas text-danger"></i></span>
-              <div class="doc-title">National Permit</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=np&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="NP Expired (&le; 0d)">
-                <span id="docNpExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=np&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="NP Warning (1–15d)">
-                <span id="docNpWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=np&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="NP Safe (16–30d)">
-                <span id="docNpSafe">0</span> 🟢
-              </a>
-              <a href="reports.html?doc=np&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="NP Notice (31–45d)">
-                <span id="docNpNotice">0</span> 📢
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Road Tax -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-tax">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-cash-stack text-primary"></i></span>
-              <div class="doc-title">Road Tax</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=tax&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Tax Expired (&le; 0d)">
-                <span id="docTaxExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=tax&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Tax Warning (1–15d)">
-                <span id="docTaxWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=tax&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Tax Safe (16–30d)">
-                <span id="docTaxExpiring">0</span> 🟢
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 5. Green Tax -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-gtax">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-tree text-success"></i></span>
-              <div class="doc-title">Green Tax</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=gtax&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Green Tax Expired (&le; 0d)">
-                <span id="docGtaxExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=gtax&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Green Tax Warning (1–15d)">
-                <span id="docGtaxWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=gtax&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Green Tax Safe (16–30d)">
-                <span id="docGtaxExpiring">0</span> 🟢
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 6. Insurance -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-ins">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-shield-shaded text-info"></i></span>
-              <div class="doc-title">Insurance</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=ins&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Insurance Expired (&le; 0d)">
-                <span id="docInsExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=ins&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Insurance Warning (1–15d)">
-                <span id="docInsWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=ins&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Insurance Safe (16–30d)">
-                <span id="docInsExpiring">0</span> 🟢
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 7. Pollution (PUC) -->
-        <div class="col-xl col-md-4 col-sm-6 col-12">
-          <div class="doc-breakdown-card doc-accent-puc">
-            <div class="doc-card-top">
-              <span class="doc-icon-wrap"><i class="bi bi-wind text-secondary"></i></span>
-              <div class="doc-title">Pollution (PUC)</div>
-            </div>
-            <div class="doc-stat-group">
-              <a href="reports.html?doc=puc&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="PUC Expired (&le; 0d)">
-                <span id="docPucExpired">0</span> 🚨
-              </a>
-              <a href="reports.html?doc=puc&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="PUC Warning (1–15d)">
-                <span id="docPucWarning">0</span> ⚠️
-              </a>
-              <a href="reports.html?doc=puc&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="PUC Safe (16–30d)">
-                <span id="docPucExpiring">0</span> 🟢
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OVERALL SUMMARY STATS -->
+    <!-- OVERALL SUMMARY KPIS -->
     <div class="row g-3 mb-4">
       <div class="col-xl-2 col-lg-4 col-sm-6 col-6">
-        <a href="reports.html?preset=ALL" class="kpi-card text-decoration-none">
-          <div class="kpi-title text-dark">Total Vehicles</div>
-          <div class="kpi-number text-dark" id="kpiTotalVehicles">0</div>
+        <span  class="kpi-card glass-card text-decoration-none d-block">
+          <div class="kpi-title text-secondary">Total Vehicles </div>
+          <div class="kpi-number text-danger d-flex align-items-center justify-content-between">
+          <a href="reports.html?preset=ALL" class="text-decoration-none">
+            <div class="kpi-number text-dark" id="kpiTotalVehicles">0</div>
+          </a>
+           <button id="btnRefresh" class="btn btn-glass-light btn-sm d-flex align-items-center fw-bold shadow-2xs px-3.5  rounded-pill" type="button" onclick="DashboardController.load()" title="Reload data">
+            <i id="refreshIcon" class="fa fa-sync-alt me-1.5 text-primary"></i> <span id="refreshBtnText"></span> 
+          </button>
+          </div>
+          
           <div class="kpi-sub"><span id="kpiTotalCustomers">0</span> Active Clients</div>
-        </a>
+        </span>
       </div>
       <div class="col-xl-2 col-lg-4 col-sm-6 col-6">
-        <a href="reports.html?preset=EXPIRED_ONLY" class="kpi-card kpi-overdue text-decoration-none">
+        <a href="reports.html?preset=EXPIRED_ONLY" class="kpi-card kpi-overdue glass-card text-decoration-none d-block">
           <div class="kpi-title text-danger">Overdue (&le; 0d)</div>
-          <div class="kpi-number text-danger" id="kpiOverdueCount">0</div>
-          <div class="kpi-sub">Expired Documents</div>
+          <div class="kpi-number text-danger d-flex align-items-center justify-content-between">
+            <span id="kpiOverdueCount">0</span>
+            <span class="pulse-dot bg-danger"></span>
+          </div>
+          <div class="kpi-sub">Immediate Action</div>
         </a>
       </div>
       <div class="col-xl-2 col-lg-4 col-sm-6 col-6">
-        <a href="reports.html?preset=FINE_ONLY" class="kpi-card kpi-fine text-decoration-none">
+        <a href="reports.html?preset=FINE_ONLY" class="kpi-card kpi-fine glass-card text-decoration-none d-block">
           <div class="kpi-title text-warning">Due in 15 Days</div>
           <div class="kpi-number text-warning" id="kpiFineCount">0</div>
           <div class="kpi-sub">High Priority</div>
         </a>
       </div>
       <div class="col-xl-2 col-lg-4 col-sm-6 col-6">
-        <a href="reports.html?preset=SAFE_ONLY" class="kpi-card kpi-safe text-decoration-none">
+        <a href="reports.html?preset=SAFE_ONLY" class="kpi-card kpi-safe glass-card text-decoration-none d-block">
           <div class="kpi-title text-success">Due in 16–30 Days</div>
           <div class="kpi-number text-success" id="kpiSafeCount">0</div>
           <div class="kpi-sub">Normal Renewal</div>
         </a>
       </div>
       <div class="col-xl-2 col-lg-4 col-sm-6 col-6">
-        <a href="reports.html?preset=NOTICE_ONLY" class="kpi-card kpi-notice text-decoration-none">
+        <a href="reports.html?preset=NOTICE_ONLY" class="kpi-card kpi-notice glass-card text-decoration-none d-block">
           <div class="kpi-title text-info">Due in 31–45 Days</div>
           <div class="kpi-number text-info" id="kpiNoticeCount">0</div>
           <div class="kpi-sub">Advance Notice</div>
         </a>
       </div>
       <div class="col-xl-2 col-lg-4 col-sm-6 col-6">
-        <a href="reports.html?preset=MISSING_ONLY" class="kpi-card kpi-missing text-decoration-none">
+        <a href="reports.html?preset=MISSING_ONLY" class="kpi-card kpi-missing glass-card text-decoration-none d-block">
           <div class="kpi-title" style="color: #8b5cf6;">Missing Papers</div>
           <div class="kpi-number" style="color: #8b5cf6;" id="kpiMissingCount">0</div>
           <div class="kpi-sub">Blank Dates</div>
         </a>
       </div>
-      
+    </div>
+
+    <!-- DOCUMENT BREAKDOWNS (7 Professional Cards with FontAwesome Icons) -->
+    <div class="mb-4">
+      <div class="section-heading mb-3 d-flex align-items-center justify-content-between">
+        <span class="fw-black text-uppercase text-secondary" style="font-size: 0.78rem; letter-spacing: 0.05em;">
+          <i class="fa fa-shield-halved text-primary me-1.5"></i> Document Expiry Breakdown 
+        </span>
+     
+      </div>
+      <div class="row g-3">
+        <!-- 1. Fitness (FC) -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-primary bg-primary-subtle p-2 rounded-3"><i class="fa fa-certificate"></i></span>
+              <div class="doc-title">Fitness (FC)</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=fc&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="FC Expired"><span id="docFcExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=fc&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="FC Warning"><span id="docFcWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=fc&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="FC Safe"><span id="docFcExpiring">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+              <a href="reports.html?doc=fc&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="FC Notice"><span id="docFcNotice">0</span> <i class="fa fa-bell ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+        <!-- 2. Permit -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-success bg-success-subtle p-2 rounded-3"><i class="fa fa-map-location-dot"></i></span>
+              <div class="doc-title">State Permit</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=permit&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Permit Expired"><span id="docPermitExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=permit&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Permit Warning"><span id="docPermitWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=permit&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Permit Safe"><span id="docPermitSafe">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+              <a href="reports.html?doc=permit&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="Permit Notice"><span id="docPermitNotice">0</span> <i class="fa fa-bell ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+        <!-- 3. National Permit -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-info bg-info-subtle p-2 rounded-3"><i class="fa fa-globe"></i></span>
+              <div class="doc-title">National Permit</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=np&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="NP Expired"><span id="docNpExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=np&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="NP Warning"><span id="docNpWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=np&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="NP Safe"><span id="docNpSafe">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+              <a href="reports.html?doc=np&preset=NOTICE_ONLY" class="doc-badge-link badge-notice" title="NP Notice"><span id="docNpNotice">0</span> <i class="fa fa-bell ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+        <!-- 4. Road Tax -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-primary bg-primary-subtle p-2 rounded-3"><i class="fa fa-coins"></i></span>
+              <div class="doc-title">Road Tax</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=tax&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Tax Expired"><span id="docTaxExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=tax&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Tax Warning"><span id="docTaxWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=tax&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Tax Safe"><span id="docTaxExpiring">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+        <!-- 5. Green Tax -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-success bg-success-subtle p-2 rounded-3"><i class="fa fa-leaf"></i></span>
+              <div class="doc-title">Green Tax</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=gtax&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Green Tax Expired"><span id="docGtaxExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=gtax&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Green Tax Warning"><span id="docGtaxWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=gtax&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Green Tax Safe"><span id="docGtaxExpiring">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+        <!-- 6. Insurance -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-danger bg-danger-subtle p-2 rounded-3"><i class="fa fa-shield-heart"></i></span>
+              <div class="doc-title">Insurance</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=ins&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="Insurance Expired"><span id="docInsExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=ins&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="Insurance Warning"><span id="docInsWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=ins&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="Insurance Safe"><span id="docInsExpiring">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+        <!-- 7. Pollution (PUC) -->
+        <div class="col-xl col-md-4 col-sm-6 col-12">
+          <div class="doc-breakdown-card glass-card">
+            <div class="doc-card-top">
+              <span class="doc-icon-wrap text-secondary bg-secondary-subtle p-2 rounded-3"><i class="fa fa-smog"></i></span>
+              <div class="doc-title">Pollution (PUC)</div>
+            </div>
+            <div class="doc-stat-group">
+              <a href="reports.html?doc=puc&preset=EXPIRED_ONLY" class="doc-badge-link badge-expired" title="PUC Expired"><span id="docPucExpired">0</span> <i class="fa fa-circle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=puc&preset=FINE_ONLY" class="doc-badge-link badge-warning" title="PUC Warning"><span id="docPucWarning">0</span> <i class="fa fa-triangle-exclamation ms-1"></i></a>
+              <a href="reports.html?doc=puc&preset=SAFE_ONLY" class="doc-badge-link badge-safe" title="PUC Safe"><span id="docPucExpiring">0</span> <i class="fa fa-circle-check ms-1"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 4 DEDICATED TRACKER CARDS -->
     <div class="row g-3 mb-4">
       <!-- CARD 1: FITNESS (FC) TRACKER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="dash-card h-100">
+        <div class="dash-card glass-card h-100">
           <div class="dash-card-header">
-            <h6 class="dash-card-title"><i class="bi bi-patch-check-fill text-primary"></i> Fitness (FC) Tracker</h6>
+            <h6 class="dash-card-title"><i class="fa fa-certificate text-primary me-1.5"></i> Fitness (FC) Tracker</h6>
             <a href="reports.html?doc=fc">View All &rarr;</a>
           </div>
           <div class="d-flex gap-1 mb-2">
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-danger-subtle border-danger-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('fc', '0d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '0d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
-              <span class="fw-bold text-danger" id="fcSum0">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-danger-subtle border-danger-subtle btn-tier-filter active-filter" onclick="DashboardController.filterTracker('fc', 'ALL', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('fc', 'ALL')" title="All / Double-click to open Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #dc2626;">ALL</span>
+              <span class="fw-black text-danger" id="fcSumAll">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-warning-subtle border-warning-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('fc', '15d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '15d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #b45309;">0–15d</span>
-              <span class="fw-bold text-warning-emphasis" id="fcSum15">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-danger-subtle border-danger-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '0d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '0d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
+              <span class="fw-black text-danger" id="fcSum0">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-success-subtle border-success-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('fc', '30d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '30d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #15803d;">15–30d</span>
-              <span class="fw-bold text-success" id="fcSum30">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-warning-subtle border-warning-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '15d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '15d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #b45309;">1–15d</span>
+              <span class="fw-black text-warning-emphasis" id="fcSum15">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-info-subtle border-info-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('fc', '45d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '45d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #0891b2;">30–45d</span>
-              <span class="fw-bold text-info-emphasis" id="fcSum45">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-success-subtle border-success-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '30d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '30d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #15803d;">16–30d</span>
+              <span class="fw-black text-success" id="fcSum30">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-info-subtle border-info-subtle btn-tier-filter" onclick="DashboardController.filterTracker('fc', '45d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('fc', '45d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #0891b2;">31–45d</span>
+              <span class="fw-black text-info-emphasis" id="fcSum45">0</span>
             </button>
           </div>
-          <div class="table-responsive" style="max-height: 185px; overflow-y: auto;">
+          <div class="table-responsive" style="max-height: 205px; overflow-y: auto;">
             <table class="dash-table table-mini-tracker">
               <thead><tr><th>Vehicle</th><th class="text-center">FC Expiry</th><th class="text-end">Status</th></tr></thead>
               <tbody id="dashFcMiniTableBody"></tbody>
@@ -330,42 +275,34 @@
 
       <!-- CARD 2: PERMIT TRACKER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="dash-card h-100">
+        <div class="dash-card glass-card h-100">
           <div class="dash-card-header">
-            <h6 class="dash-card-title"><i class="bi bi-file-earmark-text text-warning"></i> Permit Tracker</h6>
+            <h6 class="dash-card-title"><i class="fa fa-map-location-dot text-success me-1.5"></i> Permit Tracker</h6>
             <a href="reports.html?doc=permit">View All &rarr;</a>
           </div>
           <div class="d-flex gap-1 mb-2">
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-danger-subtle border-danger-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('permit', '0d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '0d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
-              <span class="fw-bold text-danger" id="permitSum0">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-success-subtle border-success-subtle btn-tier-filter active-filter" onclick="DashboardController.filterTracker('permit', 'ALL', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('permit', 'ALL')" title="All / Double-click to open Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #15803d;">ALL</span>
+              <span class="fw-black text-success" id="permitSumAll">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-warning-subtle border-warning-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('permit', '15d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '15d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #b45309;">0–15d</span>
-              <span class="fw-bold text-warning-emphasis" id="permitSum15">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-danger-subtle border-danger-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '0d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '0d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
+              <span class="fw-black text-danger" id="permitSum0">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-success-subtle border-success-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('permit', '30d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '30d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #15803d;">15–30d</span>
-              <span class="fw-bold text-success" id="permitSum30">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-warning-subtle border-warning-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '15d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '15d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #b45309;">1–15d</span>
+              <span class="fw-black text-warning-emphasis" id="permitSum15">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-info-subtle border-info-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('permit', '45d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '45d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #0891b2;">30–45d</span>
-              <span class="fw-bold text-info-emphasis" id="permitSum45">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-success-subtle border-success-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '30d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '30d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #15803d;">16–30d</span>
+              <span class="fw-black text-success" id="permitSum30">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-info-subtle border-info-subtle btn-tier-filter" onclick="DashboardController.filterTracker('permit', '60d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('permit', '60d')" title="Click: Filter (Up to 60d) | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #0891b2;">31–60d</span>
+              <span class="fw-black text-info-emphasis" id="permitSum60">0</span>
             </button>
           </div>
-          <div class="table-responsive" style="max-height: 185px; overflow-y: auto;">
+          <div class="table-responsive" style="max-height: 205px; overflow-y: auto;">
             <table class="dash-table table-mini-tracker">
               <thead><tr><th>Vehicle</th><th class="text-center">Permit Expiry</th><th class="text-end">Status</th></tr></thead>
               <tbody id="dashPermitMiniTableBody"></tbody>
@@ -376,42 +313,34 @@
 
       <!-- CARD 3: NATIONAL PERMIT TRACKER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="dash-card h-100">
+        <div class="dash-card glass-card h-100">
           <div class="dash-card-header">
-            <h6 class="dash-card-title"><i class="bi bi-shield-exclamation text-danger"></i> NP Tracker</h6>
+            <h6 class="dash-card-title"><i class="fa fa-globe text-info me-1.5"></i> NP Tracker</h6>
             <a href="reports.html?doc=np">View All &rarr;</a>
           </div>
           <div class="d-flex gap-1 mb-2">
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-danger-subtle border-danger-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('np', '0d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('np', '0d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
-              <span class="fw-bold text-danger" id="npSum0">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-info-subtle border-info-subtle btn-tier-filter active-filter" onclick="DashboardController.filterTracker('np', 'ALL', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('np', 'ALL')" title="All / Double-click to open Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #0891b2;">ALL</span>
+              <span class="fw-black text-info-emphasis" id="npSumAll">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-warning-subtle border-warning-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('np', '15d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('np', '15d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #b45309;">0–15d</span>
-              <span class="fw-bold text-warning-emphasis" id="npSum15">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-danger-subtle border-danger-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '0d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('np', '0d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #dc2626;">&le; 0d</span>
+              <span class="fw-black text-danger" id="npSum0">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-success-subtle border-success-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('np', '30d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('np', '30d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #15803d;">15–30d</span>
-              <span class="fw-bold text-success" id="npSum30">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-warning-subtle border-warning-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '15d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('np', '15d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #b45309;">1–15d</span>
+              <span class="fw-black text-warning-emphasis" id="npSum15">0</span>
             </button>
-            <button type="button" class="flex-fill p-1 border rounded text-center bg-info-subtle border-info-subtle btn-tier-filter" 
-                    onclick="DashboardController.filterTracker('np', '45d', this)" 
-                    ondblclick="DashboardController.handleTrackerBtnDblClick('np', '45d')" 
-                    title="Click: Filter Table | Double-Click: Open Reports">
-              <span class="d-block" style="font-size: 0.62rem; font-weight: 800; color: #0891b2;">30–45d</span>
-              <span class="fw-bold text-info-emphasis" id="npSum45">0</span>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-success-subtle border-success-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '30d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('np', '30d')" title="Click: Filter | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #15803d;">16–30d</span>
+              <span class="fw-black text-success" id="npSum30">0</span>
+            </button>
+            <button type="button" class="flex-fill p-1.5 border rounded-2 text-center bg-info-subtle border-info-subtle btn-tier-filter" onclick="DashboardController.filterTracker('np', '60d', this)" ondblclick="DashboardController.handleTrackerBtnDblClick('np', '60d')" title="Click: Filter (Up to 60d) | Double-Click: Reports">
+              <span class="d-block" style="font-size: 0.6rem; font-weight: 800; color: #0891b2;">31–60d</span>
+              <span class="fw-black text-info-emphasis" id="npSum60">0</span>
             </button>
           </div>
-          <div class="table-responsive" style="max-height: 185px; overflow-y: auto;">
+          <div class="table-responsive" style="max-height: 205px; overflow-y: auto;">
             <table class="dash-table table-mini-tracker">
               <thead><tr><th>Vehicle</th><th class="text-center">NP Expiry</th><th class="text-end">Status</th></tr></thead>
               <tbody id="dashNpMiniTableBody"></tbody>
@@ -420,36 +349,40 @@
         </div>
       </div>
 
-      <!-- CARD 4: ROAD TAX STATUTORY QUARTERS -->
+      <!-- CARD 4: ROAD TAX STATUTORY QUARTERS WITH FINANCIAL TOTAL -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="dash-card h-100 justify-content-between">
+        <div class="dash-card glass-card h-100 justify-content-between">
           <div>
             <div class="dash-card-header">
-              <h6 class="dash-card-title"><i class="bi bi-calendar4-range text-primary"></i> Road Tax Quarters</h6>
+              <h6 class="dash-card-title"><i class="fa fa-coins text-primary me-1.5"></i> Road Tax Quarters</h6>
               <a href="reports.html?doc=tax">View All &rarr;</a>
             </div>
             <div class="quarter-bar">
               <a href="#" id="linkTaxQ1" class="quarter-box">
                 <div class="quarter-box-title">Q1 (31-03)</div>
-                <div class="fs-6 text-primary" id="taxQ1Count">0</div>
+                <div class="fs-6 text-primary fw-black" id="taxQ1Count">0</div>
+                <small class="text-success fw-black" id="taxQ1Amt" style="font-size: 0.65rem;">₹0</small>
               </a>
               <a href="#" id="linkTaxQ2" class="quarter-box">
                 <div class="quarter-box-title">Q2 (30-06)</div>
-                <div class="fs-6 text-primary" id="taxQ2Count">0</div>
+                <div class="fs-6 text-primary fw-black" id="taxQ2Count">0</div>
+                <small class="text-success fw-black" id="taxQ2Amt" style="font-size: 0.65rem;">₹0</small>
               </a>
               <a href="#" id="linkTaxQ3" class="quarter-box">
                 <div class="quarter-box-title">Q3 (30-09)</div>
-                <div class="fs-6 text-primary" id="taxQ3Count">0</div>
+                <div class="fs-6 text-primary fw-black" id="taxQ3Count">0</div>
+                <small class="text-success fw-black" id="taxQ3Amt" style="font-size: 0.65rem;">₹0</small>
               </a>
               <a href="#" id="linkTaxQ4" class="quarter-box">
                 <div class="quarter-box-title">Q4 (31-12)</div>
-                <div class="fs-6 text-primary" id="taxQ4Count">0</div>
+                <div class="fs-6 text-primary fw-black" id="taxQ4Count">0</div>
+                <small class="text-success fw-black" id="taxQ4Amt" style="font-size: 0.65rem;">₹0</small>
               </a>
             </div>
           </div>
-          <div class="p-2 border rounded bg-light text-center">
-            <small class="text-muted d-block">Tracked quarterly tax vehicles</small>
-            <span class="fw-bold text-dark small" id="taxTotalTrackedText">0 Vehicles</span>
+          <div class="p-2.5 border rounded-3 bg-light text-center mt-2">
+            <small class="text-secondary d-block fw-black" style="font-size: 0.7rem; text-transform: uppercase;">Tracked Quarterly Tax Fleet</small>
+            <span class="fw-black text-dark fs-6" id="taxTotalTrackedText">0 Vehicles</span>
           </div>
         </div>
       </div>
@@ -459,29 +392,28 @@
     <div class="row g-3 mb-4">
       <!-- CUSTOMER FLEET DASHBOARD -->
       <div class="col-lg-5">
-        <div class="dash-card h-100">
+        <div class="dash-card glass-card h-100">
           <div class="dash-card-header flex-wrap gap-2">
             <div>
-              <h6 class="dash-card-title"><i class="bi bi-people-fill text-primary"></i> Customer Fleet Dashboard</h6>
-              <small class="text-muted">Client health & quick search.</small>
+              <h6 class="dash-card-title"><i class="fa fa-users text-primary me-1.5"></i> Customer Fleet Dashboard</h6>
+              <small class="text-muted fw-bold">Client health &amp; quick search.</small>
             </div>
             <div class="d-flex align-items-center gap-1">
-              <button type="button" class="btn btn-sm btn-dark fw-bold py-0 px-2" style="font-size: 0.75rem;" id="custBtnAll" onclick="DashboardController.filterCustomerTable('ALL')">All</button>
-              <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-0 px-2" style="font-size: 0.75rem;" id="custBtnTroubled" onclick="DashboardController.filterCustomerTable('TROUBLED')">Issues</button>
+              <button type="button" class="btn btn-sm btn-dark fw-bold py-1 px-2.5 rounded-pill" style="font-size: 0.72rem;" id="custBtnAll" onclick="DashboardController.filterCustomerTable('ALL')">All</button>
+              <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-1 px-2.5 rounded-pill" style="font-size: 0.72rem;" id="custBtnTroubled" onclick="DashboardController.filterCustomerTable('TROUBLED')">Issues</button>
             </div>
           </div>
-          <!-- Search Input Bar -->
           <div class="mb-3">
             <div class="input-group input-group-sm">
-              <span class="input-group-text bg-light"><i class="bi bi-search text-muted"></i></span>
-              <input type="text" id="customerSearchInput" class="form-control form-control-sm" placeholder="Search customer name or mobile..." onkeyup="DashboardController.renderCustomerDashboard()" />
+              <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+              <input type="text" id="customerSearchInput" class="form-control form-control-sm fw-black border-start-0 ps-0" placeholder="Search customer serial, name, or phone..." onkeyup="DashboardController.renderCustomerDashboard()" />
             </div>
           </div>
           <div class="table-responsive" style="max-height: 330px; overflow-y: auto;">
             <table class="dash-table table-customer-fleet">
               <thead>
                 <tr>
-                  <th>Customer Name</th>
+                  <th>Customer / Firm</th>
                   <th class="text-center">Total</th>
                   <th class="text-center">Overdue</th>
                   <th class="text-end">Action</th>
@@ -493,23 +425,35 @@
         </div>
       </div>
 
-      <!-- PRIORITY ACTION QUEUE -->
+      <!-- PRIORITY ACTION QUEUE (Requirement 4: Date Filter Dropdown) -->
       <div class="col-lg-7">
-        <div class="dash-card h-100 justify-content-between">
+        <div class="dash-card glass-card h-100 justify-content-between">
           <div>
             <div class="dash-card-header flex-wrap gap-2">
               <div>
-                <h6 class="dash-card-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> Priority Action Queue</h6>
-                <small class="text-muted">Filtered by active horizon window.</small>
+                <h6 class="dash-card-title"><i class="fa fa-triangle-exclamation text-warning me-1.5"></i> Priority Action Queue</h6>
+                <small class="text-muted fw-bold">Filtered by active date window. Double-tap row to view report.</small>
               </div>
-              <div class="d-flex align-items-center gap-1 flex-wrap">
-                <button type="button" class="btn btn-sm btn-dark fw-bold py-1 px-2" style="font-size: 0.75rem;" id="pqBtnAll" onclick="DashboardController.filterPriorityQueue('ALL')">All (<span id="pqCountAll">0</span>)</button>
-                <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-1 px-2" style="font-size: 0.75rem;" id="pqBtnOverdue" onclick="DashboardController.filterPriorityQueue('OVERDUE')">Overdue (<span id="pqCountOverdue">0</span>)</button>
-                <button type="button" class="btn btn-sm btn-outline-warning fw-bold py-1 px-2" style="font-size: 0.75rem;" id="pqBtnWarning" onclick="DashboardController.filterPriorityQueue('WARNING')">1–15d (<span id="pqCountWarning">0</span>)</button>
-                <button type="button" class="btn btn-sm btn-outline-success fw-bold py-1 px-2" style="font-size: 0.75rem;" id="pqBtnExpiring" onclick="DashboardController.filterPriorityQueue('EXPIRING')">16–30d (<span id="pqCountExpiring">0</span>)</button>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <!-- Requirement 4: Date Dropdown Filter -->
+                <select id="pqDateDropdown" class="form-select form-select-sm fw-black bg-light shadow-2xs" style="width: 140px; font-size: 0.75rem;" onchange="DashboardController.changePriorityQueueDateFilter(this.value)">
+                  <option value="30">Next 30 Days</option>
+                  <option value="15">Next 15 Days</option>
+                  <option value="45">Next 45 Days</option>
+                  <option value="60">Next 60 Days</option>
+                  <option value="90">Next 90 Days</option>
+                  <option value="ALL">All Dates</option>
+                </select>
+
+                <div class="d-flex align-items-center gap-1">
+                  <button type="button" class="btn btn-sm btn-dark fw-bold py-1 px-2 rounded-pill" style="font-size: 0.7rem;" id="pqBtnAll" onclick="DashboardController.filterPriorityQueue('ALL')">All (<span id="pqCountAll">0</span>)</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger fw-bold py-1 px-2 rounded-pill" style="font-size: 0.7rem;" id="pqBtnOverdue" onclick="DashboardController.filterPriorityQueue('OVERDUE')">Overdue (<span id="pqCountOverdue">0</span>)</button>
+                  <button type="button" class="btn btn-sm btn-outline-warning fw-bold py-1 px-2 rounded-pill" style="font-size: 0.7rem;" id="pqBtnWarning" onclick="DashboardController.filterPriorityQueue('WARNING')">1–15d (<span id="pqCountWarning">0</span>)</button>
+                  <button type="button" class="btn btn-sm btn-outline-success fw-bold py-1 px-2 rounded-pill" style="font-size: 0.7rem;" id="pqBtnExpiring" onclick="DashboardController.filterPriorityQueue('EXPIRING')">16–30d (<span id="pqCountExpiring">0</span>)</button>
+                </div>
               </div>
             </div>
-            <div class="table-responsive" style="max-height: 240px; overflow-y: auto;">
+            <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
               <table class="dash-table table-priority-queue">
                 <thead>
                   <tr>
@@ -528,8 +472,8 @@
           <!-- Recent Activity Ticker -->
           <div class="mt-3 pt-2 border-top">
             <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="small fw-bold text-muted"><i class="bi bi-clock-history me-1"></i> Recent Activity Ticker</span>
-              <span class="badge bg-light text-dark border small fw-bold">Live</span>
+              <span class="small fw-bold text-muted"><i class="fa fa-history me-1"></i> Recent Activity Ticker</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle small fw-black">Live</span>
             </div>
             <div class="activity-ticker-box" id="recentActivityTicker">
               <div class="activity-item">System loaded successfully. Ready for operations.</div>
@@ -539,52 +483,57 @@
       </div>
     </div>
 
-    <!-- Visual Compliance Health Score Bar -->
-    <div class="dash-card p-3">
+    <!-- Requirement 6: Missing Documents Banner & Health Score shifted to bottom -->
+    <div id="missingDocsBanner" class="dash-alert-banner alert alert-warning mb-4 d-none align-items-center justify-content-between shadow-sm rounded-4 border-warning-subtle">
+      <div class="d-flex align-items-center gap-3">
+        <i class="fa fa-triangle-exclamation fs-4 text-warning"></i>
+        <span class="fw-black"><strong id="missingDocsCount">0</strong> active vehicles have missing or incomplete statutory document dates.</span>
+      </div>
+      <a href="reports.html?preset=MISSING_ONLY" class="btn btn-sm btn-dark fw-bold py-1.5 px-3.5 rounded-pill shadow-sm">Fix Missing Papers &rarr;</a>
+    </div>
+
+    <div class="glass-card p-4 mb-3">
       <div class="d-flex justify-content-between align-items-center mb-2">
-        <span class="small fw-bold text-uppercase text-secondary"><i class="bi bi-heart-pulse-fill text-success me-1"></i> Fleet Compliance Health Score</span>
-        <span class="small fw-extrabold font-monospace" id="fleetHealthPercentText">0% Roadworthy</span>
+        <span class="small fw-black text-uppercase text-secondary tracking-wide"><i class="fa fa-heart-pulse text-success me-1.5"></i> Fleet Compliance Health Score</span>
+        <span class="small fw-black font-monospace text-dark fs-6" id="fleetHealthPercentText">0% Roadworthy</span>
       </div>
       <div class="compliance-health-bar">
         <div id="healthBarValid" class="health-segment bg-success" style="width: 0%;" title="Valid"></div>
-        <div id="healthBarWarning" class="health-segment bg-warning" style="width: 0%;" title="Warning <= 15d"></div>
+        <div id="healthBarWarning" class="health-segment bg-warning" style="width: 0%;" title="Warning &le; 15d"></div>
         <div id="healthBarOverdue" class="health-segment bg-danger" style="width: 0%;" title="Overdue"></div>
       </div>
     </div>
-    <br>
-    <!-- Missing Documents Alert Banner -->
-    <div id="missingDocsBanner" class="dash-alert-banner alert alert-warning mb-4 d-none align-items-center justify-content-between shadow-sm">
-      <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-exclamation-triangle-fill fs-5 text-warning"></i>
-        <span><strong id="missingDocsCount">0</strong> vehicles have missing or incomplete document dates.</span>
-      </div>
-      <a href="reports.html?preset=MISSING_ONLY" class="btn btn-sm btn-dark fw-bold py-1 px-3 shadow-sm">Fix Missing Papers &rarr;</a>
-    </div>
   </main>
 
-  <!-- QUICK EDIT MODAL -->
-  <div class="modal fade" id="quickEditModal" tabindex="-1" aria-hidden="true">
+  <!-- QUICK EDIT MODAL & CHANGE PREVIEW -->
+  <div class="modal fade" id="quickEditModal" tabindex="-1" aria-hidden="true" style="z-index: 1065;">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h6 class="modal-title" id="quickEditModalTitle"><i class="bi bi-pencil-square text-primary me-2"></i>Quick Edit</h6>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content glass-modal border-0 shadow-lg">
+        <div class="modal-header modal-gradient-header text-white py-3 px-4">
+          <h6 class="modal-title fw-black mb-0" id="quickEditModalTitle"><i class="fa fa-pen-to-square text-primary me-2"></i>Quick Edit</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body p-4">
           <input type="hidden" id="qeRecordId" />
           <input type="hidden" id="qeFieldType" />
           <input type="hidden" id="qeFieldName" />
+          <input type="hidden" id="qeOldValue" />
           <div class="mb-3">
-            <label id="qeLabel" class="form-label fw-bold small text-secondary text-uppercase">Value</label>
+            <label id="qeLabel" class="form-label fw-black small text-secondary text-uppercase">Value</label>
             <div id="qeInputContainer">
-              <input type="text" id="qeInput" class="form-control form-control-sm fw-bold" />
+              <input type="text" id="qeInput" class="form-control fw-black" />
             </div>
           </div>
-          <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Clicking "Yes to save" applies changes instantly to the database.</small>
+          <div id="qeDiffPreviewBox" class="p-3 bg-light border rounded-3 mb-2 small fw-bold text-secondary d-none">
+            <div class="text-uppercase text-dark fw-black mb-1" style="font-size: 0.68rem;"><i class="fa fa-code-compare me-1 text-primary"></i>Change Preview</div>
+            <div>Previous: <span class="text-danger text-decoration-line-through font-monospace fw-black" id="qeDiffOld">-</span></div>
+            <div>New Value: <span class="text-success font-monospace fw-black" id="qeDiffNew">-</span></div>
+          </div>
+          <small class="text-muted fw-bold"><i class="fa fa-info-circle me-1"></i>Review changes and click Confirm &amp; Save.</small>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm fw-bold px-3" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold px-4" id="btnYesToSave" onclick="DashboardController.executeQuickSave()">Yes to save</button>
+        <div class="modal-footer bg-light py-3 px-4">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-black rounded-pill px-4 shadow-sm" id="btnYesToSave" onclick="DashboardController.executeQuickSave()"><i class="fa fa-check me-1"></i>Confirm &amp; Save</button>
         </div>
       </div>
     </div>

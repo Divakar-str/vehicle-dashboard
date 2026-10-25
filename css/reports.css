@@ -1,491 +1,531 @@
-/* Layout & Container */
-.report-container {
-  max-width: 1780px;
-  margin: 0 auto;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #0f172a;
+/* ==========================================================================    Fleet Management - Ultimate SaaS Glassmorphism & Perfect A4 Print Reports CSS    ========================================================================== */
+:root {
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-glow: rgba(37, 99, 235, 0.16);
+  --glass-surface: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(255, 255, 255, 0.98);
+  --glass-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  --text-main: #0f172a;
+  --text-dark-bold: #020617;
+  --text-muted: #334155;
+  --border-subtle: #cbd5e1;
+  --radius-card: 20px;
+  --fast-ease: 0.15s cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* ==========================================================================    1. Global Workspace & Body Styles    ========================================================================== */
+body.bg-light,
+body.glass-app-bg {
+  background-color: #f1f5f9 !important;
+  background-image: radial-gradient(circle at 8% 0%, rgba(37, 99, 235, 0.09) 0%, transparent 42%), radial-gradient(circle at 92% 0%, rgba(16, 185, 129, 0.07) 0%, transparent 38%), radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.06) 0%, transparent 48%);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-main);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.fw-black {
+  font-weight: 900 !important;
+}
+
+.tracking-tight {
+  letter-spacing: -0.02em;
+}
+
+/* ==========================================================================    2. Glassmorphism Navbar & Cards (CRITICAL: overflow: visible for dropdowns)    ========================================================================== */
+
+
+.glass-card,
 .report-card {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  padding: 18px 20px;
+  background: var(--glass-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-card);
+  border: 1.5px solid var(--glass-border);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.95) inset, var(--glass-shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+  overflow: visible !important;
+  /* CRITICAL: Prevents card containers from clipping dropdowns */
+  transition: transform var(--fast-ease), box-shadow var(--fast-ease), border-color var(--fast-ease);
 }
 
+.glass-card .row,
+.report-card .row,
+.glass-card [class*="col-"],
+.report-card [class*="col-"] {
+  overflow: visible !important;
+  /* CRITICAL: Prevents column containers from clipping dropdowns */
+}
+
+.glass-card:hover,
+.report-card:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.1);
+}
+
+.report-container {
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+/* ==========================================================================    3. Filter Toolbar, Dropdowns & Preset Chips    ========================================================================== */
+.filter-preset-chip {
+  border: 1.5px solid var(--border-subtle);
+  background: #ffffff;
+  color: #334155;
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 50rem;
+  cursor: pointer;
+  transition: var(--fast-ease);
+}
+
+.filter-preset-chip:hover {
+  background: #f8fafc;
+  border-color: #64748b;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.filter-preset-chip.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+}
+
+/* Dropdown stacking fix: raise the card containing an open menu */
+.glass-card:has(.dropdown-menu.show),
+.report-card:has(.dropdown-menu.show) {
+  position: relative !important;
+  z-index: 1060 !important;
+  overflow: visible !important;
+}
+
+/* Keep dropdown and menu above neighboring controls */
+.dropdown {
+  position: relative;
+  overflow: visible !important;
+}
+
+.dropdown-menu.doc-dropdown-menu {
+  z-index: 1070 !important;
+}
+
+/* Avoid clipping inside the filter card's grid */
+.glass-card .row,
+.report-card .row,
+.glass-card [class*="col-"],
+.report-card [class*="col-"] {
+  overflow: visible !important;
+}
+
+/* Do not force .table-wrapper or .table-responsive to overflow: visible;
+   they may need horizontal scrolling for wide report tables. */
 .table-wrapper {
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 16px;
   background-color: #ffffff;
   overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
 }
 
-/* DataTables Table */
-table.dataTable {
-  width: 100% !important;
+#reportDataTable {
   border-collapse: collapse !important;
+  width: 100% !important;
   margin: 0 !important;
 }
 
-table.dataTable thead th {
+#reportDataTable thead th {
   background: #0f172a !important;
   color: #ffffff !important;
-  font-weight: 800;
-  font-size: 0.78rem;
+  font-weight: 900;
+  font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 10px 8px !important;
-  border: none !important;
+  letter-spacing: 0.05em;
+  padding: 12px 10px !important;
+  border: 1px solid #1e293b !important;
   white-space: nowrap;
-  vertical-align: middle;
 }
 
-table.dataTable tbody td {
-  padding: 8px 8px !important;
-  font-size: 0.82rem;
-  vertical-align: top;
-  border-bottom: 1px solid #e2e8f0;
+#reportDataTable tbody tr {
+  cursor: pointer;
+  transition: background-color 0.1s ease;
 }
 
-table.dataTable tbody tr:hover td {
+#reportDataTable tbody td {
+  padding: 11px 10px !important;
+  vertical-align: middle !important;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  font-weight: 800;
+  color: var(--text-dark-bold);
+  font-size: 0.86rem;
+}
+
+#reportDataTable tbody tr:hover td {
   background-color: #f8fafc !important;
 }
 
-/* Centered & Bolder Vehicle Number */
+/* Vehicle Reg Plate & Spec Stack */
 .reg-no-text {
-  font-family: monospace;
-  font-weight: 950;
-  font-size: 1.22rem;
-  color: #0369a1;
-  letter-spacing: 0.06em;
-  line-height: 1.1;
-  text-align: center;
-  display: block;
-  margin-bottom: 3px;
+  font-size: 1.08rem;
+  font-weight: 900;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #0284c7;
+  letter-spacing: 0.03em;
 }
 
 .spec-stack {
-  font-size: 0.73rem;
-  font-weight: 700;
-  color: #475569;
-  line-height: 1.4;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #334155;
   margin-top: 3px;
-  text-align: center;
 }
 
-/* Single-Line Tax Amount & Type */
 .tax-highlight-single-line {
   color: #047857;
-  font-weight: 800;
-  white-space: nowrap !important;
-  display: inline-block;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Customer Contacts */
+/* Customer & Owner Info */
 .customer-name-heading {
-  font-weight: 800;
-  color: #0f172a;
-  font-size: 0.88rem;
-  line-height: 1.3;
-  white-space: normal !important;
-  word-break: break-word !important;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #020617;
 }
 
 .owner-sub {
   font-size: 0.76rem;
+  font-weight: 800;
   color: #475569;
-  font-weight: 600;
-  margin-top: 2px;
 }
 
 .contact-phone-block {
-  line-height: 1.4;
-  margin-top: 4px;
+  margin-top: 3px;
+  font-size: 0.8rem;
 }
 
 .phone-link {
-  color: #334155;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-weight: 900;
+  color: #2563eb;
   text-decoration: none;
-  font-family: monospace;
-  font-weight: 700;
-  font-size: 0.8rem;
 }
 
 .phone-link:hover {
-  color: #0284c7;
   text-decoration: underline;
 }
 
-/* WhatsApp Icon Button */
-.btn-whatsapp-icon {
-  width: 26px;
-  height: 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #25d366;
-  color: #ffffff !important;
-  border-radius: 50%;
-  font-size: 0.85rem;
-  text-decoration: none;
-  border: none;
-  box-shadow: 0 1px 3px rgba(37, 211, 102, 0.3);
-  transition: transform 0.15s ease, opacity 0.15s ease;
-}
-
-.btn-whatsapp-icon:hover {
-  transform: scale(1.1);
-  opacity: 0.95;
-}
-
-/* Stacked Date Cell with Top Spacing */
-.date-stack-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 3px;
-  line-height: 1.2;
-  margin-top: 4px;
-  padding-top: 2px;
-}
-
+/* ==========================================================================    5. Crystal Date Pills, Countdown Badges & N/A    ========================================================================== */
 .editable-report-date {
-  cursor: pointer;
-  font-weight: 800;
-  font-size: 0.96rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.86rem;
+  font-weight: 900;
+  padding: 3px 9px;
+  border-radius: 7px;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
   color: #0f172a;
-  padding: 1px 3px;
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-  transition: background-color 0.15s ease;
-  user-select: none;
-  white-space: nowrap;
+  display: inline-block;
+  cursor: pointer;
+  transition: var(--fast-ease);
 }
 
 .editable-report-date:hover {
-  background-color: #fef08a;
-  outline: 1px dashed #ca8a04;
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.editable-report-date.unset-dash {
+  border: 1.5px dashed #94a3b8;
+  color: #64748b;
+  padding: 2px 10px;
+  background: #ffffff;
+}
+
+.date-stack-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
 }
 
 .countdown-pill {
-  font-size: 0.67rem;
-  font-weight: 800;
-  padding: 1px 5px;
-  border-radius: 4px;
-  display: inline-block;
-  font-family: monospace;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   white-space: nowrap;
 }
 
-.cd-lapsed  { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
-.cd-fine    { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
-.cd-safe    { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-.cd-notice  { background-color: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc; }
-.cd-clear   { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.cd-lapsed {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1.5px solid #f87171;
+}
 
-/* Quick +1 Quarter Button */
-.btn-quick-tax-cycle {
-  font-size: 0.65rem;
+.cd-fine {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1.5px solid #fbbf24;
+}
+
+.cd-safe {
+  background: #dcfce7;
+  color: #065f46;
+  border: 1.5px solid #6ee7b7;
+}
+
+.cd-notice {
+  background: #e0f2fe;
+  color: #075985;
+  border: 1.5px solid #7dd3fc;
+}
+
+.cd-clear {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
+}
+
+.badge-na {
+  font-size: 0.74rem;
   font-weight: 800;
-  padding: 1px 5px;
-  border-radius: 4px;
-  background-color: #f0fdf4;
-  color: #15803d;
-  border: 1px solid #86efac;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-  line-height: 1.2;
+  color: #64748b;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 2px 8px;
+  display: inline-block;
+}
+
+/* National Permit Age Status Badges */
+.badge-np-convert-gv {
+  display: inline-block;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+.badge-np-final-year {
+  display: inline-block;
+  background-color: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+/* ==========================================================================    6. Quick Tax Cycle, Remarks & WhatsApp Buttons    ========================================================================== */
+.btn-quick-tax-cycle {
+  border: 1.5px solid #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 50rem;
+  transition: var(--fast-ease);
 }
 
 .btn-quick-tax-cycle:hover {
-  background-color: #15803d;
+  background: #2563eb;
   color: #ffffff;
-  border-color: #15803d;
+  border-color: #2563eb;
 }
 
-/* NP 14 & 15 Year Life-Cycle Badges */
-.badge-np-final-year {
-  background-color: #fef3c7;
-  color: #b45309;
-  border: 1px solid #fde68a;
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 2px 5px;
-  border-radius: 4px;
-  display: inline-block;
-  line-height: 1.2;
-}
-
-.badge-np-convert-gv {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #f87171;
-  font-size: 0.65rem;
-  font-weight: 900;
-  padding: 2px 5px;
-  border-radius: 4px;
-  display: inline-block;
-  line-height: 1.2;
-}
-
-/* Remarks & Overdue Rules */
 .report-remarks-box {
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: #334155;
-  line-height: 1.35;
+  background: #fffbeb;
+  border: 1.5px dashed #fcd34d;
+  border-radius: 9px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #b45309;
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  border: 1px dashed #cbd5e1;
-  background-color: #f8fafc;
-  transition: all 0.15s ease;
   word-break: break-word;
+  transition: var(--fast-ease);
 }
 
 .report-remarks-box:hover {
-  background-color: #fef9c3;
-  border-color: #facc15;
-  color: #854d0e;
+  background: #fef3c7;
+  border-color: #f59e0b;
 }
 
 .blocker-pill {
-  background-color: #fff1f2;
-  border: 1px solid #fecdd3;
-  color: #9f1239;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 3px 6px;
-  border-radius: 4px;
   display: inline-block;
-  margin-top: 5px;
-  line-height: 1.3;
-}
-
-/* Preset Filter Chips */
-.filter-preset-chip {
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 20px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  padding: 4px 12px;
-  color: #475569;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  user-select: none;
-}
-
-.filter-preset-chip:hover {
-  background-color: #f1f5f9;
-  border-color: #94a3b8;
-}
-
-.filter-preset-chip.active {
-  background-color: #0f172a;
-  border-color: #0f172a;
-  color: #ffffff;
-}
-
-/* Dropdown Menus */
-.doc-dropdown-menu {
-  min-width: 240px;
-  padding: 10px 14px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-}
-
-.doc-dropdown-menu .form-check {
-  margin-bottom: 6px;
-}
-
-.doc-dropdown-menu .form-check:last-child {
-  margin-bottom: 0;
-}
-
-/* DataTables Controls */
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_filter {
-  margin-bottom: 12px;
-}
-
-.dataTables_wrapper .dataTables_length label,
-.dataTables_wrapper .dataTables_filter label {
-  font-weight: 700;
-  font-size: 0.8rem;
-  color: #475569;
-}
-
-.dataTables_wrapper .dataTables_length select,
-.dataTables_wrapper .dataTables_filter input {
-  border: 1px solid #cbd5e1;
+  background-color: #fef2f2;
+  border: 1.5px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 2px 7px;
   border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  outline: none;
+  margin-top: 4px;
+}
+
+.btn-whatsapp-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: #dcfce7;
+  color: #15803d;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  transition: var(--fast-ease);
+}
+
+.btn-whatsapp-icon:hover {
+  background: #22c55e;
+  color: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* ==========================================================================    7. Modals & Form Inputs    ========================================================================== */
+.glass-modal {
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.modal-gradient-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--border-subtle);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-dark-bold);
   background-color: #ffffff;
+  transition: var(--fast-ease);
 }
 
-.dataTables_wrapper .dataTables_info {
-  font-weight: 600;
-  font-size: 0.8rem;
-  color: #64748b;
-  padding-top: 12px !important;
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.dataTables_wrapper .dataTables_paginate {
-  padding-top: 10px !important;
+.print-report-header {
+  display: none;
 }
 
-.pagination {
-  gap: 3px;
-  margin-bottom: 0;
-}
-
-.page-item .page-link {
-  border: 1px solid #cbd5e1;
-  background-color: #ffffff;
-  color: #1e293b;
-  font-weight: 700;
-  font-size: 0.78rem;
-  border-radius: 6px !important;
-  padding: 4px 9px;
-}
-
-.page-item.active .page-link {
-  background-color: #0f172a !important;
-  border-color: #0f172a !important;
-  color: #ffffff !important;
-}
-
-/* Strict Clean Print Rules */
+/* ==========================================================================    8. Pristine A4 Landscape Print Stylesheet    ========================================================================== */
 @media print {
   @page {
     size: A4 landscape;
     margin: 6mm 5mm;
   }
 
-  html, body {
-    background-color: #ffffff !important;
+  html,
+  body {
+    width: 100% !important;
+    background: #ffffff !important;
     font-size: 7.5pt !important;
     color: #000000 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .navbar,
-  .toast-container,
-  #reportTopToolbar,
-  #reportFilterCard,
-  #reportTableCardHeader,
-  .btn,
-  .btn-whatsapp-icon,
-  .btn-quick-tax-cycle,
-  .modal,
-  .dt-container .dt-layout-row,
-  .dt-container .dt-search,
-  .dt-container .dt-length,
-  .dt-container .dt-info,
-  .dt-container .dt-paging,
-  .dataTables_wrapper div.dataTables_length,
-  div.dataTables_wrapper div.dataTables_filter,
-  div.dataTables_wrapper div.dataTables_info,
-  div.dataTables_wrapper div.dataTables_paginate {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .report-container {
-    max-width: 100% !important;
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  .report-card, .table-wrapper {
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    height: auto !important;
     overflow: visible !important;
-    background: transparent !important;
   }
 
   .print-report-header {
     display: block !important;
     margin-bottom: 6px;
     border-bottom: 1.5px solid #000000;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
   }
 
-  .print-report-header h4 {
-    margin: 0;
-    font-size: 11pt;
-    font-weight: 900;
+  .navbar,
+  #reportTopToolbar,
+  #reportFilterCard,
+  .modal,
+  .btn,
+  .dt-container,
+  .dt-search,
+  .dt-length,
+  .dt-info,
+  .dt-paging,
+  .d-print-none {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  .print-report-header p {
-    margin: 0;
-    font-size: 7pt;
+  .glass-card,
+  .report-card,
+  .table-wrapper {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
   }
 
-  table.dataTable {
+  #reportDataTable {
     width: 100% !important;
-    border: 1px solid #000000 !important;
+    border-collapse: collapse !important;
     display: table !important;
-    page-break-inside: auto;
+    visibility: visible !important;
   }
 
-  table.dataTable tr {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+  #reportDataTable tr {
+    page-break-inside: avoid;
     page-break-after: auto;
   }
 
-  table.dataTable thead th {
-    background-color: #e2e8f0 !important;
+  #reportDataTable thead th {
+    background-color: #f1f5f9 !important;
     color: #000000 !important;
     border: 1px solid #000000 !important;
     font-size: 7pt !important;
-    padding: 3px 4px !important;
+    padding: 5px !important;
+    font-weight: 800 !important;
   }
 
-  table.dataTable tbody td {
-    border: 1px solid #000000 !important;
-    padding: 3px 4px !important;
-    font-size: 6.8pt !important;
-    word-break: break-word !important;
-  }
-
-  .date-stack-cell {
-    margin-top: 1px !important;
-    padding-top: 0 !important;
+  #reportDataTable tbody td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 4px !important;
+    font-size: 8pt !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
   }
 
   .editable-report-date {
-    outline: none !important;
     background: transparent !important;
-    padding: 0 !important;
-    font-size: 7.5pt !important;
-  }
-
-  .report-remarks-box {
     border: none !important;
-    background: transparent !important;
     padding: 0 !important;
+    color: #000000 !important;
+    font-size: 8.5pt !important;
   }
 
-  .report-remarks-box i.bi-pencil-fill {
-    display: none !important;
+  .countdown-pill {
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+    background: transparent !important;
   }
-}
-
-.print-report-header {
-  display: none;
 }

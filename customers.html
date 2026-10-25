@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <!-- DataTables Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css" />
+    <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <!-- Global CSS -->
   <link rel="stylesheet" href="css/style.css" />
   <!-- Dedicated Customer Module CSS -->
@@ -36,47 +38,27 @@
   </div>
 
   <!-- Modern Top Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3 py-2 glass-navbar">
+    <!-- Standard Bootstrap Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top glass-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="dashboard.html">
-        <img src="images/logo.png" alt="Logo" width="36" height="36" class="rounded-circle bg-white p-1 shadow-sm"
-          onerror="this.style.display='none'" />
-        <span class="tracking-tight">Fleet Management</span>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
+        <img src="images/logo.png" alt="Logo" width="32" height="32" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
+        <span class="fw-bold tracking-tight">Fleet Management</span>
       </a>
-
-      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
-        data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-
       <div class="collapse navbar-collapse" id="topNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-2">
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i>
-              Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="customers.html"><i
-                class="bi bi-people-fill me-1"></i> Customers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>
-              Reports</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="print.html"><i class="bi bi-printer me-1"></i> Print</a>
-          </li>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="dashboard.html"><i class="fa fa-th-large me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="customers.html"><i class="fa fa-users me-1"></i> Customers</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="vehicles.html"><i class="fa fa-truck me-1"></i> Vehicles</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="reports.html"><i class="fa fa-chart-bar me-1"></i> Reports</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="print.html"><i class="fa fa-print me-1"></i> Print</a></li>
         </ul>
-
-        <div
-          class="d-flex align-items-center gap-3 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0">
-          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay"
-              class="text-white fw-semibold">admin</span></span>
-          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i
-              class="bi bi-box-arrow-right me-1"></i>Logout</button>
+        <div class="d-flex align-items-center gap-3">
+          <span class="text-white-50 small"><i class="fa fa-user-circle me-1"></i><span id="userDisplay" class="text-white fw-semibold">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i class="fa fa-sign-out-alt me-1"></i>Logout</button>
         </div>
       </div>
     </div>
