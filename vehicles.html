@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vehicles Registry - FleetERP</title>
+  <title>Vehicles Registry - Fleet Management</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="images/favicon.ico" />
@@ -12,54 +12,57 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <!-- DataTables Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css" />
   <!-- Tom Select CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
 
-  <!-- App Stylesheet -->
+  <!-- Glassmorphism & App Stylesheet -->
   <link rel="stylesheet" href="css/vehicles.css" />
 </head>
-<body class="bg-light">
+<body class="glass-app-bg">
 
   <!-- Toast Notification Alert -->
-  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1300;">
-    <div id="liveToast" class="toast align-items-center text-white border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1400;">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body" id="toastMessage">Action completed.</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <div class="toast-body py-3 px-3 fw-bold" id="toastMessage">Action completed.</div>
+        <button type="button" id="toastCloseBtn" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
       </div>
     </div>
   </div>
 
   <!-- Standard Bootstrap Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top glass-navbar">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-        <img src="images/logo.png" alt="Logo" width="30" height="30" class="rounded-circle bg-white p-1" onerror="this.style.display='none'" />
-        <span>Fleet Management</span>
+        <img src="images/logo.png" alt="Logo" width="32" height="32" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
+        <span class="fw-bold tracking-tight">Fleet Management</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="topNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link" href="customers.html"><i class="bi bi-people-fill me-1"></i> Customers</a></li>
-          <li class="nav-item"><a class="nav-link active" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a></li>
-          <li class="nav-item"><a class="nav-link" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</a></li>
-          <li class="nav-item"><a class="nav-link" href="print.html"><i class="bi bi-printer me-1"></i> Print</a></li>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="dashboard.html"><i class="fa fa-th-large me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="customers.html"><i class="fa fa-users me-1"></i> Customers</a></li>
+          <li class="nav-item"><a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="vehicles.html"><i class="fa fa-truck me-1"></i> Vehicles</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="reports.html"><i class="fa fa-chart-bar me-1"></i> Reports</a></li>
+          <li class="nav-item"><a class="nav-link px-3 rounded-pill" href="print.html"><i class="fa fa-print me-1"></i> Print</a></li>
         </ul>
         <div class="d-flex align-items-center gap-3">
-          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay" class="text-white">admin</span></span>
-          <button class="btn btn-outline-danger btn-sm" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+          <span class="text-white-50 small"><i class="fa fa-user-circle me-1"></i><span id="userDisplay" class="text-white fw-semibold">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i class="fa fa-sign-out-alt me-1"></i>Logout</button>
         </div>
       </div>
     </div>
   </nav>
 
   <!-- Main Container -->
-  <main class="vehicle-container py-4 px-3">
+  <main class="vehicle-container py-4 px-3 px-md-4">
+
     <!-- Printable Report Header -->
     <div class="print-only-header">
       <div class="d-flex justify-content-between align-items-end">
@@ -71,136 +74,136 @@
     </div>
 
     <!-- Top Action Toolbar -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
-      <div id="headerTitleBlock">
-        <h4 class="fw-bold mb-0 text-dark">Vehicle Registry</h4>
-        <small class="text-muted fw-semibold">Double-click any row to view complete details. Click dates or remarks to edit.</small>
-      </div>
-      <div class="d-flex gap-2" id="headerActions">
-        <button class="btn btn-outline-secondary btn-sm d-flex align-items-center fw-bold shadow-sm" type="button" data-bs-toggle="collapse" data-bs-target="#filterDrawer">
-          <i class="bi bi-funnel-fill me-1"></i> Filters <span id="activeFilterBadge" class="badge bg-primary ms-1 d-none">Active</span>
-        </button>
-        <button class="btn btn-outline-dark btn-sm d-flex align-items-center fw-bold shadow-sm" onclick="VehicleController.printReport()" title="Print full list">
-          <i class="bi bi-printer me-1"></i> Print / PDF
-        </button>
-        <button id="btnRefresh" class="btn btn-outline-secondary btn-sm d-flex align-items-center fw-bold shadow-sm" type="button" onclick="VehicleController.load()" title="Reload data">
-          <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> <span id="refreshBtnText">Refresh</span>
-        </button>
-        <button class="btn btn-primary btn-sm d-flex align-items-center fw-bold shadow-sm" onclick="VehicleController.openAdd()">
-          <i class="bi bi-plus-lg me-1"></i> Add Vehicle
-        </button>
+    <div class="glass-card p-3 p-md-4 mb-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div id="headerTitleBlock">
+          <h3 class="fw-black text-dark mb-0 tracking-tight"><i class="fa fa-truck text-primary me-2"></i>Vehicle Registry</h3>
+          <p class="text-muted small mb-0 mt-1">Click any row to view full details. Double-click / double-tap any applicable date or note to quick-edit.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2" id="headerActions">
+          <button class="btn btn-glass-light btn-sm d-flex align-items-center fw-bold shadow-2xs" type="button" data-bs-toggle="collapse" data-bs-target="#filterDrawer">
+            <i class="fa fa-filter me-1 text-primary"></i> Filters <span id="activeFilterBadge" class="badge bg-primary ms-1 d-none">Active</span>
+          </button>
+          <button class="btn btn-glass-light btn-sm d-flex align-items-center fw-bold shadow-2xs" onclick="VehicleController.printReport()" title="Print full list">
+            <i class="fa fa-print me-1"></i> Print / PDF
+          </button>
+          <button id="btnRefresh" class="btn btn-glass-light btn-sm d-flex align-items-center fw-bold shadow-2xs" type="button" onclick="VehicleController.load()" title="Reload data">
+            <i id="refreshIcon" class="fa fa-sync-alt me-1"></i> <span id="refreshBtnText">Refresh</span>
+          </button>
+          <button class="btn btn-primary btn-sm d-flex align-items-center fw-bold shadow-sm px-4 rounded-pill" onclick="VehicleController.openAdd()">
+            <i class="fa fa-plus me-1"></i> Add Vehicle
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Metrics Counters -->
-    <div class="row g-2 mb-4" id="metricRow">
+    <!-- Metrics Counters (Primary Expiry Status Filters) -->
+    <div class="row g-3 mb-4" id="metricRow">
       <div class="col-sm-6 col-md-4 col-xl">
-        <div class="metric-card metric-total" onclick="VehicleController.filterByMetric('ALL', this)" title="Filter: All vehicles">
+        <div class="metric-card metric-total glass-card active-metric-filter" data-metric="ALL" onclick="VehicleController.filterByMetric('ALL', this)" title="Show all vehicles">
           <div>
             <div class="metric-val" id="metricTotal">0</div>
             <div class="metric-label">All Vehicles</div>
           </div>
-          <div class="metric-icon"><i class="bi bi-truck"></i></div>
+          <div class="metric-icon"><i class="fa fa-truck"></i></div>
         </div>
       </div>
       <div class="col-sm-6 col-md-4 col-xl">
-        <div class="metric-card metric-expired" onclick="VehicleController.filterByMetric('EXPIRED', this)" title="Filter: Expired / Overdue">
+        <div class="metric-card metric-expired glass-card" data-metric="EXPIRED" onclick="VehicleController.filterByMetric('EXPIRED', this)" title="Filter: Expired / Overdue">
           <div>
             <div class="metric-val" id="metricExpired">0</div>
             <div class="metric-label">Expired / Overdue</div>
           </div>
-          <div class="metric-icon"><i class="bi bi-x-octagon"></i></div>
+          <div class="metric-icon"><i class="fa fa-times-circle"></i></div>
         </div>
       </div>
       <div class="col-sm-6 col-md-4 col-xl">
-        <div class="metric-card metric-15" onclick="VehicleController.filterByMetric('LE_15', this)" title="Filter: Due in 1-15 days">
+        <div class="metric-card metric-15 glass-card" data-metric="LE_15" onclick="VehicleController.filterByMetric('LE_15', this)" title="Filter: Due in 1-15 days">
           <div>
             <div class="metric-val" id="metric15">0</div>
             <div class="metric-label">&le; 15 Days</div>
           </div>
-          <div class="metric-icon"><i class="bi bi-exclamation-triangle"></i></div>
+          <div class="metric-icon"><i class="fa fa-exclamation-triangle"></i></div>
         </div>
       </div>
       <div class="col-sm-6 col-md-4 col-xl">
-        <div class="metric-card metric-30" onclick="VehicleController.filterByMetric('16_30', this)" title="Filter: Due in 16-30 days">
+        <div class="metric-card metric-30 glass-card" data-metric="16_30" onclick="VehicleController.filterByMetric('16_30', this)" title="Filter: Due in 16-30 days">
           <div>
             <div class="metric-val" id="metric30">0</div>
             <div class="metric-label">16 &ndash; 30 Days</div>
           </div>
-          <div class="metric-icon"><i class="bi bi-clock-history"></i></div>
+          <div class="metric-icon"><i class="fa fa-clock"></i></div>
         </div>
       </div>
       <div class="col-sm-6 col-md-4 col-xl">
-        <div class="metric-card metric-45" onclick="VehicleController.filterByMetric('31_45', this)" title="Filter: Due in 31-45 days">
+        <div class="metric-card metric-45 glass-card" data-metric="31_45" onclick="VehicleController.filterByMetric('31_45', this)" title="Filter: Due in 31-45 days">
           <div>
             <div class="metric-val" id="metric45">0</div>
             <div class="metric-label">31 &ndash; 45 Days</div>
           </div>
-          <div class="metric-icon"><i class="bi bi-calendar-event"></i></div>
+          <div class="metric-icon"><i class="fa fa-calendar-alt"></i></div>
         </div>
       </div>
       <div class="col-sm-6 col-md-4 col-xl">
-        <div class="metric-card metric-clear" onclick="VehicleController.filterByMetric('VALID', this)" title="Filter: Over 45 days compliant">
+        <div class="metric-card metric-clear glass-card" data-metric="VALID" onclick="VehicleController.filterByMetric('VALID', this)" title="Filter: Over 45 days compliant">
           <div>
             <div class="metric-val" id="metricValid">0</div>
             <div class="metric-label">&gt; 45 Days Safe</div>
           </div>
-          <div class="metric-icon"><i class="bi bi-check2-circle"></i></div>
+          <div class="metric-icon"><i class="fa fa-check-circle"></i></div>
         </div>
       </div>
     </div>
 
-    <!-- Collapsible Advanced Filters -->
+    <!-- Collapsible Advanced Filters & Sorting (Requirement 6: No duplicate Expiry Status dropdown) -->
     <div class="collapse mb-4" id="filterDrawer">
-      <div class="clean-card p-3" id="filterCardWrapper">
+      <div class="glass-card p-3 p-md-4" id="filterCardWrapper">
         <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-          <span class="fw-bold text-primary small text-uppercase"><i class="bi bi-sliders me-1"></i> Advanced Filters</span>
-          <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 fw-bold" onclick="VehicleController.clearAllFilters()">
-            Clear All Filters
+          <span class="fw-black text-primary small text-uppercase"><i class="fa fa-sliders-h me-1"></i> Filter &amp; Sort Vehicles</span>
+          <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 fw-bold text-danger" onclick="VehicleController.clearAllFilters()">
+            <i class="fa fa-undo me-1"></i>Reset All
           </button>
         </div>
-        <div class="row g-3 align-items-center">
-          <div class="col-md-3 col-sm-6">
-            <label class="form-label small fw-bold text-secondary mb-1">Filter by Customer / Firm</label>
-            <select id="customerFilter" class="form-select form-select-sm" onchange="VehicleController.applyFilters()"></select>
+        <div class="row g-3 align-items-end">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label small fw-bold text-dark mb-1">Filter by Customer / Firm</label>
+            <select id="customerFilter" onchange="VehicleController.applyFilters()"></select>
           </div>
-          <div class="col-md-3 col-sm-6">
-            <label class="form-label small fw-bold text-secondary mb-1">Status Window</label>
-            <select id="statusFilter" class="form-select form-select-sm fw-semibold" onchange="VehicleController.applyFilters()">
-              <option value="">All Windows</option>
-              <option value="EXPIRED">Action Required (Expired / 0d)</option>
-              <option value="LE_15">&le; 15 Days</option>
-              <option value="16_30">16 &ndash; 30 Days</option>
-              <option value="31_45">31 &ndash; 45 Days</option>
-              <option value="LE_45">All Due &le; 45 Days</option>
-              <option value="VALID">&gt; 45 Days Safe</option>
+          <div class="col-lg-2 col-md-6">
+            <label class="form-label small fw-bold text-dark mb-1">Sort Order</label>
+            <select id="sortOptionSelect" class="form-select form-select-sm fw-bold" onchange="VehicleController.applySorting(this.value)">
+              <option value="printid_asc">Customer Serial (Default)</option>
+              <option value="reg_asc">Vehicle Plate (A &rarr; Z)</option>
+              <option value="urgency">Expiry Urgency</option>
+              <option value="owner_asc">Owner Name (A &rarr; Z)</option>
+              <option value="newest">Recently Added</option>
             </select>
           </div>
-          <div class="col-md-2 col-sm-6">
-            <label class="form-label small fw-bold text-secondary mb-1">Vehicle Category</label>
-            <select id="categoryFilter" class="form-select form-select-sm fw-semibold" onchange="VehicleController.applyFilters()">
-              <option value="">All Categories</option>
-              <option value="LGV">LGV</option>
-              <option value="MGV">MGV</option>
-              <option value="HGV">HGV</option>
-              <option value="LPV">LPV</option>
-              <option value="MPV">MPV</option>
-            </select>
-          </div>
-          <div class="col-md-2 col-sm-6">
-            <label class="form-label small fw-bold text-secondary mb-1 d-block">Permits</label>
-            <div class="btn-group btn-group-sm w-100" role="group">
-              <input type="checkbox" class="btn-check" id="btnTogglePermit" autocomplete="off" onchange="VehicleController.applyFilters()">
-              <label class="btn btn-outline-success fw-bold" for="btnTogglePermit">Permit</label>
-              <input type="checkbox" class="btn-check" id="btnToggleNP" autocomplete="off" onchange="VehicleController.applyFilters()">
-              <label class="btn btn-outline-info fw-bold" for="btnToggleNP">NP</label>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label small fw-bold text-dark mb-1">Category &amp; Permits</label>
+            <div class="d-flex gap-2">
+              <select id="categoryFilter" class="form-select form-select-sm fw-bold" onchange="VehicleController.applyFilters()">
+                <option value="">All Categories</option>
+                <option value="LGV">LGV</option>
+                <option value="MGV">MGV</option>
+                <option value="HGV">HGV</option>
+                <option value="LPV">LPV</option>
+                <option value="MPV">MPV</option>
+              </select>
+              <div class="btn-group btn-group-sm flex-shrink-0" role="group">
+                <input type="checkbox" class="btn-check" id="btnTogglePermit" autocomplete="off" onchange="VehicleController.applyFilters()">
+                <label class="btn btn-outline-success fw-bold px-2" for="btnTogglePermit" title="State Permit Only">Permit</label>
+                <input type="checkbox" class="btn-check" id="btnToggleNP" autocomplete="off" onchange="VehicleController.applyFilters()">
+                <label class="btn btn-outline-info fw-bold px-2" for="btnToggleNP" title="National Permit Only">NP</label>
+              </div>
             </div>
           </div>
-          <div class="col-md-2 col-sm-12">
-            <label class="form-label small fw-bold text-secondary mb-1">Custom Expiry Range</label>
+          <div class="col-lg-3 col-md-6">
+            <label class="form-label small fw-bold text-dark mb-1">Expiry Date Range</label>
             <div class="input-group input-group-sm">
-              <input type="date" id="customDateFrom" class="form-control" onchange="VehicleController.applyFilters()" title="From Date" />
-              <input type="date" id="customDateTo" class="form-control" onchange="VehicleController.applyFilters()" title="To Date" />
+              <input type="date" id="customDateFrom" class="form-control fw-bold" onchange="VehicleController.applyFilters()" title="From Date" />
+              <span class="input-group-text bg-light fw-bold text-muted px-1">to</span>
+              <input type="date" id="customDateTo" class="form-control fw-bold" onchange="VehicleController.applyFilters()" title="To Date" />
             </div>
           </div>
         </div>
@@ -208,9 +211,9 @@
     </div>
 
     <!-- DataTable Container -->
-    <div class="clean-card p-3">
+    <div class="glass-card p-3 p-md-4">
       <div class="table-wrapper">
-        <table id="vehicleDataTable" class="table align-middle">
+        <table id="vehicleDataTable" class="table align-middle mb-0">
           <thead>
             <tr>
               <th scope="col" style="width: 16%;">Vehicle &amp; Tax Spec</th>
@@ -231,22 +234,27 @@
   </main>
 
   <!-- Modal: Quick Inline Remarks Editor -->
-  <div class="modal fade" id="quickRemarksModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="quickRemarksModal" tabindex="-1" aria-hidden="true" style="z-index: 1065;">
     <div class="modal-dialog modal-md modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
-        <div class="modal-header bg-dark text-white py-2 px-3">
-          <h6 class="modal-title fw-bold mb-0" id="quickRemarksTitle">Edit Remarks</h6>
+      <div class="modal-content glass-modal border-0 shadow-lg">
+        <div class="modal-header modal-gradient-header text-white py-2.5 px-3">
+          <h6 class="modal-title fw-bold mb-0"><i class="fa fa-comment-dots me-2 text-warning"></i>Edit Vehicle Notes</h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form id="quickRemarksForm" onsubmit="event.preventDefault(); VehicleController.saveQuickRemarks();">
           <div class="modal-body p-3">
             <input type="hidden" id="qr_vehicle_id" />
-            <label class="form-label small fw-bold text-muted">Vehicle Remarks / Operational Notes</label>
-            <textarea id="qr_input" class="form-control fw-semibold" rows="3" placeholder="Enter remarks..."></textarea>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label small fw-bold text-dark mb-0">Operational Notes / Remarks</label>
+              <button type="button" class="btn btn-link btn-sm p-0 text-danger text-decoration-none fw-bold" style="font-size: 0.75rem;" onclick="document.getElementById('qr_input').value=''; document.getElementById('qr_input').focus();">
+                <i class="fa fa-times me-1"></i>Clear
+              </button>
+            </div>
+            <textarea id="qr_input" class="form-control fw-bold" rows="3" placeholder="Enter notes..."></textarea>
           </div>
           <div class="modal-footer bg-light py-2 px-3">
-            <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" id="btnSaveQuickRemarks" class="btn btn-primary btn-sm fw-bold">Update Remarks</button>
+            <button type="button" class="btn btn-secondary btn-sm fw-bold rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" id="btnSaveQuickRemarks" class="btn btn-primary btn-sm fw-bold rounded-pill px-3"><i class="fa fa-save me-1"></i>Save Notes</button>
           </div>
         </form>
       </div>
@@ -254,35 +262,43 @@
   </div>
 
   <!-- Modal: Quick Inline Date Editor -->
-  <div class="modal fade" id="quickDateModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="quickDateModal" tabindex="-1" aria-hidden="true" style="z-index: 1065;">
     <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
-        <div class="modal-header bg-dark text-white py-2 px-3">
-          <h6 class="modal-title fw-bold mb-0" id="quickDateTitle">Update Expiry Date</h6>
+      <div class="modal-content glass-modal border-0 shadow-lg">
+        <div class="modal-header modal-gradient-header text-white py-2.5 px-3">
+          <h6 class="modal-title fw-bold mb-0"><i class="fa fa-calendar-check me-2 text-info"></i>Quick Update Date</h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form id="quickDateForm" onsubmit="event.preventDefault(); VehicleController.saveQuickDate();">
           <div class="modal-body p-3">
             <input type="hidden" id="qd_vehicle_id" />
             <input type="hidden" id="qd_field_name" />
-            <label class="form-label small fw-bold" id="qd_label">Select New Date</label>
-            <input type="date" id="qd_input" class="form-control fw-bold" required />
-            <div id="qd_tax_cycle_box" class="mt-2 p-2 bg-light rounded border d-none">
-              <small class="text-muted d-block fw-bold mb-1">Quarterly Tax Cycles:</small>
-              <button type="button" id="btnApplyNextQuarter" class="btn btn-sm btn-primary w-100 mb-1 fw-bold" style="font-size: 0.75rem;" onclick="VehicleController.applyNextTaxCycleFromCurrent()">
-                <i class="bi bi-arrow-right-circle me-1"></i>Set Next: <span id="qd_next_quarter_text">-</span>
-              </button>
+            <label class="form-label small fw-bold text-dark mb-1" id="qd_label">Select New Date</label>
+            <div class="date-input-clear-wrap mw-100">
+              <input type="date" id="qd_input" class="form-control fw-bold" />
+              <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('qd_input')" title="Clear Date">&times;</button>
+            </div>
+            <div id="qd_tax_cycle_box" class="mt-2 p-2 bg-light rounded-3 border d-none">
+              <small class="text-secondary d-block fw-bold mb-1">Quarterly Road Tax Cycles:</small>
+              <div class="d-flex gap-1 mb-1">
+                <button type="button" id="btnApplyPrevQuarter" class="btn btn-sm btn-outline-primary flex-fill fw-bold" style="font-size: 0.72rem;" onclick="VehicleController.applyPrevTaxCycleFromCurrent()">
+                  <i class="fa fa-chevron-left me-1"></i><span id="qd_prev_quarter_text">-</span>
+                </button>
+                <button type="button" id="btnApplyNextQuarter" class="btn btn-sm btn-primary flex-fill fw-bold" style="font-size: 0.72rem;" onclick="VehicleController.applyNextTaxCycleFromCurrent()">
+                  <span id="qd_next_quarter_text">-</span><i class="fa fa-chevron-right ms-1"></i>
+                </button>
+              </div>
               <div class="d-flex gap-1 justify-content-between mt-1">
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold" style="font-size: 0.7rem;" onclick="VehicleController.setSpecificCycleDate('03-31')">31-03</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold" style="font-size: 0.7rem;" onclick="VehicleController.setSpecificCycleDate('06-30')">30-06</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold" style="font-size: 0.7rem;" onclick="VehicleController.setSpecificCycleDate('09-30')">30-09</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold" style="font-size: 0.7rem;" onclick="VehicleController.setSpecificCycleDate('12-31')">31-12</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="VehicleController.setSpecificCycleDate('03-31')">31-03</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="VehicleController.setSpecificCycleDate('06-30')">30-06</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="VehicleController.setSpecificCycleDate('09-30')">30-09</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="VehicleController.setSpecificCycleDate('12-31')">31-12</button>
               </div>
             </div>
           </div>
           <div class="modal-footer bg-light py-2 px-3">
-            <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" id="btnSaveQuickDate" class="btn btn-primary btn-sm fw-bold">Update Date</button>
+            <button type="button" class="btn btn-secondary btn-sm fw-bold rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" id="btnSaveQuickDate" class="btn btn-primary btn-sm fw-bold rounded-pill px-3"><i class="fa fa-save me-1"></i>Update</button>
           </div>
         </form>
       </div>
@@ -291,21 +307,24 @@
 
   <!-- Modal: View Vehicle Full Details -->
   <div class="modal fade" id="vehicleViewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
-        <div class="modal-header bg-dark text-white py-3 px-4">
-          <div>
-            <h5 class="modal-title fw-bold mb-0" id="viewRegNo">Vehicle Full Details</h5>
-            <small class="text-white-50" id="viewCustomerInfo"></small>
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content glass-modal border-0 shadow-lg">
+        <div class="modal-header modal-gradient-header text-white py-3 px-4">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-header-icon"><i class="fa fa-truck-moving"></i></div>
+            <div>
+              <h5 class="modal-title fw-black mb-0 font-monospace tracking-wide" id="viewRegNo">Vehicle Details</h5>
+              <small class="text-white-50 fw-bold" id="viewCustomerInfo"></small>
+            </div>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4" id="viewModalBody"></div>
-        <div class="modal-footer bg-light py-2 px-4 d-flex justify-content-between align-items-center">
-          <button type="button" class="btn btn-outline-primary btn-sm fw-bold" id="btnSwitchToEdit">
-            <i class="bi bi-pencil-square me-1"></i> Edit Vehicle Details
+        <div class="modal-footer glass-modal-footer py-3 px-4 d-flex justify-content-between align-items-center">
+          <button type="button" class="btn btn-primary btn-sm fw-bold rounded-pill px-4 shadow-sm" id="btnSwitchToEdit">
+            <i class="fa fa-pen-to-square me-1"></i> Edit Vehicle Record
           </button>
-          <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-4" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -313,159 +332,326 @@
 
   <!-- Modal: Add / Edit Vehicle Form -->
   <div class="modal fade" id="vehicleModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
-        <div class="modal-header bg-dark text-white py-3 px-4">
-          <div>
-            <h5 class="modal-title fw-bold mb-0" id="vehModalTitle">Add Vehicle</h5>
-            <small class="text-white-50" id="vehModalSubtitle">Enter registration details and compliance dates</small>
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content glass-modal border-0 shadow-lg">
+
+        <div class="modal-header modal-gradient-header text-white py-3 px-4">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-header-icon"><i class="fa fa-truck"></i></div>
+            <div>
+              <h5 class="modal-title fw-black mb-0" id="vehModalTitle">Add Vehicle</h5>
+              <small class="text-white-50 fw-semibold" id="vehModalSubtitle">Enter vehicle registration, customer firm, and compliance dates</small>
+            </div>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
+
         <form id="vehicleForm" onsubmit="event.preventDefault(); VehicleController.save();">
-          <div class="modal-body p-4 row g-3">
+          <div class="modal-body p-3 p-md-4">
             <input type="hidden" id="v_id" />
 
-            <div class="col-12"><h6 class="fw-bold text-primary mb-1 border-bottom pb-2">1. Vehicle &amp; Customer Details</h6></div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Registration Number <span class="text-danger">*</span></label>
-              <input type="text" id="v_reg_no" class="form-control font-monospace text-uppercase fw-bold text-primary" placeholder="Enter registration number" required />
-            </div>
-            <div class="col-md-5">
-              <label class="form-label small fw-bold">Customer / Firm <span class="text-danger">*</span></label>
-              <select id="v_cust_id" class="form-select" required></select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label small fw-bold">Owner Name <span class="text-danger">*</span></label>
-              <input type="text" id="v_owner" class="form-control fw-bold" placeholder="e.g. John Doe" required />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Date of Registration</label>
-              <input type="date" id="v_reg_date" class="form-control" onchange="VehicleController.checkGreenTax()" />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Engine Number</label>
-              <input type="text" id="v_engine_no" class="form-control text-uppercase" placeholder="Optional" />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Chassis Number</label>
-              <input type="text" id="v_chassis_no" class="form-control text-uppercase" placeholder="Optional" />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Status</label>
-              <select id="v_active_status" class="form-select fw-bold">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Scrapped">Scrapped</option>
-              </select>
-            </div>
+            <!-- CARD 1: Vehicle & Ownership -->
+            <div class="modal-section-card mb-3">
+              <div class="section-card-title">
+                <span class="section-icon bg-primary-subtle text-primary"><i class="fa fa-id-card"></i></span>
+                <span>1. Vehicle &amp; Customer Information</span>
+              </div>
 
-            <div class="col-12 mt-4"><h6 class="fw-bold text-primary mb-1 border-bottom pb-2">2. Category, Tyre Axles &amp; Taxes</h6></div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Tyres (Structural Matrix)</label>
-              <select id="v_no_of_tyres" class="form-select fw-semibold" onchange="VehicleController.applyTyreRules(this.value)">
-                <option value="">Select Tyres</option>
-                <option value="4 TYRE">4 TYRE </option>
-                <option value="6 TYRE">6 TYRE </option>
-                <option value="10 TYRE">10 TYRE </option>
-                <option value="12 TYRE">12 TYRE </option>
-                <option value="14 TYRE">14 TYRE </option>
-                <option value="16 TYRE">16 TYRE </option>
-                <option value="22 TYRE">22 TYRE </option>
-                <option value="CUSTOM">Custom / Other</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Category <span class="text-danger">*</span></label>
-              <select id="v_category" class="form-select fw-bold" required>
-                <option value="LGV">LGV</option>
-                <option value="MGV">MGV</option>
-                <option value="HGV">HGV</option>
-                <option value="LPV">LPV</option>
-                <option value="MPV">MPV</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Tax Type</label>
-              <select id="v_tax_type" class="form-select fw-bold" onchange="VehicleController.toggleTaxType(this.value)">
-                <option value="Quarterly">Quarterly</option>
-                <option value="Lifetime">Lifetime (LTT)</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Tax Amount (₹)</label>
-              <input type="number" step="0.01" id="v_tax_amount" class="form-control fw-bold" placeholder="11500" />
-            </div>
+              <div class="row g-3 align-items-start">
+                <div class="col-lg-3 col-md-4">
+                  <label class="form-label">Vehicle Plate No. <span class="text-danger">*</span></label>
+                  <div class="input-with-clear">
+                    <input type="text" id="v_reg_no" class="form-control font-monospace text-uppercase fw-black text-primary" placeholder="TN38AB1234" required autocomplete="off" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_reg_no')" title="Clear">&times;</button>
+                  </div>
+                  <div id="regDuplicateFeedback" class="form-text text-danger fw-bold d-none" style="font-size: 0.72rem;"></div>
+                </div>
 
-            <div class="col-12 mt-4">
-              <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
-                <h6 class="fw-bold text-primary mb-0">3. Primary Statutory Compliances (Permit, FC, Tax)</h6>
-                <button type="button" class="btn btn-outline-primary btn-sm py-0 fw-bold" onclick="VehicleController.advanceFormTaxCycle()">
-                  <i class="bi bi-calendar-check me-1"></i> Auto-Fill Next Road Tax Cycle
-                </button>
+                <div class="col-lg-5 col-md-8">
+                  <label class="form-label fw-black text-dark">Customer / Firm <span class="text-danger">*</span></label>
+                  <select id="v_cust_id" required></select>
+                </div>
+
+                <div class="col-lg-4 col-md-12">
+                  <label class="form-label">Owner Name (RC Book) <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <div class="input-with-clear flex-fill">
+                      <input type="text" id="v_owner" class="form-control fw-bold rounded-end-0" placeholder="Owner full name" required autocomplete="off" />
+                      <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_owner')" title="Clear">&times;</button>
+                    </div>
+                    <button type="button" class="btn btn-same-customer fw-bold px-3" onclick="VehicleController.copyCustomerToOwner()" title="Copy name from selected Customer / Firm">
+                      <i class="fa fa-copy me-1"></i>Same
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                  <label class="form-label">Registration Date</label>
+                  <div class="date-input-clear-wrap mw-100">
+                    <input type="date" id="v_reg_date" class="form-control fw-bold" onchange="VehicleController.checkGreenTax(true)" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_reg_date'); VehicleController.checkGreenTax(true);" title="Clear Date">&times;</button>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                  <label class="form-label">Chassis Number</label>
+                  <div class="input-with-clear">
+                    <input type="text" id="v_chassis_no" class="form-control text-uppercase font-monospace fw-bold" placeholder="Optional" autocomplete="off" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_chassis_no')" title="Clear">&times;</button>
+                  </div>
+                  <div id="chassisDuplicateFeedback" class="form-text text-warning-emphasis fw-bold d-none" style="font-size: 0.72rem;"></div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                  <label class="form-label">Engine Number</label>
+                  <div class="input-with-clear">
+                    <input type="text" id="v_engine_no" class="form-control text-uppercase font-monospace fw-bold" placeholder="Optional" autocomplete="off" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_engine_no')" title="Clear">&times;</button>
+                  </div>
+                </div>
+
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                  <label class="form-label">Vehicle Status</label>
+                  <select id="v_active_status" class="form-select fw-bold compact-select">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Scrapped">Scrapped</option>
+                  </select>
+                </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Permit Applicable?</label>
-              <select id="v_permit_app" class="form-select fw-semibold" onchange="VehicleController.togglePermits(this.value)">
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">Permit Expiry Date</label>
-              <input type="date" id="v_permit" class="form-control fw-bold" disabled />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">National Permit Applicable?</label>
-              <select id="v_np_app" class="form-select fw-semibold" disabled>
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label small fw-bold">National Permit Expiry</label>
-              <input type="date" id="v_np_expiry" class="form-control fw-bold" disabled />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-bold">Fitness Certificate (FC) Expiry</label>
-              <input type="date" id="v_fc" class="form-control fw-bold" />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-bold">Road Tax Due Date</label>
-              <input type="date" id="v_tax" class="form-control fw-bold" />
-              <small id="lttHint" class="text-muted d-none">Not applicable for Lifetime Tax (LTT)</small>
+
+            <!-- CARD 2: Category, Axles & Road Tax Setup -->
+            <div class="modal-section-card mb-3">
+              <div class="section-card-title">
+                <span class="section-icon bg-success-subtle text-success"><i class="fa fa-coins"></i></span>
+                <span>2. Category, Axles &amp; Tax Setup</span>
+              </div>
+
+              <div class="d-flex flex-wrap align-items-end gap-3">
+                <div class="compact-field-sm">
+                  <label class="form-label">Tyres / Axles</label>
+                  <select id="v_no_of_tyres" class="form-select fw-bold" onchange="VehicleController.applyTyreRules(this.value)">
+                    <option value="">Select</option>
+                    <option value="4 TYRE">4 TYRE</option>
+                    <option value="6 TYRE">6 TYRE</option>
+                    <option value="10 TYRE">10 TYRE</option>
+                    <option value="12 TYRE">12 TYRE</option>
+                    <option value="14 TYRE">14 TYRE</option>
+                    <option value="16 TYRE">16 TYRE</option>
+                    <option value="22 TYRE">22 TYRE</option>
+                    <option value="CUSTOM">Custom</option>
+                  </select>
+                </div>
+
+                <div class="compact-field-xs">
+                  <label class="form-label">Category <span class="text-danger">*</span></label>
+                  <select id="v_category" class="form-select fw-bold" required>
+                    <option value="LGV">LGV</option>
+                    <option value="MGV">MGV</option>
+                    <option value="HGV">HGV</option>
+                    <option value="LPV">LPV</option>
+                    <option value="MPV">MPV</option>
+                  </select>
+                </div>
+
+                <div class="compact-field-sm">
+                  <label class="form-label">Tax Mode</label>
+                  <select id="v_tax_type" class="form-select fw-bold" onchange="VehicleController.toggleTaxType(this.value)">
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Lifetime">Lifetime (LTT)</option>
+                  </select>
+                </div>
+
+                <div class="compact-field-sm">
+                  <label class="form-label">Tax Amount (₹)</label>
+                  <div class="input-with-clear">
+                    <input type="number" step="0.01" id="v_tax_amount" class="form-control fw-bold" placeholder="11500" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_tax_amount')" title="Clear">&times;</button>
+                  </div>
+                </div>
+
+                <div class="tax-stepper-field">
+                  <label class="form-label">Road Tax Due Date</label>
+                  <div class="tax-stepper-group" id="roadTaxStepperGroup">
+                    <button type="button" class="btn-tax-step" onclick="VehicleController.shiftFormRoadTax(-1)" title="Previous Quarter (-3 Months)">
+                      <i class="fa fa-chevron-left me-1"></i>Prev
+                    </button>
+                    <div class="date-input-clear-wrap flex-fill">
+                      <input type="date" id="v_tax" class="form-control fw-bold text-center border-0 rounded-0" />
+                      <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_tax')" title="Clear Date">&times;</button>
+                    </div>
+                    <button type="button" class="btn-tax-step" onclick="VehicleController.shiftFormRoadTax(1)" title="Next Quarter (+3 Months)">
+                      Next<i class="fa fa-chevron-right ms-1"></i>
+                    </button>
+                  </div>
+                  <div id="lttHint" class="na-field-placeholder d-none">N/A (Lifetime Tax)</div>
+                </div>
+              </div>
             </div>
 
-            <div class="col-12 mt-4"><h6 class="fw-bold text-secondary mb-1 border-bottom pb-2">4. Secondary Compliances (Insurance, PUC, Green Tax)</h6></div>
-            <div class="col-md-4">
-              <label class="form-label small fw-bold">Insurance Expiry</label>
-              <input type="date" id="v_ins" class="form-control fw-bold" />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label small fw-bold">Pollution (PUC) Expiry</label>
-              <input type="date" id="v_puc" class="form-control fw-bold" />
-            </div>
-            <div class="col-md-4">
-              <div class="d-flex justify-content-between align-items-center">
-                <label class="form-label small fw-bold mb-0">Green Tax Due</label>
-                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold" style="font-size: 0.75rem;" onclick="VehicleController.unlockGreenTax()">Force Add</button>
+            <!-- CARD 3: True One-Line Compact Permits & Statutory Expiry Dates (Requirements 1, 2, 4, 5) -->
+            <div class="modal-section-card mb-3">
+              <div class="section-card-title">
+                <span class="section-icon bg-warning-subtle text-warning-emphasis"><i class="fa fa-file-shield"></i></span>
+                <span>3. Permits &amp; Statutory Expiry Dates</span>
               </div>
-              <input type="date" id="v_gtax" class="form-control mt-1 fw-bold" disabled />
+
+              <!-- ALL 6 STATUTORY ITEMS IN ONE COMPACT 6-COLUMN ROW -->
+              <div class="row g-2 align-items-end">
+
+                <!-- 1. State Permit -->
+                <div class="col-xl-3 col-md-4 col-sm-6">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label mb-0"><i class="fa fa-map-location-dot text-success me-1"></i>Permit</label>
+                    <select id="v_permit_app" class="d-none" onchange="VehicleController.togglePermits(this.value)">
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                    <div class="segmented-pill-group">
+                      <button type="button" id="pillPermitNo" class="seg-pill active-no" onclick="VehicleController.setPermitMode('permit', 'No')">No</button>
+                      <button type="button" id="pillPermitYes" class="seg-pill" onclick="VehicleController.setPermitMode('permit', 'Yes')">Yes</button>
+                    </div>
+                  </div>
+                  <div id="permitDateWrap" class="date-input-clear-wrap mw-100 d-none">
+                    <input type="date" id="v_permit" class="form-control fw-bold" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_permit')" title="Clear Date">&times;</button>
+                  </div>
+                  <div id="permitNaBadge" class="na-field-placeholder">N/A </div>
+                </div>
+
+                <!-- 2. National Permit -->
+                <div class="col-xl-3 col-md-4 col-sm-6">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label mb-0"><i class="fa fa-globe text-info me-1"></i>Nat. Permit</label>
+                    <select id="v_np_app" class="d-none">
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                    <div class="segmented-pill-group" id="npPillGroup">
+                      <button type="button" id="pillNpNo" class="seg-pill active-no" onclick="VehicleController.setPermitMode('np', 'No')">No</button>
+                      <button type="button" id="pillNpYes" class="seg-pill" onclick="VehicleController.setPermitMode('np', 'Yes')">Yes</button>
+                    </div>
+                  </div>
+                  <div id="npDateWrap" class="date-input-clear-wrap mw-100 d-none">
+                    <input type="date" id="v_np_expiry" class="form-control fw-bold" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_np_expiry')" title="Clear Date">&times;</button>
+                  </div>
+                  <div id="npNaBadge" class="na-field-placeholder">N/A </div>
+                </div>
+
+                <!-- 3. Fitness (FC) -->
+                <div class="col-xl-3 col-md-4 col-sm-6">
+                  <label class="form-label"><i class="fa fa-certificate text-primary me-1"></i>Fitness (FC)</label>
+                  <div class="date-input-clear-wrap mw-100">
+                    <input type="date" id="v_fc" class="form-control fw-bold" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_fc')" title="Clear Date">&times;</button>
+                  </div>
+                </div>
+
+              
+                <!-- 6. Green Tax -->
+                <div class="col-xl-3 col-md-4 col-sm-6">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label mb-0"><i class="fa fa-leaf text-success me-1"></i>Green Tax</label>
+                    <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold" style="font-size: 0.68rem;" onclick="VehicleController.unlockGreenTax()">Unlock</button>
+                  </div>
+                  <div class="date-input-clear-wrap mw-100">
+                    <input type="date" id="v_gtax" class="form-control fw-bold" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_gtax')" title="Clear Date">&times;</button>
+                  </div>
+                </div>
+
+              
+              </div>
             </div>
-            <div class="col-12">
-              <label class="form-label small fw-bold">Notes / Remarks</label>
-              <input type="text" id="v_remarks" class="form-control fw-semibold" placeholder="e.g. NP, FC &amp; TAX FINE..." />
+
+            <!-- CARD 4: True One-Line Compact Permits & Statutory Expiry Dates (Requirements 1, 2, 4, 5) -->
+            <div class="modal-section-card">
+              <div class="section-card-title">
+                <span class="section-icon bg-warning-subtle text-warning-emphasis"><i class="fa fa-file-shield"></i></span>
+                <span>4. other Dates and remarks </span>
+              </div>
+
+              <!-- ALL 6 STATUTORY ITEMS IN ONE COMPACT 6-COLUMN ROW -->
+              <div class="row g-2 align-items-end">
+
+               
+                <!-- 4. Insurance -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                  <label class="form-label"><i class="fa fa-shield-heart text-danger me-1"></i>Insurance</label>
+                  <div class="date-input-clear-wrap mw-100">
+                    <input type="date" id="v_ins" class="form-control fw-bold" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_ins')" title="Clear Date">&times;</button>
+                  </div>
+                </div>
+
+                <!-- 5. Pollution (PUC) -->
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                  <label class="form-label"><i class="fa fa-smog text-secondary me-1"></i>Pollution (PUC)</label>
+                  <div class="date-input-clear-wrap mw-100">
+                    <input type="date" id="v_puc" class="form-control fw-bold" />
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_puc')" title="Clear Date">&times;</button>
+                  </div>
+                </div>
+
+                
+
+                <!-- Operational Notes -->
+                <div class="col-xl-4 col-md-1 col-sm-4">
+                  <label class="form-label"><i class="fa fa-note-sticky text-warning-emphasis me-1"></i>Operational Notes / Remarks</label>
+                  <div class="input-with-clear">
+                    <textarea type="text" id="v_remarks" class="form-control fw-bold" placeholder="e.g. NP, FC &amp; TAX FINE..." rows="3"></textarea>
+                    <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_remarks')" title="Clear">&times;</button>
+                  </div>
+                </div>
+              </div>
             </div>
+
           </div>
-          <div class="modal-footer bg-light py-3 px-4">
-            <button type="button" class="btn btn-secondary btn-sm fw-bold" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" id="btnSaveVehicle" class="btn btn-primary btn-sm px-4 fw-bold">
+          <div class="modal-footer glass-modal-footer py-3 px-4">
+            <button type="button" class="btn btn-outline-secondary btn-sm fw-bold px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" id="btnSaveVehicle" class="btn btn-primary btn-sm px-5 fw-bold rounded-pill shadow-sm">
               <span id="saveBtnSpinner" class="spinner-border spinner-border-sm me-1 d-none"></span>
-              <span id="saveBtnText">Save Record</span>
+              <span id="saveBtnText"><i class="fa fa-save me-1"></i>Save Vehicle</span>
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Diff Confirmation Preview (Requirement 7) -->
+  <div class="modal fade" id="confirmChangesModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" style="z-index: 1075;">
+    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content glass-modal border-0 shadow-lg">
+        <div class="modal-header modal-gradient-header text-white py-3 px-4">
+          <div>
+            <h6 class="modal-title fw-black mb-0"><i class="fa fa-code-compare me-2 text-info"></i>Confirm Vehicle Changes</h6>
+            <small class="text-white-50 fw-semibold" id="confirmChangesSubtitle">Review modified fields before updating</small>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-3">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered align-middle mb-0">
+              <thead class="table-light small fw-black text-uppercase">
+                <tr>
+                  <th style="width: 36%;">Field</th>
+                  <th style="width: 32%;">Previous</th>
+                  <th style="width: 32%;">Updated</th>
+                </tr>
+              </thead>
+              <tbody id="confirmChangesBody" class="small fw-bold"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer bg-light py-2.5 px-3">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-3" data-bs-dismiss="modal">Back to Edit</button>
+          <button type="button" id="btnConfirmSaveExec" class="btn btn-success btn-sm fw-bold rounded-pill px-4 shadow-sm" onclick="VehicleController.confirmAndExecuteSave()">
+            <i class="fa fa-check-circle me-1"></i>Confirm &amp; Save
+          </button>
+        </div>
       </div>
     </div>
   </div>

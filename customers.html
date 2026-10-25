@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customers - Fleet Management</title>
+  <title>Customers</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="images/favicon.ico" />
@@ -19,52 +20,63 @@
   <!-- Dedicated Customer Module CSS -->
   <link rel="stylesheet" href="css/customers.css" />
 </head>
-<body class="bg-light">
+
+<body class="glass-app-bg">
 
   <!-- Toast Notification Container -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg rounded-3" role="alert"
+      aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
         <div class="toast-body py-3 px-3 fw-medium" id="toastMessage"></div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <button type="button" id="toastCloseBtn" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
       </div>
     </div>
   </div>
 
   <!-- Modern Top Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3 py-2">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm px-3 py-2 glass-navbar">
     <div class="container-fluid">
       <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="dashboard.html">
-        <img src="images/logo.png" alt="Logo" width="36" height="36" class="rounded-circle bg-white p-1 shadow-sm" onerror="this.style.display='none'" />
+        <img src="images/logo.png" alt="Logo" width="36" height="36" class="rounded-circle bg-white p-1 shadow-sm"
+          onerror="this.style.display='none'" />
         <span class="tracking-tight">Fleet Management</span>
       </a>
 
-      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+        data-bs-target="#topNav" aria-controls="topNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="topNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-2">
           <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i> Dashboard</a>
+            <a class="nav-link px-3 rounded-pill" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i>
+              Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="customers.html"><i class="bi bi-people-fill me-1"></i> Customers</a>
+            <a class="nav-link active px-3 rounded-pill bg-primary bg-opacity-25 text-white" href="customers.html"><i
+                class="bi bi-people-fill me-1"></i> Customers</a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3 rounded-pill" href="vehicles.html"><i class="bi bi-truck me-1"></i> Vehicles</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-3 rounded-pill" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</a>
+            <a class="nav-link px-3 rounded-pill" href="reports.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>
+              Reports</a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3 rounded-pill" href="print.html"><i class="bi bi-printer me-1"></i> Print</a>
           </li>
         </ul>
 
-        <div class="d-flex align-items-center gap-3 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0">
-          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay" class="text-white fw-semibold">admin</span></span>
-          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+        <div
+          class="d-flex align-items-center gap-3 pt-2 pt-lg-0 border-top border-secondary border-opacity-25 border-top-lg-0">
+          <span class="text-white-50 small"><i class="bi bi-person-circle me-1"></i><span id="userDisplay"
+              class="text-white fw-semibold">admin</span></span>
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="Auth.logout()"><i
+              class="bi bi-box-arrow-right me-1"></i>Logout</button>
         </div>
       </div>
     </div>
@@ -72,58 +84,96 @@
 
   <!-- Main Workspace Container -->
   <main class="container-fluid py-4 px-3 px-md-4">
-    <!-- Page Header & Action Buttons -->
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
-      <div>
-        <h3 class="fw-bold text-dark mb-1">Customer List</h3>
-      </div>
-      <div>
-        <div class="card border-0 customer-card-shadow mb-4">
-          <div class="card-body py-3 px-4">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <span class="small fw-bold text-secondary me-2"><i class="bi bi-funnel text-primary me-1"></i>Filter By:</span>
-              <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 filter-pill active" onclick="CustomerController.setFilter('health', '', this)">
-                All Status
-              </button>
-              <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'EXPIRED', this)">
-                <i class="bi bi-exclamation-circle me-1"></i>Expired
-              </button>
-              <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 filter-pill text-dark" onclick="CustomerController.setFilter('health', 'URGENT', this)">
-                <i class="bi bi-clock me-1"></i>Due Soon
-              </button>
-              <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('health', 'HEALTHY', this)">
-                <i class="bi bi-check-circle me-1"></i>Valid
-              </button>
-              <div class="vr mx-2 text-muted opacity-25 d-none d-md-block"></div>
-              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'active', this)">
-                Active Only
-              </button>
-              <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill" onclick="CustomerController.setFilter('account', 'inactive', this)">
-                Inactive Only
-              </button>
+
+    <!-- Unified Sleek Header & Glass Filter Bar -->
+    <div class="glass-card p-3 p-md-4 mb-4">
+      <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+
+        <!-- Left: Title & Total Clients Pill -->
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <div class="total-clients-pill" title="Total Registered Clients">
+                <i class="bi bi-people-fill total-clients-icon"></i>
+                <span class="total-clients-label">TOTAL CLIENTS</span>
+                <strong id="totalClientCount" class="total-clients-count">0</strong>
+              </div>
+
             </div>
+
           </div>
         </div>
-      </div>
 
-      <div class="d-flex gap-2">
-        <button id="btnRefresh" class="btn btn-outline-secondary btn-sm px-3 rounded-pill bg-white shadow-sm" onclick="CustomerController.load()" title="Reload list">
-          <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> Refresh
-        </button>
-        <button class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm" onclick="CustomerController.openModal()">
-          <i class="bi bi-person-plus-fill me-1"></i> Add Customer
-        </button>
+        <!-- Center: Filter Pills -->
+        <div class="glass-filter-bar d-flex flex-wrap align-items-center gap-2 py-2 px-3">
+          <span class="small fw-bold text-secondary me-1">
+            <i class="bi bi-funnel-fill text-primary me-1"></i>Filter:
+          </span>
+          <button type="button" class="btn btn-sm btn-dark rounded-pill px-3 filter-pill active"
+            data-filter-group="health" data-filter-val="" onclick="CustomerController.setFilter('health', '', this)">
+            All 
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 filter-pill"
+            data-filter-group="health" data-filter-val="EXPIRED"
+            onclick="CustomerController.setFilter('health', 'EXPIRED', this)">
+            <i class="bi bi-exclamation-circle me-1"></i>Expired
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 filter-pill"
+            data-filter-group="health" data-filter-val="URGENT"
+            onclick="CustomerController.setFilter('health', 'URGENT', this)">
+            <i class="bi bi-clock me-1"></i>Due Soon
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 filter-pill"
+            data-filter-group="health" data-filter-val="HEALTHY"
+            onclick="CustomerController.setFilter('health', 'HEALTHY', this)">
+            <i class="bi bi-check-circle me-1"></i>Valid
+          </button>
+
+          <div class="vr mx-1 text-secondary opacity-25 d-none d-sm-block"></div>
+
+          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill"
+            data-filter-group="account" data-filter-val="active"
+            onclick="CustomerController.setFilter('account', 'active', this)">
+            Active 
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 filter-pill"
+            data-filter-group="account" data-filter-val="inactive"
+            onclick="CustomerController.setFilter('account', 'inactive', this)">
+            Inactive 
+          </button>
+        </div>
+
+        <!-- Right: Action & Export Buttons -->
+        <div class="d-flex flex-wrap align-items-center gap-2 align-self-start align-self-xl-center">
+          <button type="button" class="btn btn-glass-light btn-sm px-3 rounded-pill"
+            onclick="CustomerController.exportFilteredCSV()" title="Export currently filtered customers to CSV">
+            <i class="bi bi-filetype-csv text-success me-1"></i> Export CSV
+          </button>
+          <button type="button" class="btn btn-glass-light btn-sm px-3 rounded-pill"
+            onclick="CustomerController.printFilteredList()" title="Print currently filtered customer list">
+            <i class="bi bi-printer text-secondary me-1"></i> Print 
+          </button>
+          <button id="btnRefresh" type="button" class="btn btn-glass-light btn-sm px-3 rounded-pill"
+            onclick="CustomerController.load()" title="Reload list">
+            <i id="refreshIcon" class="bi bi-arrow-clockwise me-1"></i> Refresh
+          </button>
+          <button type="button" class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm"
+            onclick="CustomerController.openModal()">
+            <i class="bi bi-person-plus-fill me-1"></i> Add Customer
+          </button>
+        </div>
+
       </div>
     </div>
 
     <!-- Customers Data Table Container Card -->
-    <div class="card border-0 customer-card-shadow p-3 p-md-4">
+    <div class="glass-card p-3 p-md-4">
       <div class="table-responsive">
-        <table id="customerDataTable" class="table table-hover align-middle mb-0 w-100" style="cursor: pointer;">
-          <thead class="table-light text-secondary small uppercase fw-bold border-bottom">
+        <table id="customerDataTable" class="table table-hover align-middle mb-0 w-100">
+          <thead>
             <tr>
               <th scope="col" class="d-none">ID</th>
-              <th scope="col" class="py-3 text-center" style="width: 80px;">Print ID</th>
+              <th scope="col" class="py-3 text-center" style="width: 90px;">Serial No.</th>
               <th scope="col" class="py-3">Customer Name</th>
               <th scope="col" class="py-3">Phone &amp; WhatsApp</th>
               <th scope="col" class="py-3">Address &amp; Notes</th>
@@ -144,56 +194,98 @@
   <!-- Modal: Add / Edit Customer -->
   <div class="modal fade" id="customerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content border-0 shadow-lg">
-        <div class="modal-header bg-dark text-white px-4 py-3">
-          <h5 class="modal-title fw-bold fs-6" id="customerModalTitle">Customer Details</h5>
+      <div class="modal-content glass-modal">
+        <div class="modal-header px-4 py-3">
+          <h5 class="modal-title fw-bold fs-6 text-white" id="customerModalTitle">Customer Details</h5>
           <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
         </div>
         <form id="customerForm" onsubmit="event.preventDefault(); CustomerController.save();">
           <div class="modal-body p-4 row g-3">
             <input type="hidden" id="cust_id" />
 
-            <div class="col-md-8">
-              <label class="form-label small fw-bold text-secondary">Customer / Business Name <span class="text-danger">*</span></label>
-              <input type="text" id="cust_name" class="form-control" placeholder="e.g. Kumar Transport" required />
+            <!-- Customer Name -->
+            <div class="col-md-7">
+              <label for="cust_name" class="form-label small fw-bold text-secondary">Customer / Business Name <span
+                  class="text-danger">*</span></label>
+              <input type="text" id="cust_name" class="form-control" placeholder="e.g. STR Transport" required
+                autocomplete="off" />
             </div>
+
+            <!-- Serial No. + Quick Auto Gap Finder Button -->
+            <div class="col-md-5">
+              <label for="cust_printid" class="form-label small fw-bold text-secondary">Serial No. <span
+                  class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="number" id="cust_printid" class="form-control" placeholder="e.g. 1" min="1" step="1"
+                  required />
+                <button type="button" class="btn btn-outline-primary px-2"
+                  onclick="CustomerController.fillNextPrintId()" title="Assign lowest available Serial No.">
+                  <i class="bi bi-magic"></i> Auto
+                </button>
+              </div>
+              <div id="printIdFeedback" class="form-text text-danger fw-medium d-none" style="font-size: 0.72rem;">
+              </div>
+            </div>
+
+            <!-- Phone 1 -> Phone 2 -> Phone 3 with Auto-Jump -->
             <div class="col-md-4">
-              <label class="form-label small fw-bold text-secondary">Print ID <span class="text-danger">*</span></label>
-              <input type="number" id="cust_printid" class="form-control" placeholder="e.g. 1" min="1" step="1" required />
+              <label for="cust_mobile" class="form-label small fw-bold text-secondary">
+                Primary Phone <span class="text-danger">*</span>
+              </label>
+              <input type="tel" id="cust_mobile" class="form-control phone-auto-jump" data-next-input="cust_mobile_2"
+                maxlength="10" inputmode="numeric" placeholder="10 Digits" required autocomplete="off" />
+              <div id="phoneConflictFeedback" class="form-text text-warning-emphasis fw-medium d-none"
+                style="font-size: 0.72rem;"></div>
             </div>
 
             <div class="col-md-4">
-              <label class="form-label small fw-bold text-secondary">Primary Phone <span class="text-danger">*</span></label>
-              <input type="tel" id="cust_mobile" class="form-control" maxlength="10" placeholder="10 Digits" required />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label small fw-bold text-secondary">Extra Phone 2</label>
-              <input type="tel" id="cust_mobile_2" class="form-control" maxlength="10" placeholder="Optional" />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label small fw-bold text-secondary">Extra Phone 3</label>
-              <input type="tel" id="cust_mobile_3" class="form-control" maxlength="10" placeholder="Optional" />
+              <label for="cust_mobile_2" class="form-label small fw-bold text-secondary"> Phone 2</label>
+              <input type="tel" id="cust_mobile_2" class="form-control phone-auto-jump" data-next-input="cust_mobile_3"
+                maxlength="10" inputmode="numeric" placeholder="Optional " autocomplete="off" />
             </div>
 
+            <div class="col-md-4">
+              <label for="cust_mobile_3" class="form-label small fw-bold text-secondary"> Phone 3</label>
+              <input type="tel" id="cust_mobile_3" class="form-control phone-auto-jump" data-next-input="cust_address"
+                maxlength="10" inputmode="numeric" placeholder="Optional " autocomplete="off" />
+            </div>
+
+            <!-- Address (With Clear Button) -->
             <div class="col-12">
-              <label class="form-label small fw-bold text-secondary">Address</label>
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="cust_address" class="form-label small fw-bold text-secondary mb-1">Address</label>
+                <button type="button" class="btn btn-link btn-sm p-0 text-muted text-decoration-none"
+                  style="font-size: 0.72rem;"
+                  onclick="document.getElementById('cust_address').value=''; document.getElementById('cust_address').focus();">
+                  Clear
+                </button>
+              </div>
               <textarea id="cust_address" class="form-control" rows="2" placeholder="Street, City, Area..."></textarea>
             </div>
 
+            <!-- Remarks & Account State -->
             <div class="col-md-8">
-              <label class="form-label small fw-bold text-secondary">Notes / Remarks</label>
+              <div class="d-flex justify-content-between align-items-center">
+                <label for="cust_remarks" class="form-label small fw-bold text-secondary mb-1">Notes / Remarks</label>
+                <button type="button" class="btn btn-link btn-sm p-0 text-muted text-decoration-none"
+                  style="font-size: 0.72rem;"
+                  onclick="document.getElementById('cust_remarks').value=''; document.getElementById('cust_remarks').focus();">
+                  Clear
+                </button>
+              </div>
               <input type="text" id="cust_remarks" class="form-control" placeholder="e.g. Regular client" />
             </div>
             <div class="col-md-4">
-              <label class="form-label small fw-bold text-secondary">Account State</label>
+              <label for="cust_status" class="form-label small fw-bold text-secondary mb-1">Account State</label>
               <select id="cust_status" class="form-select">
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
           </div>
-          <div class="modal-footer bg-light px-4 py-3">
-            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+          <div class="modal-footer glass-modal-footer px-4 py-3">
+            <button type="button" class="btn btn-glass-light btn-sm rounded-pill px-4"
+              data-bs-dismiss="modal">Cancel</button>
             <button type="submit" id="btnSaveCustomer" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
               <span id="saveBtnSpinner" class="spinner-border spinner-border-sm me-1 d-none"></span>
               <span id="saveBtnText">Save Customer</span>
@@ -207,18 +299,28 @@
   <!-- Modal: View Customer Vehicles -->
   <div class="modal fade" id="customerFleetModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content border-0 shadow-lg">
-        <div class="modal-header bg-dark text-white px-4 py-3">
+      <div class="modal-content glass-modal">
+        <div class="modal-header px-4 py-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
           <div>
-            <h5 class="modal-title fw-bold fs-6" id="fleetModalCustomerName">Customer Vehicles</h5>
+            <h5 class="modal-title fw-bold fs-6 text-white mb-0" id="fleetModalCustomerName">Customer Vehicles</h5>
             <small class="text-white-50" id="fleetModalCustomerId"></small>
           </div>
-          <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
+
+          <!-- Instant Search Inside Fleet Modal -->
+          <div class="d-flex align-items-center gap-2 ms-auto">
+            <div class="position-relative">
+              <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50 small"></i>
+              <input type="search" id="fleetModalSearchInput"
+                class="form-control form-control-sm fleet-search-input ps-4 pe-3 rounded-pill"
+                placeholder="Filter vehicle no, category, status..." autocomplete="off" />
+            </div>
+            <button type="button" class="btn-close btn-close-white shadow-none ms-2" data-bs-dismiss="modal"></button>
+          </div>
         </div>
         <div class="modal-body p-0">
           <div class="table-responsive fleet-modal-scrollable">
             <table class="table table-hover align-middle mb-0">
-              <thead class="table-light text-secondary small uppercase fw-bold">
+              <thead class="table-light text-secondary small uppercase fw-bold sticky-top">
                 <tr>
                   <th class="py-3 ps-3">Vehicle Number</th>
                   <th class="py-3">Category</th>
@@ -235,8 +337,10 @@
             </table>
           </div>
         </div>
-        <div class="modal-footer bg-light px-4 py-3">
-          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer glass-modal-footer px-4 py-3 d-flex justify-content-between align-items-center">
+          <span class="small text-muted" id="fleetModalMatchCount"></span>
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4"
+            data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -253,4 +357,5 @@
   <script src="js/api.js"></script>
   <script src="js/customers.js"></script>
 </body>
+
 </html>
