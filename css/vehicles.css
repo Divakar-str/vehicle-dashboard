@@ -1,37 +1,54 @@
+
 /* ==========================================================================
-   Fleet Management - Modern Light Glassmorphism & Precision Alignment CSS
+   Fleet Management - Optimized Light Glassmorphism CSS
+   Performance-focused | Bootstrap | DataTables | Tom Select
    ========================================================================== */
 
 :root {
   --primary-color: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-glow: rgba(37, 99, 235, 0.15);
-  --glass-surface: rgba(255, 255, 255, 0.92);
-  --glass-border: rgba(255, 255, 255, 0.96);
-  --glass-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+
+  --glass-surface: rgba(255, 255, 255, 0.97);
+  --glass-border: #e2e8f0;
+  --glass-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+
   --text-main: #0f172a;
   --text-dark-bold: #020617;
   --text-muted: #475569;
+
   --border-subtle: #cbd5e1;
   --border-light: #e2e8f0;
+
   --radius-card: 18px;
-  --fast-ease: 0.15s cubic-bezier(0.2, 0, 0, 1);
+  --fast-ease: 0.15s ease;
 }
 
 /* ==========================================================================
-   1. Global Ambient Glass Workspace
+   1. GLOBAL WORKSPACE
    ========================================================================== */
+
 body.glass-app-bg {
   background-color: #f1f5f9;
   background-image:
-    radial-gradient(circle at 8% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 42%),
-    radial-gradient(circle at 92% 0%, rgba(16, 185, 129, 0.06) 0%, transparent 38%),
-    radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 48%);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    radial-gradient(
+      circle at 8% 0%,
+      rgba(37, 99, 235, 0.06) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 92% 0%,
+      rgba(16, 185, 129, 0.04) 0%,
+      transparent 38%
+    );
+
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
   color: var(--text-main);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .fw-black {
@@ -47,62 +64,64 @@ body.glass-app-bg {
 }
 
 .glass-navbar {
-  background: rgba(15, 23, 42, 0.96) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #0f172a !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-card {
   background: var(--glass-surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-radius: var(--radius-card);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.95) inset, var(--glass-shadow);
+  box-shadow: var(--glass-shadow);
 }
 
 .vehicle-container {
+  width: 100%;
   max-width: 1640px;
   margin: 0 auto;
 }
 
 /* ==========================================================================
-   2. Top KPI Metric Cards
+   2. KPI METRIC CARDS
    ========================================================================== */
+
 .metric-card {
   border-radius: 16px;
   padding: 15px 18px;
   border: 1.5px solid #e2e8f0;
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   cursor: pointer;
   user-select: none;
   height: 100%;
-  transition: transform var(--fast-ease), box-shadow var(--fast-ease), border-color var(--fast-ease);
+
+  transition: border-color var(--fast-ease),
+              background-color var(--fast-ease);
 }
 
 .metric-card:hover {
-  transform: translateY(-2px);
   border-color: #cbd5e1;
-  box-shadow: 0 12px 22px -6px rgba(15, 23, 42, 0.08);
 }
 
 .metric-card.active-metric-filter {
   border-color: #2563eb !important;
   background-color: #eff6ff !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
 }
 
 .metric-card .metric-icon {
   width: 44px;
   height: 44px;
   border-radius: 12px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 1.25rem;
   flex-shrink: 0;
 }
@@ -178,8 +197,9 @@ body.glass-app-bg {
 }
 
 /* ==========================================================================
-   3. DataTables Wrapper & High-Contrast Table Cells
+   3. DATATABLES CONTROLS
    ========================================================================== */
+
 .dt-container .row,
 .dataTables_wrapper .row {
   align-items: center;
@@ -191,10 +211,12 @@ body.glass-app-bg {
   border-radius: 10px !important;
   border: 1.5px solid #cbd5e1 !important;
   background-color: #ffffff !important;
+
   padding: 6px 14px !important;
   font-size: 0.86rem !important;
   font-weight: 700 !important;
   color: var(--text-dark-bold) !important;
+
   min-width: 250px;
   outline: none;
 }
@@ -209,7 +231,10 @@ body.glass-app-bg {
   border: 1.5px solid #cbd5e1;
   border-radius: 14px;
   background-color: #ffffff;
+
   overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
 }
 
 table.dataTable {
@@ -221,10 +246,12 @@ table.dataTable {
 table.dataTable thead th {
   background: #0f172a !important;
   color: #ffffff !important;
+
   font-weight: 800;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+
   padding: 11px 10px !important;
   border: 1px solid #1e293b !important;
   white-space: nowrap;
@@ -232,12 +259,11 @@ table.dataTable thead th {
 
 table.dataTable tbody tr {
   cursor: pointer;
-  transition: background-color 0.1s ease;
 }
 
 table.dataTable tbody td {
   padding: 0 !important;
-  vertical-align: stretch !important;
+  vertical-align: middle !important;
   border: 1px solid #cbd5e1;
   background-color: #ffffff;
 }
@@ -246,10 +272,15 @@ table.dataTable tbody tr:hover td {
   background-color: #f8fafc !important;
 }
 
+/* ==========================================================================
+   4. MERGED / STACKED TABLE CELLS
+   ========================================================================== */
+
 .cell-merged-stack {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
   height: 100%;
   min-height: 90px;
 }
@@ -258,6 +289,7 @@ table.dataTable tbody tr:hover td {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding: 5px 10px;
   min-height: 30px;
   gap: 8px;
@@ -280,6 +312,7 @@ table.dataTable tbody tr:hover td {
   font-size: 0.83rem;
   font-weight: 800 !important;
   color: var(--text-dark-bold) !important;
+
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -290,7 +323,10 @@ table.dataTable tbody tr:hover td {
 .phone-pill-bold {
   display: inline-flex;
   align-items: center;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
   font-size: 0.78rem;
   font-weight: 900;
   color: #020617;
@@ -303,7 +339,10 @@ table.dataTable tbody tr:hover td {
 .reg-no-link {
   font-size: 1.02rem;
   font-weight: 900;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
   color: #0284c7;
   text-decoration: none;
   letter-spacing: 0.03em;
@@ -324,7 +363,6 @@ table.dataTable tbody tr:hover td {
 
 .status-dot.active {
   background-color: #16a34a;
-  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
 }
 
 .status-dot.inactive {
@@ -358,26 +396,26 @@ table.dataTable tbody tr:hover td {
 }
 
 /* ==========================================================================
-   4. Crystal Date Pills, Unset Dash (-) & N/A Badges
+   5. EXPIRY PILLS AND STATUS BADGES
    ========================================================================== */
+
 .exp-pill {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
   font-variant-numeric: tabular-nums;
   font-size: 0.79rem;
   font-weight: 900;
+
   padding: 3px 8px;
   border-radius: 6px;
+
   display: inline-flex;
   align-items: center;
+
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
-  transition: transform var(--fast-ease), filter var(--fast-ease);
-}
-
-.exp-pill:hover {
-  filter: brightness(0.94);
-  transform: translateY(-1px);
 }
 
 .exp-pill.expired {
@@ -423,7 +461,6 @@ table.dataTable tbody tr:hover td {
   user-select: none;
 }
 
-/* N/A Field Box inside Add/Edit Modal when Permit=No or Tax=Lifetime */
 .na-field-placeholder {
   height: 36px;
   border-radius: 9px;
@@ -432,42 +469,41 @@ table.dataTable tbody tr:hover td {
   color: #64748b;
   font-size: 0.76rem;
   font-weight: 800;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   user-select: none;
 }
 
 .view-date-card-editable {
   cursor: pointer;
   user-select: none;
-  transition: transform var(--fast-ease), box-shadow var(--fast-ease), border-color var(--fast-ease);
 }
 
 .view-date-card-editable:hover {
-  transform: translateY(-2px);
   border-color: #60a5fa !important;
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.1) !important;
 }
 
-.badge-tag-permit {
-  font-size: 0.67rem;
-  font-weight: 900;
-  color: #065f46;
-  background-color: #d1fae5;
-  border: 1px solid #6ee7b7;
-  border-radius: 4px;
-  padding: 2px 5px;
-}
-
+.badge-tag-permit,
 .badge-tag-np {
   font-size: 0.67rem;
   font-weight: 900;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+.badge-tag-permit {
+  color: #065f46;
+  background-color: #d1fae5;
+  border: 1px solid #6ee7b7;
+}
+
+.badge-tag-np {
   color: #075985;
   background-color: #e0f2fe;
   border: 1px solid #7dd3fc;
-  border-radius: 4px;
-  padding: 2px 5px;
 }
 
 .badge-permit-fine,
@@ -496,34 +532,41 @@ table.dataTable tbody tr:hover td {
   border-radius: 8px;
   margin: 6px;
   padding: 6px 8px;
+
   font-size: 0.76rem;
   font-weight: 800;
   color: #b45309;
+
   cursor: pointer;
   min-height: 74px;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .blocker-alert-box {
   background-color: #fef2f2;
   border: 1px solid #fecaca;
   border-left: 3px solid #dc2626;
+
   padding: 2px 6px;
   border-radius: 4px;
   margin-bottom: 4px;
+
   font-size: 0.66rem;
   color: #991b1b;
   font-weight: 800;
 }
 
 /* ==========================================================================
-   5. Modernized Modal Architecture, Section Cards & Compact Inputs
+   6. MODALS
    ========================================================================== */
+
 .glass-modal {
   border-radius: 20px;
   overflow: hidden;
   background: #f8fafc;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+
   max-height: 92vh;
   display: flex;
   flex-direction: column;
@@ -538,9 +581,11 @@ table.dataTable tbody tr:hover td {
   width: 38px;
   height: 38px;
   border-radius: 10px;
+
   background: rgba(37, 99, 235, 0.25);
   border: 1px solid rgba(96, 165, 250, 0.35);
   color: #60a5fa;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -574,6 +619,7 @@ table.dataTable tbody tr:hover td {
   overflow-y: auto !important;
   overflow-x: hidden;
   max-height: calc(92vh - 135px);
+  overscroll-behavior: contain;
 }
 
 .modal-section-card {
@@ -588,11 +634,13 @@ table.dataTable tbody tr:hover td {
   display: flex;
   align-items: center;
   gap: 8px;
+
   font-size: 0.76rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #0f172a;
+
   border-bottom: 1px solid #f1f5f9;
   padding-bottom: 8px;
   margin-bottom: 12px;
@@ -602,6 +650,7 @@ table.dataTable tbody tr:hover td {
   width: 24px;
   height: 24px;
   border-radius: 6px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -616,17 +665,24 @@ table.dataTable tbody tr:hover td {
   white-space: nowrap;
 }
 
+/* ==========================================================================
+   7. INPUTS AND FORM CONTROLS
+   ========================================================================== */
+
 .form-control,
 .form-select {
   border-radius: 9px;
   padding: 5px 10px;
   height: 36px;
+
   border: 1.5px solid #cbd5e1;
   font-size: 0.83rem;
   font-weight: 700;
   color: var(--text-dark-bold);
   background-color: #ffffff;
-  transition: var(--fast-ease);
+
+  transition: border-color var(--fast-ease),
+              box-shadow var(--fast-ease);
 }
 
 textarea.form-control {
@@ -677,14 +733,17 @@ textarea.form-control {
   right: 5px;
   top: 50%;
   transform: translateY(-50%);
+
   border: none;
   background: transparent;
   color: #94a3b8;
+
   font-size: 0.95rem;
   font-weight: 900;
   line-height: 1;
   padding: 2px 4px;
   border-radius: 4px;
+
   cursor: pointer;
   z-index: 4;
 }
@@ -698,11 +757,15 @@ textarea.form-control {
   background: #eff6ff;
   border: 1.5px solid #93c5fd;
   color: #1d4ed8;
+
   font-size: 0.76rem;
   height: 36px;
+
   border-top-right-radius: 9px;
   border-bottom-right-radius: 9px;
-  transition: var(--fast-ease);
+
+  transition: background-color var(--fast-ease),
+              color var(--fast-ease);
 }
 
 .btn-same-customer:hover {
@@ -711,7 +774,10 @@ textarea.form-control {
   color: #ffffff;
 }
 
-/* Road Tax Stepper */
+/* ==========================================================================
+   8. ROAD TAX STEPPER
+   ========================================================================== */
+
 .tax-stepper-field {
   flex: 1 1 280px;
   max-width: 330px;
@@ -720,6 +786,7 @@ textarea.form-control {
 .tax-stepper-group {
   display: flex;
   align-items: stretch;
+
   border: 1.5px solid #cbd5e1;
   border-radius: 9px;
   overflow: hidden;
@@ -738,13 +805,17 @@ textarea.form-control {
   border: none;
   background: #f8fafc;
   color: #1e293b;
+
   font-size: 0.72rem;
   font-weight: 800;
   padding: 0 10px;
+
   display: inline-flex;
   align-items: center;
+
   border-right: 1px solid #e2e8f0;
-  transition: var(--fast-ease);
+  transition: background-color var(--fast-ease),
+              color var(--fast-ease);
 }
 
 .btn-tax-step:last-child {
@@ -758,8 +829,9 @@ textarea.form-control {
 }
 
 /* ==========================================================================
-   6. Compact Segmented Yes/No Pills
+   9. SEGMENTED YES / NO PILLS
    ========================================================================== */
+
 .segmented-pill-group {
   display: inline-flex;
   background: #e2e8f0;
@@ -772,12 +844,15 @@ textarea.form-control {
   border: none;
   background: transparent;
   color: #475569;
+
   font-size: 0.68rem;
   font-weight: 800;
   padding: 1px 8px;
   border-radius: 999px;
   cursor: pointer;
-  transition: var(--fast-ease);
+
+  transition: background-color var(--fast-ease),
+              color var(--fast-ease);
 }
 
 .seg-pill.active-no {
@@ -789,18 +864,19 @@ textarea.form-control {
 .seg-pill.active-yes {
   background: #16a34a;
   color: #ffffff;
-  box-shadow: 0 2px 5px rgba(22, 163, 74, 0.28);
 }
 
 /* ==========================================================================
-   7. Tom-Select Fixed Styling
+   10. TOM SELECT DROPDOWNS
    ========================================================================== */
+
 select.tomselected {
   display: none !important;
 }
 
 .ts-wrapper {
   width: 100%;
+  min-width: 0;
 }
 
 .ts-control {
@@ -808,11 +884,14 @@ select.tomselected {
   min-height: 36px !important;
   height: 36px !important;
   padding: 4px 12px !important;
+
   border: 1.5px solid #cbd5e1 !important;
   background-color: #ffffff !important;
+
   font-size: 0.84rem !important;
   font-weight: 700 !important;
   color: var(--text-dark-bold) !important;
+
   display: flex;
   align-items: center;
   box-shadow: none !important;
@@ -834,8 +913,10 @@ select.tomselected {
   border-radius: 10px !important;
   border: 1.5px solid #cbd5e1 !important;
   background: #ffffff !important;
-  box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.2) !important;
+
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12) !important;
   font-size: 0.84rem !important;
+
   z-index: 2050 !important;
   margin-top: 4px !important;
   overflow: hidden;
@@ -845,6 +926,7 @@ select.tomselected {
   max-height: 220px !important;
   overflow-y: auto !important;
   padding: 4px !important;
+  overscroll-behavior: contain;
 }
 
 .ts-dropdown .option {
@@ -858,19 +940,22 @@ select.tomselected {
 }
 
 /* ==========================================================================
-   8. Action Buttons & Print Media Queries
+   11. ACTION BUTTONS
    ========================================================================== */
+
 .btn-clean-action {
   width: 30px;
   height: 30px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   border: 1.5px solid #cbd5e1;
   border-radius: 8px;
+
   background-color: #ffffff;
   color: #1e293b;
-  transition: var(--fast-ease);
 }
 
 .btn-clean-action.edit:hover {
@@ -899,6 +984,10 @@ select.tomselected {
   color: #0f172a;
 }
 
+/* ==========================================================================
+   12. SPINNER
+   ========================================================================== */
+
 .spin-animation {
   display: inline-block;
   animation: spin 0.75s linear infinite;
@@ -914,12 +1003,15 @@ select.tomselected {
   }
 }
 
+/* ==========================================================================
+   13. MOBILE RESPONSIVENESS
+   ========================================================================== */
+
 .print-only-header {
   display: none;
 }
 
 @media (max-width: 768px) {
-
   .compact-field-xs,
   .compact-field-sm,
   .tax-stepper-field,
@@ -930,9 +1022,37 @@ select.tomselected {
 
   .dt-search input,
   .dataTables_wrapper .dataTables_filter input {
-    min-width: 100%;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .glass-card {
+    border-radius: 14px;
+  }
+
+  .modal-section-card {
+    padding: 12px;
   }
 }
+
+/* ==========================================================================
+   14. REDUCED MOTION ACCESSIBILITY
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   15. PRINT - A4 LANDSCAPE
+   ========================================================================== */
 
 @media print {
   @page {
@@ -944,8 +1064,10 @@ select.tomselected {
   body {
     width: 100% !important;
     background: #ffffff !important;
+    background-image: none !important;
     font-size: 7.5pt !important;
     color: #000000 !important;
+    overflow: visible !important;
   }
 
   .navbar,
@@ -962,12 +1084,13 @@ select.tomselected {
   .d-print-none,
   .no-print-placeholder {
     display: none !important;
-    height: 0 !important;
   }
 
   .vehicle-container {
+    width: 100% !important;
     max-width: 100% !important;
     padding: 0 !important;
+    margin: 0 !important;
   }
 
   .glass-card,
@@ -976,6 +1099,7 @@ select.tomselected {
     box-shadow: none !important;
     padding: 0 !important;
     background: transparent !important;
+    overflow: visible !important;
   }
 
   .print-only-header {
@@ -983,6 +1107,11 @@ select.tomselected {
     margin-bottom: 6px;
     border-bottom: 1.5px solid #000000;
     padding-bottom: 2px;
+  }
+
+  table.dataTable {
+    width: 100% !important;
+    border-collapse: collapse !important;
   }
 
   table.dataTable thead th {
@@ -997,5 +1126,13 @@ select.tomselected {
     padding: 0 !important;
     font-size: 8pt !important;
     background: #ffffff !important;
+  }
+
+  .exp-pill,
+  .cat-badge,
+  .badge-tag-permit,
+  .badge-tag-np {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }
