@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vehicles Registry - Fleet Management</title>
+
+  <!-- Fast CDN Preconnects -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.datatables.net" crossorigin />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="images/favicon.ico" />
 
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <!-- DataTables Bootstrap 5 CSS -->
@@ -155,7 +158,7 @@
       </div>
     </div>
 
-    <!-- Collapsible Advanced Filters & Sorting (Requirement 6: No duplicate Expiry Status dropdown) -->
+    <!-- Collapsible Advanced Filters & Sorting -->
     <div class="collapse mb-4" id="filterDrawer">
       <div class="glass-card p-3 p-md-4" id="filterCardWrapper">
         <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
@@ -199,7 +202,7 @@
             </div>
           </div>
           <div class="col-lg-3 col-md-6">
-            <label class="form-label small fw-bold text-dark mb-1">Expiry Date Range</label>
+            <label class="form-label small fw-bold text-dark mb-1">Expiry Date Range (DD-MM-YYYY)</label>
             <div class="input-group input-group-sm">
               <input type="date" id="customDateFrom" class="form-control fw-bold" onchange="VehicleController.applyFilters()" title="From Date" />
               <span class="input-group-text bg-light fw-bold text-muted px-1">to</span>
@@ -490,18 +493,16 @@
               </div>
             </div>
 
-            <!-- CARD 3: True One-Line Compact Permits & Statutory Expiry Dates (Requirements 1, 2, 4, 5) -->
+            <!-- CARD 3: Permits, Fitness & Green Tax -->
             <div class="modal-section-card mb-3">
               <div class="section-card-title">
                 <span class="section-icon bg-warning-subtle text-warning-emphasis"><i class="fa fa-file-shield"></i></span>
                 <span>3. Permits &amp; Statutory Expiry Dates</span>
               </div>
 
-              <!-- ALL 6 STATUTORY ITEMS IN ONE COMPACT 6-COLUMN ROW -->
               <div class="row g-2 align-items-end">
-
                 <!-- 1. State Permit -->
-                <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-6 col-sm-6">
                   <div class="d-flex justify-content-between align-items-center mb-1">
                     <label class="form-label mb-0"><i class="fa fa-map-location-dot text-success me-1"></i>Permit</label>
                     <select id="v_permit_app" class="d-none" onchange="VehicleController.togglePermits(this.value)">
@@ -517,11 +518,11 @@
                     <input type="date" id="v_permit" class="form-control fw-bold" />
                     <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_permit')" title="Clear Date">&times;</button>
                   </div>
-                  <div id="permitNaBadge" class="na-field-placeholder">N/A </div>
+                  <div id="permitNaBadge" class="na-field-placeholder">N/A</div>
                 </div>
 
                 <!-- 2. National Permit -->
-                <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-6 col-sm-6">
                   <div class="d-flex justify-content-between align-items-center mb-1">
                     <label class="form-label mb-0"><i class="fa fa-globe text-info me-1"></i>Nat. Permit</label>
                     <select id="v_np_app" class="d-none">
@@ -537,11 +538,11 @@
                     <input type="date" id="v_np_expiry" class="form-control fw-bold" />
                     <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_np_expiry')" title="Clear Date">&times;</button>
                   </div>
-                  <div id="npNaBadge" class="na-field-placeholder">N/A </div>
+                  <div id="npNaBadge" class="na-field-placeholder">N/A</div>
                 </div>
 
                 <!-- 3. Fitness (FC) -->
-                <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-6 col-sm-6">
                   <label class="form-label"><i class="fa fa-certificate text-primary me-1"></i>Fitness (FC)</label>
                   <div class="date-input-clear-wrap mw-100">
                     <input type="date" id="v_fc" class="form-control fw-bold" />
@@ -549,9 +550,8 @@
                   </div>
                 </div>
 
-              
-                <!-- 6. Green Tax -->
-                <div class="col-xl-3 col-md-4 col-sm-6">
+                <!-- 4. Green Tax -->
+                <div class="col-xl-3 col-md-6 col-sm-6">
                   <div class="d-flex justify-content-between align-items-center mb-1">
                     <label class="form-label mb-0"><i class="fa fa-leaf text-success me-1"></i>Green Tax</label>
                     <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold" style="font-size: 0.68rem;" onclick="VehicleController.unlockGreenTax()">Unlock</button>
@@ -561,33 +561,28 @@
                     <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_gtax')" title="Clear Date">&times;</button>
                   </div>
                 </div>
-
-              
               </div>
             </div>
 
-            <!-- CARD 4: True One-Line Compact Permits & Statutory Expiry Dates (Requirements 1, 2, 4, 5) -->
+            <!-- CARD 4: Insurance, PUC & Operational Remarks -->
             <div class="modal-section-card">
               <div class="section-card-title">
-                <span class="section-icon bg-warning-subtle text-warning-emphasis"><i class="fa fa-file-shield"></i></span>
-                <span>4. other Dates and remarks </span>
+                <span class="section-icon bg-info-subtle text-info-emphasis"><i class="fa fa-shield-heart"></i></span>
+                <span>4. Insurance, PUC &amp; Operational Remarks</span>
               </div>
 
-              <!-- ALL 6 STATUTORY ITEMS IN ONE COMPACT 6-COLUMN ROW -->
-              <div class="row g-2 align-items-end">
-
-               
-                <!-- 4. Insurance -->
-                <div class="col-xl-2 col-md-4 col-sm-6">
-                  <label class="form-label"><i class="fa fa-shield-heart text-danger me-1"></i>Insurance</label>
+              <div class="row g-3 align-items-start">
+                <!-- Insurance -->
+                <div class="col-xl-3 col-md-6 col-sm-6">
+                  <label class="form-label"><i class="fa fa-shield-heart text-danger me-1"></i>Insurance Expiry</label>
                   <div class="date-input-clear-wrap mw-100">
                     <input type="date" id="v_ins" class="form-control fw-bold" />
                     <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_ins')" title="Clear Date">&times;</button>
                   </div>
                 </div>
 
-                <!-- 5. Pollution (PUC) -->
-                <div class="col-xl-2 col-md-4 col-sm-6">
+                <!-- Pollution (PUC) -->
+                <div class="col-xl-3 col-md-6 col-sm-6">
                   <label class="form-label"><i class="fa fa-smog text-secondary me-1"></i>Pollution (PUC)</label>
                   <div class="date-input-clear-wrap mw-100">
                     <input type="date" id="v_puc" class="form-control fw-bold" />
@@ -595,13 +590,11 @@
                   </div>
                 </div>
 
-                
-
-                <!-- Operational Notes -->
-                <div class="col-xl-4 col-md-1 col-sm-4">
+                <!-- Operational Notes (Fixed responsive column width) -->
+                <div class="col-xl-6 col-md-12 col-sm-12">
                   <label class="form-label"><i class="fa fa-note-sticky text-warning-emphasis me-1"></i>Operational Notes / Remarks</label>
                   <div class="input-with-clear">
-                    <textarea type="text" id="v_remarks" class="form-control fw-bold" placeholder="e.g. NP, FC &amp; TAX FINE..." rows="3"></textarea>
+                    <textarea id="v_remarks" class="form-control fw-bold" placeholder="e.g. NP, FC &amp; TAX FINE..." rows="2"></textarea>
                     <button type="button" class="btn-clear-inside" onclick="VehicleController.clearInput('v_remarks')" title="Clear">&times;</button>
                   </div>
                 </div>
@@ -621,7 +614,7 @@
     </div>
   </div>
 
-  <!-- Modal: Edit Diff Confirmation Preview (Requirement 7) -->
+  <!-- Modal: Edit Diff Confirmation Preview -->
   <div class="modal fade" id="confirmChangesModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" style="z-index: 1075;">
     <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content glass-modal border-0 shadow-lg">
@@ -665,6 +658,11 @@
 
   <script src="js/auth.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/vehicles.js"></script>
+  <!-- Vehicle Controller Modules -->
+  <script src="js/vehicle.js"></script>
+  <script src="js/vehicle/utils.js"></script>
+  <script src="js/vehicle/table.js"></script>
+  <script src="js/vehicle/modals.js"></script>
+  <script src="js/vehicle/actions.js"></script>
 </body>
 </html>
