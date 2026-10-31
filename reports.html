@@ -1,41 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="js/auth.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vehicle Compliance Reports - Fleet Management</title>
-
-  <!-- Favicon -->
+  <title>Vehicle Reports</title>
+  
   <link rel="icon" type="image/png" href="images/favicon.ico" />
-
-  <!-- Bootstrap 5 CSS -->
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <!-- DataTables Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css" />
-  <!-- Tom Select CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
-
-  <!-- App Stylesheets -->
+  
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/reports.css" />
 </head>
 <body class="glass-app-bg">
-
-  <!-- Toast Notification Alert -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1400;">
-    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg rounded-4" role="alert" aria-live="assertive" aria-atomic="true">
+    <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg" role="alert">
       <div class="d-flex">
-        <div class="toast-body py-3 px-3 fw-bold" id="toastMessage">Action completed.</div>
-        <button type="button" id="toastCloseBtn" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        <div class="toast-body py-2 px-3 fw-bold" id="toastMessage">Action completed.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
       </div>
     </div>
   </div>
 
-  <!-- Navbar -->
    <!-- Standard Bootstrap Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top glass-navbar">
     <div class="container-fluid">
@@ -62,258 +53,202 @@
     </div>
   </nav>
 
-  <!-- Workspace -->
-  <main class="report-container py-4 px-3 px-md-4">
-    <!-- Print Header (A4 Landscape optimized) -->
-    <div class="print-report-header">
-      <div class="d-flex justify-content-between align-items-end">
+  <main class="report-container">
+    <!-- Clean Print-Only Header: Displays ONLY "Generated on: DD/MM/YYYY" -->
+    <div class="print-a4-header">
+      <div class="d-flex justify-content-between align-items-center">
         <div>
-          <h4 class="fw-black mb-0 text-uppercase">VEHICLE COMPLIANCE REPORT</h4>
-          <p class="mb-0 small fw-bold">Printed on: <span id="printDateStamp"></span> | Fleet Management System</p>
+          <span>Generated on: <span id="printDateStamp"></span></span>
         </div>
-        <div class="text-end">
-          <p class="mb-0 small fw-bold">Format: A4 Landscape</p>
+        <div>
+          <span class="font-mono text-muted" id="printFilterLabel"></span>
         </div>
       </div>
     </div>
 
-    <!-- Toolbar -->
-    <div class="glass-card p-4 mb-4 d-print-none" id="reportTopToolbar">
-      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-        <div>
-          <h3 class="fw-black text-dark mb-0 tracking-tight"><i class="fa fa-file-contract text-primary me-2"></i>Vehicle Compliance Reports</h3>
-          <p class="text-muted small fw-bold mb-0 mt-1">Double-click / double-tap dates or remarks to update. Tap WhatsApp icon to send expiry notices.</p>
+    <!-- Operations Console -->
+    <div class="erp-card d-print-none mb-2">
+      <div class="erp-card-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa fa-shield-halved text-primary"></i>
+          <span class="fw-bold text-dark" style="font-size: 0.88rem;">Vehicle Compliance Register</span>
+          <span class="badge bg-secondary-subtle text-secondary border font-mono py-1" id="reportCountBadge">0 Vehicles</span>
         </div>
-        <div class="d-flex flex-wrap gap-2">
-          <button class="btn btn-outline-success btn-sm d-flex align-items-center fw-bold shadow-2xs px-3 rounded-pill" onclick="ReportController.exportCSV()">
-            <i class="fa fa-file-excel me-1.5"></i> Export Excel / CSV
+        <div class="d-flex align-items-center gap-1.5">
+          <button class="btn btn-outline-success btn-sm py-1 px-2.5 fw-bold" onclick="ReportController.exportCSV()">
+            <i class="fa fa-file-excel me-1"></i>Export Excel
           </button>
-          <button class="btn btn-outline-dark btn-sm d-flex align-items-center fw-bold shadow-2xs px-3 rounded-pill" onclick="ReportController.printReport()">
-            <i class="fa fa-print me-1.5"></i> Print A4 (PDF)
+          <button class="btn btn-dark btn-sm py-1 px-2.5 fw-bold" onclick="ReportController.printReport()">
+            <i class="fa fa-print me-1"></i>Print A4
           </button>
-          <button id="btnRefreshReports" class="btn btn-glass-light btn-sm d-flex align-items-center fw-bold shadow-2xs px-3 rounded-pill" onclick="ReportController.load()">
-            <i id="refreshIcon" class="fa fa-sync-alt me-1.5 text-primary"></i> Refresh
+          <button class="btn btn-outline-secondary btn-sm py-1 px-2" onclick="ReportController.load()" title="Reload Data">
+            <i id="refreshIcon" class="fa fa-sync-alt text-primary"></i>
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- Filter Configuration Card -->
-    <div class="glass-card p-4 mb-4 d-print-none" id="reportFilterCard">
-      <div class="row g-3 align-items-end mb-3">
-        <!-- Customer Search -->
-        <div class="col-lg-3 col-md-4">
-          <label class="form-label small fw-bold text-dark mb-1">Search Customer / Firm</label>
-          <select id="reportCustomerSelect"></select>
-        </div>
-
-        <!-- Date Range Filter -->
-        <div class="col-lg-3 col-md-4">
-          <label class="form-label small fw-bold text-dark mb-1">Expiry Date Between</label>
-          <div class="input-group input-group-sm">
-            <input type="date" id="dateFilterFrom" class="form-control fw-bold" onchange="ReportController.applyFilters()" title="From Date" />
-            <input type="date" id="dateFilterTo" class="form-control fw-bold" onchange="ReportController.applyFilters()" title="To Date" />
-            <button class="btn btn-outline-secondary px-2" type="button" onclick="ReportController.resetDates()" title="Clear dates">
-              <i class="fa fa-times"></i>
-            </button>
+      <div class="erp-card-body">
+        <div class="row g-2 align-items-end mb-2">
+          <div class="col-md-3">
+            <label class="label-xs">Customer / Firm</label>
+            <select id="reportCustomerSelect"></select>
           </div>
-        </div>
-
-        <!-- Permit Category Filter -->
-        <div class="col-lg-2 col-md-4">
-          <label class="form-label small fw-bold text-dark mb-1">Permit Category</label>
-          <select id="reportPermitFilter" class="form-select form-select-sm fw-bold" onchange="ReportController.applyFilters()">
-            <option value="ALL">All Permits</option>
-            <option value="PERMIT_ONLY">State Permit Only</option>
-            <option value="NP_ONLY">National Permit (NP) Only</option>
-            <option value="NO_PERMIT">Not Applicable / No Permit</option>
-          </select>
-        </div>
-
-        <!-- Vehicle Category Filter -->
-        <div class="col-lg-2 col-md-6">
-          <label class="form-label small fw-bold text-dark mb-1">Vehicle Category</label>
-          <select id="reportCategoryFilter" class="form-select form-select-sm fw-bold" onchange="ReportController.applyFilters()">
-            <option value="">All Categories</option>
-            <option value="HGV">HGV</option>
-            <option value="MGV">MGV</option>
-            <option value="LGV">LGV</option>
-            <option value="LPV">LPV</option>
-            <option value="MPV">MPV</option>
-          </select>
-        </div>
-
-        <!-- Dropdowns for Fields & Docs -->
-        <div class="col-lg-2 col-md-6 d-flex gap-2">
-          <div class="dropdown flex-fill">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle w-100 fw-bold d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-              <span><i class="fa fa-sliders-h me-1"></i> Fields</span>
-            </button>
-            <div class="dropdown-menu doc-dropdown-menu p-2 shadow-lg">
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="fld_chassis" checked onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_chassis">Chassis Number</label>
+          <div class="col-md-3">
+            <label class="label-xs">Expiry Window</label>
+            <div class="input-group input-group-sm">
+              <input type="date" id="dateFilterFrom" class="form-control form-control-xs" onchange="ReportController.applyFilters()" />
+              <input type="date" id="dateFilterTo" class="form-control form-control-xs" onchange="ReportController.applyFilters()" />
+              <button class="btn btn-outline-secondary px-2" onclick="ReportController.resetDates()"><i class="fa fa-times"></i></button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label class="label-xs">Permit Rule</label>
+            <select id="reportPermitFilter" class="form-select form-select-xs" onchange="ReportController.applyFilters()">
+              <option value="ALL">All Fleets</option>
+              <option value="PERMIT_ONLY">State Permit Only</option>
+              <option value="NP_ONLY">National Permit (NP) Only</option>
+              <option value="BOTH_PERMIT">Both State &amp; NP</option>
+              <option value="NO_PERMIT">No Permit (Exempt)</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="label-xs">Category</label>
+            <select id="reportCategoryFilter" class="form-select form-select-xs" onchange="ReportController.applyFilters()">
+              <option value="">All Categories</option>
+              <option value="HGV">HGV</option>
+              <option value="MGV">MGV</option>
+              <option value="LGV">LGV</option>
+              <option value="LMV">LMV</option>
+              <option value="LPV">LPV</option>
+              <option value="MPV">MPV</option>
+            </select>
+          </div>
+          <div class="col-md-2 d-flex gap-1">
+            <div class="dropdown flex-fill">
+              <button class="btn btn-outline-secondary btn-sm w-100 fw-bold py-1" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                <i class="fa fa-columns me-1"></i>Cols
+              </button>
+              <div class="dropdown-menu p-2 shadow-lg">
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="fld_age" onchange="ReportController.applyFilters()"><label class="form-check-label small">Vehicle Age</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="fld_engine" onchange="ReportController.applyFilters()"><label class="form-check-label small">Engine No</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="fld_audit" onchange="ReportController.applyFilters()"><label class="form-check-label small">Audit Timestamps</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="fld_rem_days" onchange="ReportController.applyFilters()"><label class="form-check-label small">Days Left Pills</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="fld_alt_contacts" onchange="ReportController.applyFilters()"><label class="form-check-label small">Alt Mobiles</label></div>
               </div>
-              <hr class="dropdown-divider my-1">
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="fld_category" onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_category">Category</label>
-              </div>
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="fld_tyre" onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_tyre">Tyres Count</label>
-              </div>
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="fld_tax_amt" onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_tax_amt">Tax Amount (₹)</label>
-              </div>
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="fld_tax_type" onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_tax_type">Tax Payment Type</label>
-              </div>
-              <div class="form-check mb-1">
-                <input class="form-check-input" type="checkbox" id="fld_rem_days" checked onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_rem_days">Remaining Days Pills</label>
-              </div>
-              <hr class="dropdown-divider my-1">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="fld_alt_contacts" onchange="ReportController.applyFilters()">
-                <label class="form-check-label small fw-bold" for="fld_alt_contacts">Alt Mobile Numbers (2 & 3)</label>
+            </div>
+            <div class="dropdown flex-fill">
+              <button class="btn btn-outline-secondary btn-sm w-100 fw-bold py-1" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                <i class="fa fa-file-lines me-1"></i>Docs
+              </button>
+              <div class="dropdown-menu p-2 shadow-lg">
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_permit" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">State Permit</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_np" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">National Permit</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_fc" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">Fitness (FC)</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_tax" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">Road Tax</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_gtax" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">Green Tax</label></div>
+                <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_ins" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">Insurance</label></div>
+                <div class="form-check"><input class="form-check-input" type="checkbox" id="col_puc" checked onchange="ReportController.applyFilters()"><label class="form-check-label small">Pollution (PUC)</label></div>
               </div>
             </div>
           </div>
-
-          <div class="dropdown flex-fill">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle w-100 fw-bold d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-              <span><i class="fa fa-check-square me-1"></i> Docs</span>
-            </button>
-            <div class="dropdown-menu doc-dropdown-menu p-2 shadow-lg">
-              <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_permit" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_permit">Permit</label></div>
-              <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_np" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_np">National Permit (NP)</label></div>
-              <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_fc" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_fc">Fitness (FC)</label></div>
-              <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_tax" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_tax">Road Tax</label></div>
-              <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_gtax" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_gtax">Green Tax</label></div>
-              <div class="form-check mb-1"><input class="form-check-input" type="checkbox" id="col_ins" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_ins">Insurance</label></div>
-              <div class="form-check"><input class="form-check-input" type="checkbox" id="col_puc" checked onchange="ReportController.applyFilters()"><label class="form-check-label small fw-bold" for="col_puc">Pollution (PUC)</label></div>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <!-- Preset Quick Chips -->
-      <div class="pt-3 border-top d-flex flex-wrap align-items-center justify-content-start gap-2">
-        <span class="small fw-black text-secondary text-uppercase me-1" style="font-size: 0.72rem;">Expiry Status:</span>
-        <button type="button" class="filter-preset-chip active" onclick="ReportController.setQuickPreset('ALL', this)">All</button>
-        <button type="button" class="filter-preset-chip" onclick="ReportController.setQuickPreset('EXPIRED_ONLY', this)">Overdue (&le; 0d)</button>
-        <button type="button" class="filter-preset-chip" onclick="ReportController.setQuickPreset('FINE_ONLY', this)">Due &le; 15d</button>
-        <button type="button" class="filter-preset-chip" onclick="ReportController.setQuickPreset('SAFE_ONLY', this)">16 &ndash; 30d</button>
-        <button type="button" class="filter-preset-chip" onclick="ReportController.setQuickPreset('NOTICE_ONLY', this)">31 &ndash; 45d</button>
-        <button type="button" class="filter-preset-chip" onclick="ReportController.setQuickPreset('MISSING_ONLY', this)">Missing Papers</button>
+        <!-- Presets Row (Vibrant Colored Buttons) -->
+        <div class="preset-bar pt-2 border-top">
+          <span class="label-xs mb-0 me-1">Presets:</span>
+          <button type="button" class="chip-btn preset-all active" onclick="ReportController.setQuickPreset('ALL', this)">All</button>
+          <button type="button" class="chip-btn preset-overdue" onclick="ReportController.setQuickPreset('OVERDUE', this)">Overdue (&le; 0d)</button>
+          <button type="button" class="chip-btn preset-crit" onclick="ReportController.setQuickPreset('CRITICAL_7', this)">Due in 7 Days</button>
+          <button type="button" class="chip-btn preset-soon" onclick="ReportController.setQuickPreset('UPCOMING_15', this)">Due in 15 Days</button>
+          <button type="button" class="chip-btn preset-warn" onclick="ReportController.setQuickPreset('WINDOW_30', this)">Due in 30 Days</button>
+          <button type="button" class="chip-btn preset-notice" onclick="ReportController.setQuickPreset('WINDOW_45', this)">Due in 45 Days</button>
+          <button type="button" class="chip-btn preset-window60" onclick="ReportController.setQuickPreset('WINDOW_60', this)">Due in 60 Days</button>
+          <button type="button" class="chip-btn preset-missing" onclick="ReportController.setQuickPreset('MISSING_ONLY', this)">Missing Papers</button>
+          <button type="button" class="chip-btn preset-blocked" onclick="ReportController.setQuickPreset('BLOCKED_ONLY', this)">Action Required</button>
+          <button type="button" class="chip-btn preset-barred" onclick="ReportController.setQuickPreset('AGE_BARRED', this)">15y+ Barred</button>
+        </div>
       </div>
     </div>
 
-    <!-- Active Report Table -->
-    <div class="glass-card p-4">
-      <div class="d-flex justify-content-between align-items-center mb-3 d-print-none" id="reportTableCardHeader">
-        <div>
-          <h6 class="fw-black text-dark mb-0 text-uppercase" style="font-size: 0.85rem;"><i class="fa fa-table text-primary me-2"></i>Vehicle Compliance &amp; Contact Register</h6>
-          <small class="text-muted fw-bold">Profile &bull; Customer Contacts &bull; Document Expiry Dates &bull; Remarks &amp; Overdue Rules</small>
-        </div>
-        <span class="badge bg-dark font-monospace fw-bold px-3 py-2" id="reportCountBadge">0 Vehicles</span>
-      </div>
-
-      <div class="table-wrapper">
-        <table class="table table-bordered align-middle w-100 mb-0" id="reportDataTable">
-          <!-- Rendered dynamically by DataTables -->
-        </table>
+    <!-- Main Table Container -->
+    <div class="erp-card">
+      <div class="table-responsive">
+        <table class="table align-middle w-100" id="reportDataTable"></table>
       </div>
     </div>
   </main>
 
-  <!-- Modal: Quick Inline Date Editor (Double-Tap Date with Road Tax Cycle Jumper & Clear Shortcut) -->
-  <div class="modal fade" id="quickDateModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content glass-modal border-0 shadow-lg">
-        <div class="modal-header modal-gradient-header text-white py-2.5 px-3">
-          <h6 class="modal-title fw-black mb-0"><i class="fa fa-calendar-check me-2 text-info"></i>Update Expiry Date</h6>
+  <!-- Combined Date Editor with Diff Display -->
+  <div class="modal fade" id="quickDateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-dark text-white py-2 px-3">
+          <h6 class="modal-title fw-bold mb-0">Update Expiry Date</h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="quickDateForm" onsubmit="event.preventDefault(); ReportController.saveQuickDate();">
+        <form onsubmit="event.preventDefault(); ReportController.saveQuickDate();">
           <div class="modal-body p-3">
             <input type="hidden" id="qd_vehicle_id" />
             <input type="hidden" id="qd_field_name" />
-            <input type="hidden" id="qd_old_value" />
+            <input type="hidden" id="qd_original_val" />
+
             <div class="d-flex justify-content-between align-items-center mb-1">
-              <label class="form-label small fw-bold text-dark mb-0" id="qd_label">Select New Date</label>
-              <button type="button" class="btn btn-link btn-sm p-0 text-danger text-decoration-none fw-bold" style="font-size: 0.72rem;" onclick="ReportController.clearInput('qd_input'); ReportController.onQuickDateInputChange();">Clear Date</button>
+              <label class="label-xs mb-0" id="qd_label">Select New Expiry Date</label>
+              <button type="button" class="btn btn-link btn-sm p-0 text-danger text-decoration-none fw-bold" onclick="ReportController.clearInput('qd_input');">Clear</button>
             </div>
-            <div class="date-input-clear-wrap mw-100">
-              <input type="date" id="qd_input" class="form-control fw-bold" required onchange="ReportController.onQuickDateInputChange()" />
-              <button type="button" class="btn-clear-inside" onclick="ReportController.clearInput('qd_input'); ReportController.onQuickDateInputChange();" title="Clear Date">&times;</button>
+            <input type="date" id="qd_input" class="form-control form-control-xs fw-bold mb-2" required onchange="ReportController.onDateInputChange()" />
+
+            <!-- Diff Warning Banner -->
+            <div id="qd_diff_box" class="p-2.5 bg-light rounded border mb-2 small fw-bold">
+              <div class="text-muted">Current Saved: <span class="font-mono text-danger text-decoration-line-through fw-bold" id="qd_diff_old">-</span></div>
+              <div>Proposed New: <span class="font-mono text-success fs-6 fw-bold" id="qd_diff_new">-</span></div>
+              <div class="text-danger small mt-1"><i class="fa fa-info-circle me-1"></i>Please verify changes before saving.</div>
             </div>
 
-            <div id="qd_diff_box" class="p-2 bg-light border rounded-3 mt-2 small fw-bold text-secondary d-none">
-              <div>Old: <span class="text-danger text-decoration-line-through font-monospace" id="qd_diff_old">-</span></div>
-              <div>New: <span class="text-success font-monospace fw-black" id="qd_diff_new">-</span></div>
-            </div>
-
-            <!-- Dynamic Quick Tax Cycle Panel -->
-            <div id="qd_tax_cycle_box" class="mt-2 p-2 bg-light rounded-3 border d-none">
-              <small class="text-secondary d-block fw-bold mb-1">Quarterly Tax Cycles:</small>
-              <button type="button" id="btnApplyNextQuarter" class="btn btn-sm btn-primary w-100 mb-1 fw-bold" style="font-size: 0.72rem;" onclick="ReportController.applyNextTaxCycleFromModal()">
-                <i class="fa fa-arrow-repeat me-1"></i>Set Next: <span id="qd_next_quarter_text">-</span>
-              </button>
-              <div class="d-flex gap-1 justify-content-between mt-1">
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="ReportController.setModalCycleDate('03-31')">31-03</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="ReportController.setModalCycleDate('06-30')">30-06</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="ReportController.setModalCycleDate('09-30')">30-09</button>
-                <button type="button" class="btn btn-outline-secondary btn-sm py-0 px-1 fw-bold flex-fill" style="font-size: 0.68rem;" onclick="ReportController.setModalCycleDate('12-31')">31-12</button>
-              </div>
+            <!-- Quick Advancement Shortcuts -->
+            <div class="p-2 bg-light rounded border">
+              <small class="text-secondary d-block fw-bold mb-1">Quick Date Advancement:</small>
+              <div class="d-flex flex-wrap gap-1" id="qd_advance_shortcuts"></div>
             </div>
           </div>
           <div class="modal-footer bg-light py-2 px-3">
             <button type="button" class="btn btn-secondary btn-sm fw-bold rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" id="btnSaveQuickDate" class="btn btn-primary btn-sm fw-bold rounded-pill px-3"><i class="fa fa-save me-1"></i>Update Date</button>
+            <button type="submit" id="btnSaveQuickDate" class="btn btn-primary btn-sm fw-bold rounded-pill px-3">Confirm &amp; Save</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- Modal: Quick Inline Remarks Editor -->
-  <div class="modal fade" id="quickRemarksModal" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
+  <!-- Quick Remarks Editor Modal -->
+  <div class="modal fade" id="quickRemarksModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered">
-      <div class="modal-content glass-modal border-0 shadow-lg">
-        <div class="modal-header modal-gradient-header text-white py-2.5 px-3">
-          <h6 class="modal-title fw-black mb-0"><i class="fa fa-comment-dots me-2 text-warning"></i>Edit Vehicle Notes</h6>
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-dark text-white py-2 px-3">
+          <h6 class="modal-title fw-bold mb-0">Edit Remarks</h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <form id="quickRemarksForm" onsubmit="event.preventDefault(); ReportController.saveQuickRemarks();">
+        <form onsubmit="event.preventDefault(); ReportController.saveQuickRemarks();">
           <div class="modal-body p-3">
             <input type="hidden" id="qr_vehicle_id" />
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <label class="form-label small fw-bold text-dark mb-0">Vehicle Remarks / Notes</label>
-              <button type="button" class="btn btn-link btn-sm p-0 text-danger text-decoration-none fw-bold" style="font-size: 0.72rem;" onclick="document.getElementById('qr_input').value=''; document.getElementById('qr_input').focus();">Clear</button>
-            </div>
-            <textarea id="qr_input" class="form-control fw-bold" rows="3" placeholder="Enter notes..."></textarea>
+            <textarea id="qr_input" class="form-control fw-bold" rows="3" placeholder="Enter remarks..."></textarea>
           </div>
           <div class="modal-footer bg-light py-2 px-3">
             <button type="button" class="btn btn-secondary btn-sm fw-bold rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" id="btnSaveQuickRemarks" class="btn btn-primary btn-sm fw-bold rounded-pill px-3"><i class="fa fa-save me-1"></i>Save Remarks</button>
+            <button type="submit" id="btnSaveQuickRemarks" class="btn btn-primary btn-sm fw-bold rounded-pill px-3">Save Remarks</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-
-  <script src="js/auth.js"></script>
+  
+ 
   <script src="js/api.js"></script>
   <script src="js/reports.js"></script>
 </body>

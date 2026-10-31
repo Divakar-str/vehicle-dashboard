@@ -1,531 +1,426 @@
-/* ==========================================================================    Fleet Management - Ultimate SaaS Glassmorphism & Perfect A4 Print Reports CSS    ========================================================================== */
+/* ========================================================
+   EXECUTIVE FLEET COMPLIANCE DESIGN SYSTEM
+   High Density, Fixed-Column A4 Landscape Engine
+   ======================================================== */
+
 :root {
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-glow: rgba(37, 99, 235, 0.16);
-  --glass-surface: rgba(255, 255, 255, 0.94);
-  --glass-border: rgba(255, 255, 255, 0.98);
-  --glass-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-  --text-main: #0f172a;
-  --text-dark-bold: #020617;
-  --text-muted: #334155;
-  --border-subtle: #cbd5e1;
-  --radius-card: 20px;
-  --fast-ease: 0.15s cubic-bezier(0.2, 0, 0, 1);
+  --erp-primary: #1e40af;
+  --erp-bg: #f8fafc;
+  --erp-card: #ffffff;
+  --erp-border: #cbd5e1;
+  --erp-border-strong: #64748b;
+  --erp-text: #0f172a;
+  --erp-muted: #64748b;
+
+  /* 60-Day Multi-Tier Colors */
+  --c-overdue-bg: #fee2e2;
+  --c-overdue-txt: #dc2626;
+  --c-overdue-bdr: #f87171;
+
+  --c-crit-bg: #ffedd5;
+  --c-crit-txt: #ea580c;
+  --c-crit-bdr: #fb923c;
+
+  --c-soon-bg: #fef3c7;
+  --c-soon-txt: #b45309;
+  --c-soon-bdr: #fcd34d;
+
+  --c-warn-bg: #ecfccb;
+  --c-warn-txt: #4d7c0f;
+  --c-warn-bdr: #bef264;
+
+  --c-notice-bg: #e0f2fe;
+  --c-notice-txt: #0369a1;
+  --c-notice-bdr: #7dd3fc;
+
+  --c-safe-bg: #dcfce7;
+  --c-safe-txt: #15803d;
+  --c-safe-bdr: #86efac;
 }
 
-/* ==========================================================================    1. Global Workspace & Body Styles    ========================================================================== */
-body.bg-light,
-body.glass-app-bg {
-  background-color: #f1f5f9 !important;
-  background-image: radial-gradient(circle at 8% 0%, rgba(37, 99, 235, 0.09) 0%, transparent 42%), radial-gradient(circle at 92% 0%, rgba(16, 185, 129, 0.07) 0%, transparent 38%), radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.06) 0%, transparent 48%);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--text-main);
-  min-height: 100vh;
+body {
+  background-color: var(--erp-bg) !important;
+  color: var(--erp-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-
-.fw-black {
-  font-weight: 900 !important;
-}
-
-.tracking-tight {
-  letter-spacing: -0.02em;
-}
-
-/* ==========================================================================    2. Glassmorphism Navbar & Cards (CRITICAL: overflow: visible for dropdowns)    ========================================================================== */
-
-
-.glass-card,
-.report-card {
-  background: var(--glass-surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: var(--radius-card);
-  border: 1.5px solid var(--glass-border);
-  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.95) inset, var(--glass-shadow);
-  padding: 24px;
-  margin-bottom: 24px;
-  overflow: visible !important;
-  /* CRITICAL: Prevents card containers from clipping dropdowns */
-  transition: transform var(--fast-ease), box-shadow var(--fast-ease), border-color var(--fast-ease);
-}
-
-.glass-card .row,
-.report-card .row,
-.glass-card [class*="col-"],
-.report-card [class*="col-"] {
-  overflow: visible !important;
-  /* CRITICAL: Prevents column containers from clipping dropdowns */
-}
-
-.glass-card:hover,
-.report-card:hover {
-  border-color: #94a3b8;
-  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.1);
 }
 
 .report-container {
-  max-width: 1680px;
-  margin: 0 auto;
+  max-width: 100%;
+  padding: 6px 10px !important;
 }
 
-/* ==========================================================================    3. Filter Toolbar, Dropdowns & Preset Chips    ========================================================================== */
-.filter-preset-chip {
-  border: 1.5px solid var(--border-subtle);
-  background: #ffffff;
-  color: #334155;
-  font-size: 0.76rem;
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* Console Card */
+.erp-card {
+  background: var(--erp-card);
+  border: 1px solid var(--erp-border);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.erp-card-header {
+  padding: 6px 10px;
+  background: #f1f5f9;
+  border-bottom: 1px solid var(--erp-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.erp-card-body {
+  padding: 8px 10px;
+}
+
+.label-xs {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--erp-muted);
+  letter-spacing: 0.03em;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.form-control-xs, .form-select-xs {
+  font-size: 0.76rem !important;
+  font-weight: 600;
+  border-color: var(--erp-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  height: 27px;
+}
+
+/* ========================================================
+   COLORFUL PRESET CHIPS
+   ======================================================== */
+.preset-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.chip-btn {
+  border-radius: 4px;
+  font-size: 0.72rem;
   font-weight: 800;
-  padding: 6px 14px;
-  border-radius: 50rem;
   cursor: pointer;
-  transition: var(--fast-ease);
+  white-space: nowrap;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  transition: all 0.12s ease;
 }
 
-.filter-preset-chip:hover {
-  background: #f8fafc;
-  border-color: #64748b;
-  color: #0f172a;
-  transform: translateY(-1px);
+.chip-btn.active {
+  box-shadow: 0 0 0 2px #0f172a inset !important;
 }
 
-.filter-preset-chip.active {
-  background: #0f172a;
-  color: #ffffff;
-  border-color: #0f172a;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
-}
+/* Specific Preset Colors */
+.preset-all { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+.preset-overdue { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+.preset-crit { background: #ffedd5; color: #c2410c; border-color: #fdba74; }
+.preset-soon { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
+.preset-warn { background: #ecfccb; color: #4d7c0f; border-color: #bef264; }
+.preset-notice { background: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+.preset-window60 { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+.preset-missing { background: #ffe4e6; color: #be123c; border-color: #fda4af; }
+.preset-blocked { background: #fef08a; color: #854d0e; border-color: #eab308; }
+.preset-barred { background: #fecdd3; color: #9f1239; border-color: #fb7185; }
 
-/* Dropdown stacking fix: raise the card containing an open menu */
-.glass-card:has(.dropdown-menu.show),
-.report-card:has(.dropdown-menu.show) {
-  position: relative !important;
-  z-index: 1060 !important;
-  overflow: visible !important;
-}
-
-/* Keep dropdown and menu above neighboring controls */
-.dropdown {
-  position: relative;
-  overflow: visible !important;
-}
-
-.dropdown-menu.doc-dropdown-menu {
-  z-index: 1070 !important;
-}
-
-/* Avoid clipping inside the filter card's grid */
-.glass-card .row,
-.report-card .row,
-.glass-card [class*="col-"],
-.report-card [class*="col-"] {
-  overflow: visible !important;
-}
-
-/* Do not force .table-wrapper or .table-responsive to overflow: visible;
-   they may need horizontal scrolling for wide report tables. */
-.table-wrapper {
-  border: 1.5px solid var(--border-subtle);
-  border-radius: 16px;
-  background-color: #ffffff;
-  overflow-x: auto;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
-}
-
+/* Table Design */
 #reportDataTable {
-  border-collapse: collapse !important;
-  width: 100% !important;
   margin: 0 !important;
+  border-collapse: collapse !important;
+  border: 1.5px solid var(--erp-border-strong) !important;
+  font-size: 0.78rem;
+  width: 100% !important;
 }
 
 #reportDataTable thead th {
   background: #0f172a !important;
   color: #ffffff !important;
-  font-weight: 900;
-  font-size: 0.74rem;
+  font-weight: 800;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 12px 10px !important;
-  border: 1px solid #1e293b !important;
-  white-space: nowrap;
-}
-
-#reportDataTable tbody tr {
-  cursor: pointer;
-  transition: background-color 0.1s ease;
+  border: 1px solid #334155 !important;
+  padding: 5px 6px !important;
+  vertical-align: middle;
 }
 
 #reportDataTable tbody td {
-  padding: 11px 10px !important;
-  vertical-align: middle !important;
-  border: 1px solid #cbd5e1;
-  background-color: #ffffff;
-  font-weight: 800;
-  color: var(--text-dark-bold);
-  font-size: 0.86rem;
+  padding: 4px 6px !important;
+  vertical-align: middle;
+  border: 1px solid var(--erp-border) !important;
 }
 
-#reportDataTable tbody tr:hover td {
-  background-color: #f8fafc !important;
+/* Vehicle Cell 3-Row Anatomy */
+.veh-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
-/* Vehicle Reg Plate & Spec Stack */
-.reg-no-text {
-  font-size: 1.08rem;
+.veh-row1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.veh-reg {
   font-weight: 900;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  color: #0284c7;
-  letter-spacing: 0.03em;
+  font-size: 1rem;
+  color: #0f172a;
+  padding-right: 20px;
 }
 
-.spec-stack {
-  font-size: 0.76rem;
-  font-weight: 800;
-  color: #334155;
-  margin-top: 3px;
-}
-
-.tax-highlight-single-line {
-  color: #047857;
-  font-weight: 900;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Customer & Owner Info */
-.customer-name-heading {
-  font-size: 0.92rem;
-  font-weight: 900;
-  color: #020617;
-}
-
-.owner-sub {
-  font-size: 0.76rem;
-  font-weight: 800;
+.veh-row2 {
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #475569;
 }
 
-.contact-phone-block {
-  margin-top: 3px;
-  font-size: 0.8rem;
+.veh-row3 {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #1e3a8a;
 }
 
-.phone-link {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-weight: 900;
-  color: #2563eb;
-  text-decoration: none;
-}
-
-.phone-link:hover {
-  text-decoration: underline;
-}
-
-/* ==========================================================================    5. Crystal Date Pills, Countdown Badges & N/A    ========================================================================== */
-.editable-report-date {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.86rem;
-  font-weight: 900;
-  padding: 3px 9px;
-  border-radius: 7px;
-  background: #f8fafc;
-  border: 1.5px solid #cbd5e1;
-  color: #0f172a;
+/* Category Badges */
+.cat-badge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0  !important;
+  border-radius: 3px;
   display: inline-block;
-  cursor: pointer;
-  transition: var(--fast-ease);
 }
+.cat-HGV { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+.cat-MGV { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.cat-LGV { background: #ccfbf1; color: #115e59; border: 1px solid #99f6e4; }
+.cat-LMV { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+.cat-LPV, .cat-MPV { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
 
-.editable-report-date:hover {
-  background: #eff6ff;
-  border-color: #2563eb;
-  color: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-.editable-report-date.unset-dash {
-  border: 1.5px dashed #94a3b8;
-  color: #64748b;
-  padding: 2px 10px;
-  background: #ffffff;
-}
-
-.date-stack-cell {
+/* Large Bold Date Cells */
+.date-box {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
+  gap: 1px;
 }
 
-.countdown-pill {
-  font-size: 0.68rem;
-  font-weight: 900;
-  padding: 2px 7px;
-  border-radius: 5px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+.date-val {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-weight: 800 !important;
+  font-size: 0.82rem !important;
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 3px;
+  display: inline-block;
+  width: fit-content;
   white-space: nowrap;
 }
 
-.cd-lapsed {
+.date-val:hover {
+  filter: brightness(0.92);
+  text-decoration: underline;
+}
+
+/* 60-Day Date Colors */
+.date-overdue { background: var(--c-overdue-bg); color: var(--c-overdue-txt); border: 1px solid var(--c-overdue-bdr); }
+.date-crit    { background: var(--c-crit-bg); color: var(--c-crit-txt); border: 1px solid var(--c-crit-bdr); }
+.date-soon    { background: var(--c-soon-bg); color: var(--c-soon-txt); border: 1px solid var(--c-soon-bdr); }
+.date-warn    { background: var(--c-warn-bg); color: var(--c-warn-txt); border: 1px solid var(--c-warn-bdr); }
+.date-notice  { background: var(--c-notice-bg); color: var(--c-notice-txt); border: 1px solid var(--c-notice-bdr); }
+.date-safe    { background: var(--c-safe-bg); color: var(--c-safe-txt); border: 1px solid var(--c-safe-bdr); }
+
+.date-unset {
+  color: #94a3b8;
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.chain-alert {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  line-height: 1.25;
+}
+
+.chain-blocked {
   background: #fee2e2;
   color: #991b1b;
-  border: 1.5px solid #f87171;
+  border: 1px solid #f87171;
 }
 
-.cd-fine {
-  background: #fef3c7;
-  color: #92400e;
-  border: 1.5px solid #fbbf24;
-}
-
-.cd-safe {
-  background: #dcfce7;
-  color: #065f46;
-  border: 1.5px solid #6ee7b7;
-}
-
-.cd-notice {
-  background: #e0f2fe;
-  color: #075985;
-  border: 1.5px solid #7dd3fc;
-}
-
-.cd-clear {
-  background: #f1f5f9;
-  color: #475569;
-  border: 1.5px solid #cbd5e1;
-}
-
-.badge-na {
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: #64748b;
-  background-color: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 2px 8px;
-  display: inline-block;
-}
-
-/* National Permit Age Status Badges */
-.badge-np-convert-gv {
-  display: inline-block;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
-  font-size: 0.65rem;
-  font-weight: 900;
-  padding: 2px 6px;
-  border-radius: 5px;
-}
-
-.badge-np-final-year {
-  display: inline-block;
-  background-color: #fef3c7;
-  border: 1px solid #fde68a;
-  color: #b45309;
-  font-size: 0.65rem;
-  font-weight: 900;
-  padding: 2px 6px;
-  border-radius: 5px;
-}
-
-/* ==========================================================================    6. Quick Tax Cycle, Remarks & WhatsApp Buttons    ========================================================================== */
-.btn-quick-tax-cycle {
-  border: 1.5px solid #93c5fd;
-  background: #eff6ff;
-  color: #1d4ed8;
-  font-size: 0.7rem;
-  font-weight: 900;
-  padding: 2px 8px;
-  border-radius: 50rem;
-  transition: var(--fast-ease);
-}
-
-.btn-quick-tax-cycle:hover {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
-}
-
-.report-remarks-box {
-  background: #fffbeb;
-  border: 1.5px dashed #fcd34d;
-  border-radius: 9px;
-  padding: 6px 10px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #b45309;
-  cursor: pointer;
-  word-break: break-word;
-  transition: var(--fast-ease);
-}
-
-.report-remarks-box:hover {
-  background: #fef3c7;
-  border-color: #f59e0b;
-}
-
-.blocker-pill {
-  display: inline-block;
-  background-color: #fef2f2;
-  border: 1.5px solid #fecaca;
-  color: #991b1b;
-  font-size: 0.68rem;
-  font-weight: 900;
-  padding: 2px 7px;
-  border-radius: 6px;
-  margin-top: 4px;
-}
-
-.btn-whatsapp-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
+.chain-ready {
   background: #dcfce7;
   color: #15803d;
-  border-radius: 50%;
-  font-size: 0.9rem;
-  transition: var(--fast-ease);
+  border: 1px solid #86efac;
 }
 
-.btn-whatsapp-icon:hover {
-  background: #22c55e;
-  color: #ffffff;
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-}
-
-/* ==========================================================================    7. Modals & Form Inputs    ========================================================================== */
-.glass-modal {
-  border-radius: 20px;
-  overflow: hidden;
-  background: #f8fafc;
-}
-
-.modal-gradient-header {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.form-control,
-.form-select {
-  border-radius: 10px;
-  padding: 8px 12px;
-  border: 1.5px solid var(--border-subtle);
-  font-size: 0.88rem;
+.missing-pill {
+  font-size: 0.63rem;
   font-weight: 800;
-  color: var(--text-dark-bold);
-  background-color: #ffffff;
-  transition: var(--fast-ease);
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-right: 2px;
+  display: inline-block;
 }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+.missing-mandatory {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
 }
 
-.print-report-header {
+.missing-opt {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px dashed #94a3b8;
+}
+
+.print-a4-header {
   display: none;
 }
 
-/* ==========================================================================    8. Pristine A4 Landscape Print Stylesheet    ========================================================================== */
+.ts-control {
+  border-color: var(--erp-border) !important;
+  border-radius: 4px !important;
+  min-height: 27px !important;
+  padding: 1px 6px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+}
+
+/* ========================================================
+   STRICT A4 LANDSCAPE PRINT ENGINE (Fits 8-12 Rows)
+   ======================================================== */
 @media print {
   @page {
-    size: A4 landscape;
-    margin: 6mm 5mm;
+    size: 297mm 210mm; /* Strict A4 Landscape */
+    margin: 5mm 6mm;
   }
 
-  html,
+  *, *:before, *:after {
+    box-shadow: none !important;
+  }
+
   body {
-    width: 100% !important;
     background: #ffffff !important;
     font-size: 7.5pt !important;
     color: #000000 !important;
-    height: auto !important;
-    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .print-report-header {
-    display: block !important;
-    margin-bottom: 6px;
-    border-bottom: 1.5px solid #000000;
-    padding-bottom: 2px;
-  }
-
+  /* KILLS DATATABLES WRAPPERS, SEARCH BARS, LENGTH, PAGINATION */
+  .d-print-none,
   .navbar,
-  #reportTopToolbar,
-  #reportFilterCard,
+  .toast-container,
   .modal,
-  .btn,
-  .dt-container,
-  .dt-search,
-  .dt-length,
-  .dt-info,
-  .dt-paging,
-  .d-print-none {
+  .dt-container .dt-layout-row:first-child,
+  .dt-container .dt-layout-row:last-child,
+  .dataTables_length,
+  .dataTables_filter,
+  .dataTables_info,
+  .dataTables_paginate,
+  div.dataTables_wrapper div.dataTables_paginate,
+  div.dataTables_wrapper div.dataTables_info,
+  div.dataTables_wrapper div.dataTables_filter,
+  div.dataTables_wrapper div.dataTables_length,
+  div.dt-search,
+  div.dt-paging,
+  div.dt-info,
+  div.dt-length {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
     height: 0 !important;
+    width: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: hidden !important;
   }
 
-  .glass-card,
-  .report-card,
-  .table-wrapper {
-    border: none !important;
-    box-shadow: none !important;
+  .report-container {
     padding: 0 !important;
-    background: transparent !important;
-    overflow: visible !important;
-  }
-
-  #reportDataTable {
+    margin: 0 !important;
     width: 100% !important;
-    border-collapse: collapse !important;
-    display: table !important;
-    visibility: visible !important;
   }
 
-  #reportDataTable tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
+  .erp-card {
+    border: none !important;
   }
 
-  #reportDataTable thead th {
-    background-color: #f1f5f9 !important;
-    color: #000000 !important;
-    border: 1px solid #000000 !important;
-    font-size: 7pt !important;
-    padding: 5px !important;
+  /* Single Minimal Header */
+  .print-a4-header {
+    display: block !important;
+    border-bottom: 1.5px solid #000000;
+    margin-bottom: 4px;
+    padding-bottom: 2px;
+    font-size: 8.5pt !important;
     font-weight: 800 !important;
   }
 
-  #reportDataTable tbody td {
-    border: 1px solid #cbd5e1 !important;
-    padding: 4px !important;
-    font-size: 8pt !important;
-    background-color: #ffffff !important;
-    color: #000000 !important;
-  }
-
-  .editable-report-date {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    color: #000000 !important;
-    font-size: 8.5pt !important;
-  }
-
-  .countdown-pill {
+  /* Fixed Column Width Allocation */
+  table.dataTable {
+    width: 100% !important;
+    table-layout: fixed !important; /* Prevents column shrink/warping */
+    border-collapse: collapse !important;
     border: 1px solid #000000 !important;
+  }
+
+  table.dataTable thead {
+    display: table-header-group !important;
+  }
+
+  table.dataTable thead th {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border: 0.5px solid #000000 !important;
+    padding: 2.5px 4px !important;
+    font-size: 7pt !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  table.dataTable tr {
+    page-break-inside: avoid !important;
+  }
+
+  table.dataTable td {
+    padding: 2.5px 4px !important; /* Tight padding to fit 8-12 rows */
+    border: 0.5px solid #475569 !important;
     color: #000000 !important;
-    background: transparent !important;
+    font-size: 7.5pt !important;
+    line-height: 1.15;
+    overflow: hidden;
+  }
+
+  /* Column Width Percentages */
+  th.col-veh, td.col-veh { width: 17% !important; }
+  th.col-owner, td.col-owner { width: 14% !important; }
+  th.col-doc, td.col-doc { width: 8.5% !important; }
+  th.col-act, td.col-act { width: 18% !important; }
+
+  /* Date Typography in Print */
+  .date-val {
+    font-weight: 900 !important;
+    font-size: 8pt !important;
+    padding: 0 2px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .date-overdue, .date-crit, .date-soon, .date-warn, .date-notice, .date-safe,
+  .chain-blocked, .chain-ready, .missing-mandatory, .missing-opt, .cat-badge {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    border-width: 0.5px !important;
   }
 }
