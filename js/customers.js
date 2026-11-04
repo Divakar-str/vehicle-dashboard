@@ -740,11 +740,11 @@ const CustomerController = {
                 <tr>
                     <td class="ps-3 fw-bold text-primary">${this.escapeHtml(v.registration_no)}</td>
                     <td><span class="badge bg-secondary">${this.escapeHtml(v.vehicle_category)}</span></td>
-                    <td>${this.formatDateWithBadge(v.fc_expiry)}</td>
-                    <td>${this.formatDateWithBadge(v.road_tax_due)}</td>       
-                     <td>${this.formatDateWithBadge(v.green_tax_due)}</td>          
+                    <td>${this.formatDateWithBadge(v.road_tax_due)}</td> 
+                    <td>${this.formatDateWithBadge(v.fc_expiry)}</td>    
                     <td>${this.formatDateWithBadge(v.permit_expiry)}</td>
-                    <td>${this.formatDateWithBadge(v.national_permit_expiry)}</td>
+                    <td>${this.formatDateWithBadge(v.national_permit_expiry)}</td> 
+                     <td>${this.formatDateWithBadge(v.green_tax_due)}</td>    
                     <td>${this.formatDateWithBadge(v.insurance_expiry)}</td>
                     <td>${this.formatDateWithBadge(v.puc_expiry)}</td>
                     <td class="pe-3">${badge}</td>
